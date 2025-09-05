@@ -32,6 +32,18 @@
   .muted{color:var(--muted); font-size:13px}
   .preview{display:grid; place-items:center; height:360px; color:var(--muted); border:1px dashed var(--line); border-radius:12px}
   @media(max-width:900px){ .layout{grid-template-columns:1fr} aside{order:2} }
+
+
+.lock{ display:grid; place-items:center; text-align:center; gap:10px; padding:32px }
+.lock-icon{ font-size:48px; line-height:1 }
+.lock-title{ margin:0 }
+.lock-actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:4px }
+.btn.primary{ border-color:#19442a; background:#22c55e22 }
+.btn.primary:hover{ background:#22c55e33 }
+.hidden{ display:none }
+
+
+  
 </style>
 <!-- Firebase CDN (compat agar simpel) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -51,11 +63,7 @@
   </div>
 </div>
 
-<div id="gateFree" class="card" style="margin:16px;" >
-  <h2>Akses Khusus Pelanggan</h2>
-  <p class="muted">Silakan login. Jika belum terdaftar sebagai pelanggan, hubungi kami untuk mengaktifkan langganan.</p>
-  <p class="muted">Status: <span id="status">Belum login</span></p>
-</div>
+<h2>Akses Khusus Pelanggan</h2>
 
 <div id="app" class="layout hidden">
   <!-- Sidebar kiri -->
