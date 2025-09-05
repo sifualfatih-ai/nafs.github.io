@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prompt Generator — Nafs Project</title>
+  <meta name="description" content="Buat prompt cepat untuk berbagai kebutuhan." />
+  <style>
+    :root{
+      --card-bg: rgba(255,255,255,.08);
+      --card-border: rgba(255,255,255,.14);
+      --text: #eaf0ff;
+      --muted: #b8c1ff;
+      --btn-bg: rgba(255,255,255,.10);
+      --btn-border: rgba(255,255,255,.22);
+      --btn-hover: rgba(255,255,255,.18);
+      --radius: 22px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      display:grid; place-items:center; padding:24px;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(96,165,250,.25), transparent 60%),
+        linear-gradient(180deg, #0b1220 0%, #0b1530 40%, #0a1b3f 100%);
+    }
+    .wrap{width:min(900px, 96vw)}
+    .card{background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(12px); padding:22px}
+    h1{margin:0 0 8px; text-align:center}
+    p.sub{margin:0 0 20px; text-align:center; color:var(--muted)}
+    .grid{display:grid; gap:14px; grid-template-columns: 1fr 1fr}
+    .grid > div{display:flex; flex-direction:column; gap:6px}
+    label{font-size:14px; color:var(--muted)}
+    input, select, textarea{
+      width:100%; padding:12px 12px; border-radius:14px; border:1px solid var(--btn-border);
+      background:rgba(255,255,255,.06); color:var(--text);
+    }
+    textarea{min-height:160px; resize:vertical}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button, a.btn{
+      appearance:none; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--text);
+      padding:12px 16px; border-radius:14px; cursor:pointer; font-weight:600; text-decoration:none;
+    }
+    button:hover, a.btn:hover{background:var(--btn-hover)}
+    .out{margin-top:14px}
+    .topnav{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px}
+    .back{font-size:14px}
+    @media (max-width:820px){ .grid{grid-template-columns: 1fr} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="topnav">
+        <a class="btn back" href="./">← Kembali</a>
+        <span style="opacity:.7">Nafs Project</span>
+      </div>
+
+      <h1>Prompt Generator</h1>
+      <p class="sub">Buat prompt yang rapi untuk ChatGPT / ide konten / UMKM.</p>
+
+      <div class="grid">
+        <div>
+          <label>Platform / Kegunaan</label>
+          <select id="platform">
+            <option value="chatgpt">ChatGPT — tugas umum</option>
+            <option value="iklan">Iklan singkat UMKM</option>
+            <option value="tiktok">Caption TikTok</option>
+            <option value="seo">Outline Artikel SEO</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Bahasa</label>
+          <select id="lang">
+            <option value="id-ID">Indonesia</option>
+            <option value="en-US">English</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Tujuan/Topik</label>
+          <input id="goal" placeholder="contoh: promosi sewa motor harian, diskon 20%" />
+        </div>
+
+        <div>
+          <label>Target audiens</label>
+          <input id="aud" placeholder="contoh: mahasiswa & pekerja harian di kota X" />
+        </div>
+
+        <div>
+          <label>Gaya/Nada</label>
+          <input id="tone" placeholder="contoh: ramah, to the point, ajakan kuat" />
+        </div>
+
+        <div>
+          <label>Batasan/Rule (opsional)</label>
+          <input id="rules" placeholder="contoh: maksimal 120 kata, sertakan CTA & no WA" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="gen">Buat Prompt</button>
+        <button id="copy">Salin ke Clipboard</button>
+        <button id="clear" style="margin-left:auto">Bersihkan</button>
+      </div>
+
+      <div class="out">
+        <label>Hasil prompt</label>
+        <textarea id="out" placeholder="Hasil akan muncul di sini..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    const templates = {
+      chatgpt: (g,a,t,r,lang)=>`Kamu adalah asisten ahli pemasaran UMKM. Gunakan bahasa ${lang==='id-ID'?'Indonesia':'English'} yang ${t||'jelas dan persuasif'}.
+TUGAS: ${g}.
+AUDIENS: ${a||'-'}.
+OUTPUT: Berikan 3 variasi ide dengan struktur: 1) judul singkat, 2) naskah/teks, 3) CTA. ${r||''}
+Format dengan poin-poin yang mudah dibaca.`,
+      iklan: (g,a,t,r,lang)=>`Tulis 3 naskah iklan singkat (${lang==='id-ID'?'Indonesia':'English'}) untuk ${g}.
+Target: ${a||'-'}. Gaya: ${t||'ramah & langsung'}.
+Sertakan ajakan bertindak + nomor WhatsApp: 6285134882357. ${r||''}`,
+      tiktok: (g,a,t,r,lang)=>`Buat 5 caption TikTok (${lang==='id-ID'?'ID':'EN'}) tentang: ${g}.
+Audiens: ${a||'-'}. Nada: ${t||'fun & engaging'}.
+Masukkan 5 hashtag relevan. ${r||''}`,
+      seo: (g,a,t,r,lang)=>`Buat outline artikel SEO lengkap (${lang==='id-ID'?'Indonesia':'English'}) tentang: ${g}.
+Audiens: ${a||'-'}. Nada: ${t||'informatif'}.
+Hasil: judul H1, 6-10 subjudul H2/H3, poin kunci, FAQ, dan meta description. ${r||''}`
+    };
+
+    $('gen').onclick = () => {
+      const p = $('platform').value, lang=$('lang').value;
+      const g=$('goal').value.trim(), a=$('aud').value.trim(), t=$('tone').value.trim(), r=$('rules').value.trim();
+      const txt = templates[p](g,a,t,r,lang);
+      $('out').value = txt;
+      $('out').scrollIntoView({behavior:'smooth', block:'center'});
+    };
+    $('copy').onclick = async ()=> {
+      const v = $('out').value;
+      if(!v) return alert('Belum ada prompt.');
+      await navigator.clipboard.writeText(v);
+      alert('Prompt disalin ✅');
+    };
+    $('clear').onclick = ()=> {
+      ['goal','aud','tone','rules','out'].forEach(id=>$(id).value='');
+      $('goal').focus();
+    };
+  </script>
+</body>
+</html>
