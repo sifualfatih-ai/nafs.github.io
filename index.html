@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ama — Linktree Sederhana</title>
+  <meta name="description" content="Kumpulan tautan Ama" />
+  <style>
+    :root{
+      --card-bg: rgba(255,255,255,.08);
+      --card-border: rgba(255,255,255,.14);
+      --text: #eaf0ff;
+      --muted: #b8c1ff;
+      --btn-bg: rgba(255,255,255,.10);
+      --btn-border: rgba(255,255,255,.22);
+      --btn-hover: rgba(255,255,255,.18);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      display:grid; place-items:center;
+      /* Ganti gambar latar di sini (boleh URL atau file sendiri) */
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(96,165,250,.25), transparent 60%),
+        linear-gradient(180deg, #0b1220 0%, #0b1530 40%, #0a1b3f 100%),
+        url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop') center/cover fixed no-repeat;
+    }
+    .wrapper{width:min(520px, 92vw); padding:24px}
+    .card{
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding:28px 22px;
+    }
+    .avatar{
+      width:88px;height:88px;border-radius:50%;
+      border:2px solid rgba(255,255,255,.6);
+      display:block;margin:0 auto 14px;object-fit:cover; background:#222;
+    }
+    h1{margin:6px 0 4px; font-size:28px; text-align:center; letter-spacing:.3px}
+    .subtitle{margin:0 0 18px; text-align:center; color:var(--muted)}
+    .links{display:grid; gap:12px; margin-top:6px}
+    .btn{
+      display:flex; align-items:center; gap:10px;
+      padding:14px 16px; border-radius:16px;
+      background:var(--btn-bg); border:1px solid var(--btn-border);
+      text-decoration:none; color:var(--text); transition:.2s ease; font-weight:600;
+    }
+    .btn:hover{background:var(--btn-hover); transform:translateY(-1px)}
+    .btn svg{width:20px; height:20px; opacity:.9; flex:0 0 20px}
+    footer{margin-top:18px; text-align:center; font-size:12px; color:#a9b5ff9c}
+    /* Responsif */
+    @media (max-width:420px){
+      h1{font-size:24px}
+      .card{padding:22px 16px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrapper">
+    <section class="card" role="region" aria-label="Kartu profil">
+      <!-- GANTI FOTO PROFIL -->
+      <!-- Pakai URL gambar, atau upload file 'avatar.jpg' ke repo lalu ganti src='avatar.jpg' -->
+      <img class="avatar" src="https://i.pravatar.cc/176?img=5" alt="Foto profil" />
+
+      <!-- GANTI NAMA & DESKRIPSI -->
+      <h1>Ama</h1>
+      <p class="subtitle">Hai, saya Ama — Web Developer</p>
+
+      <div class="links" role="navigation" aria-label="Tautan utama">
+        <!-- GANTI href="#" dengan tautan kamu -->
+        <a class="btn" href="#" target="_blank" rel="noopener">
+          <!-- Ikon YouTube -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a4 4 0 0 0-2.8-2.8C18.9 3 12 3 12 3s-6.9 0-8.7.4A4 4 0 0 0 .5 6.2 41.8 41.8 0 0 0 0 12a41.8 41.8 0 0 0 .5 5.8 4 4 0 0 0 2.8 2.8C5.1 21 12 21 12 21s6.9 0 8.7-.4a4 4 0 0 0 2.8-2.8A41.8 41.8 0 0 0 24 12a41.8 41.8 0 0 0-.5-5.8zM9.7 15.5V8.5L15.8 12l-6.1 3.5z"/></svg>
+          YouTube
+        </a>
+
+        <a class="btn" href="#" target="_blank" rel="noopener">
+          <!-- Ikon TikTok -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 2a6.5 6.5 0 0 0 .4 2.1 5.8 5.8 0 0 0 2.8 3 7.4 7.4 0 0 0 2.1.6v3a10 10 0 0 1-4.2-1.1 8.5 8.5 0 0 1-1.4-.9v6.7a6.8 6.8 0 1 1-6.8-6.8c.3 0 .7 0 1 .1v3a3.8 3.8 0 1 0 2.7 3.6V2h3.4z"/></svg>
+          TikTok
+        </a>
+
+        <a class="btn" href="#" target="_blank" rel="noopener">
+          <!-- Ikon Instagram -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zM18 6.8a1.2 1.2 0 1 1-1.2 1.2A1.2 1.2 0 0 1 18 6.8z"/></svg>
+          Instagram
+        </a>
+
+        <a class="btn" href="#" target="_blank" rel="noopener">
+          <!-- Ikon Facebook -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3h-3.1V8.7c0-.9.3-1.5 1.6-1.5H17V4.5c-.8-.1-1.7-.2-2.5-.2-2.5 0-4.2 1.5-4.2 4.3V11H8v3h2.3v8h3.2z"/></svg>
+          Facebook
+        </a>
+
+        <a class="btn" href="#" target="_blank" rel="noopener">
+          <!-- Ikon Portofolio / globe -->
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm7.9 9h-3.3a15.3 15.3 0 0 0-1.2-5 8 8 0 0 1 4.5 5zM12 4c1.2 1.7 2 4 2.3 7H9.7C10 8 10.8 5.7 12 4zM4.1 11a8 8 0 0 1 4.5-5 15.3 15.3 0 0 0-1.2 5H4.1zm3.3 2a15.3 15.3 0 0 0 1.2 5 8 8 0 0 1-4.5-5h3.3zm4.6 7c-1.2-1.7-2-4-2.3-7h4.6c-.3 3-1.1 5.3-2.3 7zm3.9-2a15.3 15.3 0 0 0 1.2-5h3.3a8 8 0 0 1-4.5 5z"/></svg>
+          Portofolio
+        </a>
+      </div>
+
+      <footer>© <span id="y"></span> Ama</footer>
+    </section>
+  </main>
+
+  <script>
+    // Tahun otomatis
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
