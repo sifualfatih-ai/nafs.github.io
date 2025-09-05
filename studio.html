@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Studio — Khusus Pelanggan | Nafs Project</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#0f172a; --muted:#9aa4c9; --line:#1f2a44; --accent:#22c55e;
+    --radius:18px;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0; font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial; color:#e6ecff;
+       background:radial-gradient(900px 500px at 50% -10%, rgba(96,165,250,.25),transparent 60%), var(--bg);}
+  .layout{display:grid; grid-template-columns:260px 1fr; gap:16px; height:100%}
+  aside{background:rgba(255,255,255,.03); border-right:1px solid var(--line); padding:16px}
+  main{padding:16px}
+  h2{margin:0 0 10px}
+  .card{background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  label{font-size:13px; color:var(--muted)}
+  input,select,textarea{
+    width:100%; padding:10px 12px; border:1px solid var(--line); background:rgba(255,255,255,.03);
+    border-radius:12px; color:#e6ecff;
+  }
+  textarea{min-height:120px}
+  button,.btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
+    border:1px solid var(--line); background:rgba(255,255,255,.05); color:#e6ecff; cursor:pointer; text-decoration:none}
+  button:hover,.btn:hover{background:rgba(255,255,255,.08)}
+  .primary{border-color:#19442a; background:#19442a}
+  .hidden{display:none}
+  .topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px}
+  .muted{color:var(--muted); font-size:13px}
+  .preview{display:grid; place-items:center; height:360px; color:var(--muted); border:1px dashed var(--line); border-radius:12px}
+  @media(max-width:900px){ .layout{grid-template-columns:1fr} aside{order:2} }
+</style>
+<!-- Firebase CDN (compat agar simpel) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="topbar" style="padding:10px 16px; border-bottom:1px solid var(--line);">
+  <a class="btn" href="./">← Kembali</a>
+  <div id="authArea">
+    <button id="loginBtn" class="btn">Masuk dengan Google</button>
+    <div id="userBox" class="hidden">
+      <span id="userEmail" class="muted"></span>
+      <button id="logoutBtn" class="btn">Keluar</button>
+    </div>
+  </div>
+</div>
+
+<div id="gateFree" class="card" style="margin:16px;" >
+  <h2>Akses Khusus Pelanggan</h2>
+  <p class="muted">Silakan login. Jika belum terdaftar sebagai pelanggan, hubungi kami untuk mengaktifkan langganan.</p>
+  <p class="muted">Status: <span id="status">Belum login</span></p>
+</div>
+
+<div id="app" class="layout hidden">
+  <!-- Sidebar kiri -->
+  <aside>
+    <div style="margin-bottom:14px">
+      <strong>Free Akses</strong>
+    </div>
+    <nav class="card" style="display:grid; gap:8px">
+      <a class="btn" href="#" onclick="return false">Chat</a>
+      <a class="btn" href="#" onclick="return false">Generate Image</a>
+      <a class="btn" href="#" onclick="return false">Generate Video</a>
+      <a class="btn" href="#" onclick="return false">Canvas AI</a>
+    </nav>
+  </aside>
+
+  <!-- Konten kanan -->
+  <main>
+    <div class="card">
+      <div class="topbar" style="margin:0 0 12px">
+        <h2 style="margin:0">Generate Image</h2>
+        <span class="muted" id="planLabel">PRO</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:380px 1fr; gap:16px">
+        <div class="card">
+          <div style="display:grid; gap:10px">
+            <div>
+              <label>Model</label>
+              <select>
+                <option>imagen-4.0-generate-001</option>
+                <option>flux-schnell</option>
+                <option>sdxl-turbo</option>
+              </select>
+            </div>
+            <div>
+              <label>Prompt</label>
+              <textarea placeholder="e.g., A cute robot holding a red skateboard"></textarea>
+            </div>
+            <div>
+              <label>Negative Prompt</label>
+              <textarea placeholder="e.g., blurry, low quality"></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+              <div><label>Aspect Ratio</label><select><option>9:16</option><option>1:1</option><option>16:9</option></select></div>
+              <div><label>Number of Images</label><select><option>1</option><option>2</option><option>4</option></select></div>
+            </div>
+            <div><label>Seed (Optional)</label><input placeholder="Random" /></div>
+            <div><label>Image Reference</label><input type="file" /></div>
+            <div><button class="primary">Generate</button></div>
+          </div>
+        </div>
+
+        <div class="card preview">
+          Gambar Anda akan muncul di sini.
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // 1) Inisialisasi Firebase
+  const firebaseConfig = {
+    /* <-- PASTE CONFIG DI SINI (apiKey, authDomain, projectId, dll.) */
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const $ = (id)=>document.getElementById(id);
+  const loginBtn = $('loginBtn'), logoutBtn = $('logoutBtn'), userBox = $('userBox'), userEmail = $('userEmail');
+  const gateFree = $('gateFree'), app = $('app'), status = $('status');
+
+  // 2) Login/Logout
+  loginBtn.onclick = async () => {
+    try{ await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch(e){ alert(e.message); }
+  };
+  logoutBtn.onclick = ()=> auth.signOut();
+
+  // 3) Pantau status login & cek langganan
+  auth.onAuthStateChanged(async (user)=>{
+    if(!user){
+      status.textContent = 'Belum login';
+      userBox.classList.add('hidden');
+      loginBtn.classList.remove('hidden');
+      app.classList.add('hidden');
+      gateFree.classList.remove('hidden');
+      return;
+    }
+    // tampil email
+    userEmail.textContent = user.email;
+    userBox.classList.remove('hidden');
+    loginBtn.classList.add('hidden');
+    status.textContent = 'Login sebagai ' + user.email + ' — cek status langganan…';
+
+    try{
+      // Cek koleksi "subscribers": dokumen dengan id = email
+      const doc = await db.collection('subscribers').doc(user.email).get();
+      const ok = doc.exists && (doc.data().plan === 'pro' || doc.data().active === true);
+      if(ok){
+        // izinkan akses
+        gateFree.classList.add('hidden');
+        app.classList.remove('hidden');
+        $('planLabel').textContent = 'PRO';
+      }else{
+        status.textContent = 'Login berhasil, tetapi akun belum berlangganan.';
+        $('planLabel').textContent = 'FREE';
+        alert('Akses ini khusus pelanggan. Hubungi admin untuk aktivasi langganan.');
+      }
+    }catch(err){
+      console.error(err);
+      alert('Gagal memeriksa langganan. Coba lagi.');
+    }
+  });
+</script>
+</body>
+</html>
