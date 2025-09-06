@@ -59,6 +59,18 @@
       aside{order:2}
       .grid2{grid-template-columns:1fr}
     }
+
+    /* ====== KUNCI KERAS: Nonaktifkan app saat locked ====== */
+    #gateFree{ position:relative; z-index:3; }
+    #gateBlocker{
+      position:fixed; inset:0; z-index:2; display:none;   /* di atas #app, di bawah #gateFree */
+    }
+    body[data-locked="true"] #gateBlocker{ display:block; }
+    body[data-locked="true"] #app{
+      pointer-events:none; user-select:none;
+      filter:grayscale(.2) brightness(.95);
+      opacity:.85;
+    }
   </style>
 
   <!-- Firebase CDN (compat; cukup isi config di bawah agar aktif) -->
@@ -92,6 +104,9 @@
     </div>
     <p id="status" class="muted" style="margin-top:8px">Status: Belum login</p>
   </section>
+
+  <!-- Overlay tak terlihat yang memblokir klik ke #app saat locked -->
+  <div id="gateBlocker" aria-hidden="true"></div>
 
   <!-- App: tampil hanya jika PRO -->
   <div id="app" class="layout hidden">
@@ -137,7 +152,7 @@
               </div>
               <div><label>Seed (Optional)</label><input placeholder="Random" /></div>
               <div><label>Image Reference</label><input type="file" /></div>
-              <div><button class="btn primary">Generate</button></div>
+              <div><button class="btn primary" id="btnGenerate">Generate</button></div>
             </div>
           </div>
 
@@ -152,25 +167,11 @@
   <script>
     /* ============================================================
        1) KONFIGURASI FIREBASE
-       ------------------------------------------------------------
-       → ISI OBJEK di bawah ini dengan config Web App kamu dari
-         Firebase Console (Project settings → Your apps → Web).
-       → JANGAN GANTI struktur kuncinya (apiKey, authDomain, dst).
-       → Jika dibiarkan kosong (null), file tetap jalan dengan
-         mode allowlist sederhana (tanpa Firebase).
     ============================================================ */
     const firebaseConfig = null;
-    // Contoh jika ingin mengaktifkan Firebase nanti:
-    // const firebaseConfig = {
-    //   apiKey: "AKIza...ganti",
-    //   authDomain: "nafsproject.firebaseapp.com",
-    //   projectId: "nafsproject",
-    //   storageBucket: "nafsproject.appspot.com",
-    //   messagingSenderId: "1234567890",
-    //   appId: "1:1234567890:web:abcdef012345",
-    // };
+    // const firebaseConfig = { ... };
 
-    // ====== DETEKSI & INISIALISASI FIREBASE (compat) ======
+    /* ====== DETEKSI & INISIALISASI FIREBASE (compat) ====== */
     let USE_FIREBASE = false, auth=null, db=null, provider=null;
     try{
       if (firebaseConfig && typeof firebase !== 'undefined') {
@@ -182,13 +183,12 @@
       }
     }catch(e){ USE_FIREBASE = false; }
 
-    // ====== ALLOWLIST CADANGAN (tanpa Firebase) ======
+    /* ====== ALLOWLIST CADANGAN (tanpa Firebase) ====== */
     const ALLOWED = [
-      "nazrentalmotor@gmail.com"  // email kamu sudah diizinkan
-      // tambah email lain di sini bila perlu
+      "nazrentalmotor@gmail.com"
     ];
 
-    // ====== Ambil elemen UI ======
+    /* ====== Ambil elemen UI ====== */
     const $ = (id)=>document.getElementById(id);
     const loginBtn  = $('loginBtn');
     const loginBtn2 = $('loginBtn2');
@@ -201,7 +201,21 @@
     const buyBtn    = $('buyBtn');
     const statusEl  = $('status');
 
-    // ====== Login/Logout handler ======
+    /* ====== Helper kunci ====== */
+    function lockApp(){
+      document.body.setAttribute('data-locked','true');
+      gateFree.classList.remove('hidden');
+      app.classList.add('hidden');           // jika ingin tetap terlihat tapi tak bisa diklik, hapus baris ini
+      planLabel.textContent = 'FREE';
+    }
+    function unlockApp(){
+      document.body.removeAttribute('data-locked');
+      gateFree.classList.add('hidden');
+      app.classList.remove('hidden');
+      planLabel.textContent = 'PRO';
+    }
+
+    /* ====== Login/Logout handler ====== */
     const manualLogin = async()=>{
       const email = (prompt('Masukkan email Google kamu untuk verifikasi:')||'').trim().toLowerCase();
       if(!email) return;
@@ -222,7 +236,19 @@
     loginBtn2.onclick = doLogin;
     logoutBtn.onclick = ()=> USE_FIREBASE ? auth.signOut() : manualLogout();
 
-    // ====== Render state (untuk Firebase & fallback) ======
+    // Contoh: cegah tombol aksi saat terkunci
+    const requirePro = (fn) => () => {
+      if (document.body.getAttribute('data-locked') === 'true') {
+        alert('Fitur ini khusus pelanggan. Silakan login/berlangganan.');
+        return;
+      }
+      fn();
+    };
+    // contoh pemakaian untuk tombol Generate (dummy)
+    const btnGen = document.getElementById('btnGenerate');
+    if (btnGen) btnGen.onclick = requirePro(()=> alert('Generate dijalankan (demo)'));
+
+    /* ====== Render state (Firebase & fallback) ====== */
     async function renderState(firebaseUser=null){
       buyBtn.classList.add('hidden');
       planLabel.textContent = 'FREE';
@@ -233,11 +259,9 @@
           userBox.classList.add('hidden');
           loginBtn.classList.remove('hidden');
           statusEl.textContent = 'Status: Belum login';
-          gateFree.classList.remove('hidden');
-          app.classList.add('hidden');
+          lockApp();
           return;
         }
-        // tampil email
         userEmail.textContent = user.email;
         userBox.classList.remove('hidden');
         loginBtn.classList.add('hidden');
@@ -248,17 +272,15 @@
           const data = snap.exists ? snap.data() : null;
           const isPro = !!data && (data.plan === 'pro' || data.active === true);
           if (isPro){
-            planLabel.textContent = 'PRO';
-            gateFree.classList.add('hidden');
-            app.classList.remove('hidden');
+            unlockApp();
           } else {
             statusEl.textContent = 'Login berhasil, tetapi akun belum berlangganan.';
             buyBtn.classList.remove('hidden');
-            gateFree.classList.remove('hidden');
-            app.classList.add('hidden');
+            lockApp();
           }
         }catch(err){
           console.error(err); alert('Gagal memeriksa langganan. Coba lagi.');
+          lockApp();
         }
         return;
       }
@@ -269,8 +291,7 @@
         userBox.classList.add('hidden');
         loginBtn.classList.remove('hidden');
         statusEl.textContent = 'Status: Belum login';
-        gateFree.classList.remove('hidden');
-        app.classList.add('hidden');
+        lockApp();
         return;
       }
       userEmail.textContent = email;
@@ -280,14 +301,11 @@
 
       const isPro = ALLOWED.map(x=>x.toLowerCase()).includes(email);
       if (isPro){
-        planLabel.textContent = 'PRO';
-        gateFree.classList.add('hidden');
-        app.classList.remove('hidden');
+        unlockApp();
       } else {
         statusEl.textContent = 'Login berhasil, tetapi akun belum berlangganan.';
         buyBtn.classList.remove('hidden');
-        gateFree.classList.remove('hidden');
-        app.classList.add('hidden');
+        lockApp();
       }
     }
 
