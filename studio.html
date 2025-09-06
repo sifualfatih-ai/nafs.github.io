@@ -71,6 +71,28 @@
       filter:grayscale(.2) brightness(.95);
       opacity:.85;
     }
+
+    /* =========================================
+       TAMBAHAN KECIL UNTUK MENU WEB3 (NON-INVASIF)
+       ========================================= */
+    .w3-card{background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:var(--radius); padding:12px; margin-top:12px}
+    .w3-head{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;
+      padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:#efeaff; cursor:pointer}
+    .w3-head:hover{border-color:var(--accent)}
+    .w3-chev{transition:transform .15s ease}
+    .w3-open .w3-chev{transform:rotate(90deg)}
+    .w3-sub{list-style:none; margin:8px 0 0; padding:6px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.03)}
+    .w3-sub a{display:block; padding:9px 10px; border-radius:10px; color:#bfb6d8; text-decoration:none; border:1px solid transparent}
+    .w3-sub a:hover{color:#efeaff; border-color:var(--line); background:rgba(255,255,255,.02)}
+    .w3-sub a.w3-active{color:#efeaff; border-color:var(--accent)}
+    .w3-tip{font-size:13px; color:var(--muted); margin:6px 0 0}
+
+    .w3-panel .w3-section{margin-top:12px}
+    .w3-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; margin-top:8px}
+    .w3-card-mini{background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:14px; padding:12px}
+    .w3-card-mini h4{margin:0 0 8px; font-size:15px}
+    .w3-card-mini p{margin:0; color:var(--muted)}
+    .w3-card-mini ul{margin:0; padding-left:18px; color:var(--muted)}
   </style>
 
   <!-- Firebase CDN (compat; cukup isi config di bawah agar aktif) -->
@@ -111,13 +133,35 @@
   <!-- App: tampil hanya jika PRO -->
   <div id="app" class="layout hidden">
     <aside>
-      <div style="margin-bottom:14px"><strong>Menu</strong></div>
+      <div style="margin-bottom:14px"><strong>Tools AI</strong></div>
       <nav class="card" style="display:grid; gap:8px">
         <a class="btn" href="#" onclick="return false">Chat</a>
         <a class="btn" href="#" onclick="return false">Generate Image</a>
         <a class="btn" href="#" onclick="return false">Generate Video</a>
         <a class="btn" href="#" onclick="return false">Canvas AI</a>
       </nav>
+
+      <!-- ====== TAMBAHAN: Web3 Project (Sidebar) ====== -->
+      <div class="w3-card" id="w3Menu">
+        <button type="button" class="w3-head" id="w3Toggle" aria-expanded="false" aria-controls="w3Sub">
+          <span>Web3 Project</span>
+          <svg class="w3-chev" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+          </svg>
+        </button>
+        <ul class="w3-sub" id="w3Sub" hidden>
+          <li><a href="#web3-defi" class="w3-link" data-target="web3-defi">DeFi (Decentralized Finance)</a></li>
+          <li><a href="#web3-nft" class="w3-link" data-target="web3-nft">NFT &amp; Digital Assets</a></li>
+          <li><a href="#web3-metaverse" class="w3-link" data-target="web3-metaverse">Metaverse &amp; Virtual Experiences</a></li>
+          <li><a href="#web3-dao" class="w3-link" data-target="web3-dao">DAO (Decentralized Autonomous Organization)</a></li>
+          <li><a href="#web3-infra" class="w3-link" data-target="web3-infra">Blockchain Infrastructure</a></li>
+          <li><a href="#web3-gamefi" class="w3-link" data-target="web3-gamefi">GameFi (Blockchain Gaming)</a></li>
+          <li><a href="#web3-token" class="w3-link" data-target="web3-token">Tokenization of Real Assets</a></li>
+          <li><a href="#web3-security" class="w3-link" data-target="web3-security">Web3 Security &amp; Identity</a></li>
+        </ul>
+        <div class="w3-tip">Klik sub-menu untuk membuka detail di panel kanan.</div>
+      </div>
+      <!-- ====== /TAMBAHAN ====== -->
     </aside>
 
     <main>
@@ -161,6 +205,175 @@
           </div>
         </div>
       </div>
+
+      <!-- ====== TAMBAHAN: Panel Konten Web3 Project ====== -->
+      <section class="card w3-panel" id="web3-panel">
+        <div class="topbar" style="margin:0 0 10px">
+          <h2 style="margin:0">Web3 Project</h2>
+          <span class="muted">Pilih sub-menu di kiri untuk melihat detail.</span>
+        </div>
+
+        <!-- DeFi -->
+        <article id="web3-defi" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">DeFi (Decentralized Finance)</h3>
+          <p class="muted">Layanan keuangan tanpa perantara: lending/borrowing, DEX, staking, dan yield strategies.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Pilihan Produk</h4>
+              <ul>
+                <li>Crypto lending &amp; borrowing</li>
+                <li>Payment gateway kripto</li>
+                <li>Staking / yield</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Biaya lebih rendah, akses global, transparansi transaksi on-chain.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- NFT -->
+        <article id="web3-nft" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">NFT &amp; Digital Assets</h3>
+          <p class="muted">Aset digital untuk koleksi, membership, sertifikasi, dan utilities ekosistem.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Use Cases</h4>
+              <ul>
+                <li>Keanggotaan premium (token-gated)</li>
+                <li>Sertifikat kepemilikan digital</li>
+                <li>Royalti kreator</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Engagement komunitas &amp; aliran pendapatan baru berbasis utilitas.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Metaverse -->
+        <article id="web3-metaverse" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">Metaverse &amp; Virtual Experiences</h3>
+          <p class="muted">Ruang 3D untuk event, showroom, edukasi, hingga social commerce.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Use Cases</h4>
+              <ul>
+                <li>Virtual showroom &amp; demo</li>
+                <li>Training/edukasi imersif</li>
+                <li>Event &amp; komunitas</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Diferensiasi brand &amp; pengalaman pelanggan yang interaktif.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- DAO -->
+        <article id="web3-dao" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">DAO (Decentralized Autonomous Organization)</h3>
+          <p class="muted">Organisasi transparan dengan tata kelola token &amp; smart contract.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Komponen</h4>
+              <ul>
+                <li>Voting &amp; proposal on-chain</li>
+                <li>Treasury management</li>
+                <li>Peran &amp; izin berbasis token</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Keputusan cepat, akuntabel, dan terdokumentasi publik.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Infra -->
+        <article id="web3-infra" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">Blockchain Infrastructure</h3>
+          <p class="muted">Fondasi teknis: L1/L2, wallet, on/off-ramp, indexing, dan tool pengembang.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Layanan</h4>
+              <ul>
+                <li>Integrasi wallet &amp; pembayaran</li>
+                <li>Smart contract &amp; audit partner</li>
+                <li>Observabilitas &amp; analytics on-chain</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Skalabilitas, efisiensi biaya, dan keandalan untuk seluruh lini Web3.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- GameFi -->
+        <article id="web3-gamefi" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">GameFi (Blockchain Gaming)</h3>
+          <p class="muted">Kepemilikan item on-chain, ekonomi pemain, dan komunitas yang aktif.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Use Cases</h4>
+              <ul>
+                <li>Item NFT &amp; marketplace</li>
+                <li>Reward &amp; loyalty token</li>
+                <li>Event &amp; turnamen on-chain</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Retensi pemain meningkat &amp; pendapatan sekunder dari trading aset digital.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tokenization -->
+        <article id="web3-token" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">Tokenization of Real Assets</h3>
+          <p class="muted">RWA ke token untuk fraksionalisasi, likuiditas, dan transparansi.</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Use Cases</h4>
+              <ul>
+                <li>Tokenisasi properti/komoditas</li>
+                <li>Revenue-share by smart contract</li>
+                <li>Membership/loyalty pass on-chain</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Pendanaan alternatif, likuiditas tinggi, audit trail jelas.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Security & Identity -->
+        <article id="web3-security" class="w3-section" hidden>
+          <h3 style="margin:0 0 6px">Web3 Security &amp; Identity</h3>
+          <p class="muted">Keamanan, verifikasi, &amp; identitas terdesentralisasi (DID).</p>
+          <div class="w3-grid">
+            <div class="w3-card-mini">
+              <h4>Komponen</h4>
+              <ul>
+                <li>Smart contract audit &amp; bug bounty</li>
+                <li>Multi-sig &amp; hardware wallet</li>
+                <li>DID / verifiable credentials</li>
+              </ul>
+            </div>
+            <div class="w3-card-mini">
+              <h4>Nilai Bisnis</h4>
+              <p>Menurunkan risiko, membangun trust, dan mematuhi standar regulasi.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+      <!-- ====== /TAMBAHAN ====== -->
     </main>
   </div>
 
@@ -315,6 +528,50 @@
     } else {
       renderState();
     }
+  </script>
+
+  <!-- ====== TAMBAHAN: Script Web3 (terpisah, tidak mengubah script di atas) ====== -->
+  <script>
+    (function(){
+      const panel   = document.getElementById('web3-panel');
+      const toggle  = document.getElementById('w3Toggle');
+      const sub     = document.getElementById('w3Sub');
+      const links   = document.querySelectorAll('#w3Sub .w3-link');
+      const sections= panel ? panel.querySelectorAll('.w3-section') : [];
+
+      if (!panel || !toggle || !sub) return;
+
+      // toggle sub menu
+      function setOpen(open){
+        toggle.setAttribute('aria-expanded', String(open));
+        sub.hidden = !open;
+        toggle.parentElement.classList.toggle('w3-open', open);
+      }
+      toggle.addEventListener('click', ()=> setOpen(toggle.getAttribute('aria-expanded')!=='true'));
+
+      // show section
+      function show(id){
+        sections.forEach(sec => sec.hidden = (sec.id !== id));
+        links.forEach(a => a.classList.toggle('w3-active', a.dataset.target === id));
+        panel.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+      links.forEach(a=>{
+        a.addEventListener('click', (e)=>{
+          e.preventDefault();
+          const id = a.dataset.target;
+          setOpen(true);
+          show(id);
+          history.replaceState(null, '', '#'+id); // opsional: update hash
+        });
+      });
+
+      // jika URL sudah punya hash ke salah satu section, auto-buka
+      const hash = (location.hash || '').replace('#','');
+      if (hash && document.getElementById(hash)){
+        setOpen(true);
+        show(hash);
+      }
+    })();
   </script>
 </body>
 </html>
