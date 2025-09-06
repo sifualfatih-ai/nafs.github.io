@@ -44,10 +44,52 @@
   .inv-meta{text-align:right}
   .badge{display:inline-block;background:#7c3aed22;border:1px solid #7c3aed44;color:var(--text);
          font-weight:700;padding:4px 8px;border-radius:999px;margin-bottom:6px}
+
+  /* ===== Gate Private ===== */
+  .hidden{display:none}
+  .gate{
+    position:fixed; inset:0; display:grid; place-items:center; padding:24px;
+    background:linear-gradient(180deg, rgba(6,5,12,.9), rgba(6,5,12,.96));
+    backdrop-filter: blur(2px); z-index:9999;
+  }
+  .gate-card{width:min(460px,94vw); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px}
+  .muted{color:var(--muted)}
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
+  }
+  .pill{
+    display:inline-block; padding:6px 10px; border:1px solid var(--line); border-radius:999px; font-size:12px; color:var(--muted);
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- ===== GATE (LOCK SCREEN) ===== -->
+<section id="gate" class="gate">
+  <div class="gate-card">
+    <h2 style="margin:0 0 6px">Akses Admin</h2>
+    <p class="muted" style="margin:0 0 12px">Halaman ini <b>private</b>. Masukkan email admin yang diizinkan untuk melanjutkan. <br>Jika belum terdaftar, hubungi admin Nafs untuk mendapatkan akses.</p>
+    <label>Email admin</label>
+    <input id="gateEmail" placeholder="email@gmail.com" autocomplete="email" style="width:100%; margin:6px 0 10px">
+    <div style="display:flex; gap:8px; align-items:center">
+      <button id="btnGateLogin" class="btn accent">Login</button>
+      <span id="gateStatus" class="status"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TOPBAR (tampil saat login) ===== -->
+<div class="wrap hidden" id="topbar">
+  <div class="topbar noprint-only">
+    <span class="pill">Privat • Hanya admin</span>
+    <div style="display:flex; gap:8px; align-items:center">
+      <span id="who" class="muted"></span>
+      <button id="btnLogout" class="btn">Keluar</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="app"><!-- app disembunyikan sampai login -->
   <h1 class="noprint-only">Invoice Generator — <span style="color:#a78bfa">Bot Invoice Nafs</span></h1>
 
   <!-- FORM INPUT -->
@@ -147,14 +189,80 @@
 </div>
 
 <script>
+  // ====== Allowlist admin email ======
+  const ALLOWED_EMAILS = [
+    "nazrentalmotor@gmail.com",   // <— ganti/ tambah email admin di sini
+    // "email-lain@domain.com",
+  ];
+  const STORAGE_KEY = "nafs_invoice_admin_email";
+
   // ===== util & konfigurasi =====
   const rupiah = n => (Number(n)||0).toLocaleString('id-ID');
   const SHEET_WEBAPP_URL = 'PASTE_WEB_APP_URL_DI_SINI'; // ganti setelah membuat Apps Script Web App
 
+  // ====== Gate helpers ======
+  function isAllowed(email){
+    if(!email) return false;
+    const e = email.trim().toLowerCase();
+    return ALLOWED_EMAILS.map(x=>x.toLowerCase()).includes(e);
+  }
+  function currentEmail(){
+    return (localStorage.getItem(STORAGE_KEY)||"").toLowerCase();
+  }
+  function setEmailSession(email){
+    if(email) localStorage.setItem(STORAGE_KEY, email.toLowerCase());
+  }
+  function clearSession(){
+    localStorage.removeItem(STORAGE_KEY);
+  }
+  function renderGate(){
+    const gate   = document.getElementById('gate');
+    const app    = document.getElementById('app');
+    const topbar = document.getElementById('topbar');
+    const who    = document.getElementById('who');
+
+    const email = currentEmail();
+    const ok = isAllowed(email);
+
+    if(ok){
+      gate.classList.add('hidden');
+      app.classList.remove('hidden');
+      topbar.classList.remove('hidden');
+      who.textContent = email;
+    }else{
+      gate.classList.remove('hidden');
+      app.classList.add('hidden');
+      topbar.classList.add('hidden');
+      who.textContent = '';
+    }
+  }
+
+  // ====== App utama ======
   document.addEventListener('DOMContentLoaded', () => {
+    // Gate actions
+    document.getElementById('btnGateLogin').addEventListener('click', ()=>{
+      const input = document.getElementById('gateEmail');
+      const status = document.getElementById('gateStatus');
+      const email = (input.value||'').trim().toLowerCase();
+      if(!email){ status.textContent = 'Masukkan email.'; return; }
+      if(!isAllowed(email)){ status.textContent = 'Email tidak diizinkan. Hubungi admin.'; return; }
+      setEmailSession(email);
+      status.textContent = 'Berhasil. Membuka halaman...';
+      renderGate();
+    });
+    document.getElementById('btnLogout').addEventListener('click', ()=>{
+      clearSession();
+      renderGate();
+    });
+
+    renderGate(); // cek sesi saat pertama
+
+    // ====== Jika belum login, cegah aksi tombol penting ======
+    function guard(){ if(!isAllowed(currentEmail())){ alert('Halaman privat. Silakan login admin.'); return false; } return true; }
+
+    // ==== Fitur invoice (hanya binding saat DOM ready; guard dijalankan di handler) ====
     const tbody = document.querySelector('#itemsTbl tbody');
 
-    // === tambah 1 baris item ===
     function addRow(desc = '', qty = 1, price = 0) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -166,11 +274,11 @@
           <button type="button" class="btn btn-sm btn-remove">✕</button>
         </td>`;
       tbody.appendChild(tr);
-      calc(); // hitung awal
+      calc();
     }
 
-    // === hapus baris (event delegation) ===
     tbody.addEventListener('click', (e) => {
+      if(!guard()) return;
       const btn = e.target.closest('.btn-remove');
       if (btn) {
         btn.closest('tr')?.remove();
@@ -178,21 +286,20 @@
       }
     });
 
-    // === setiap input berubah -> hitung ulang ===
     tbody.addEventListener('input', (e) => {
+      if(!guard()) return;
       if (e.target.matches('.i-desc, .i-qty, .i-price')) calc();
     });
 
-    // === klik tambah item ===
     document.getElementById('btnAdd').addEventListener('click', (e) => {
       e.preventDefault();
+      if(!guard()) return;
       addRow();
     });
 
-    // baris awal
+    // baris awal (tidak bikin data sensitif)
     addRow('Layanan/Jasa', 1, 100000);
 
-    // === fungsi hitung ===
     window.calc = function calc() {
       let sub = 0;
       [...tbody.querySelectorAll('tr')].forEach(tr => {
@@ -215,8 +322,8 @@
       return { sub, disc, tax, grand };
     };
 
-    // === PREVIEW ===
     document.getElementById('btnPreview').addEventListener('click', () => {
+      if(!guard()) return;
       const {sub,disc,tax,grand} = calc();
       document.getElementById('pNo').textContent   = document.getElementById('invNo').value || '—';
       document.getElementById('pDate').textContent = document.getElementById('invDate').value || '—';
@@ -242,17 +349,17 @@
       document.getElementById('pGrand').textContent = rupiah(grand);
     });
 
-    // === PRINT / PDF ===
     document.getElementById('btnPrint').addEventListener('click', () => {
-      document.getElementById('btnPreview').click(); // sinkron dulu
+      if(!guard()) return;
+      document.getElementById('btnPreview').click();
       window.print();
     });
 
-    // === SAVE ONLINE (Apps Script Web App) ===
     document.getElementById('btnSaveOnline').addEventListener('click', async () => {
+      if(!guard()) return;
       const status = document.getElementById('saveStatus');
       status.textContent = 'Menyimpan...';
-      document.getElementById('btnPreview').click(); // sinkron
+      document.getElementById('btnPreview').click();
 
       const items = [...tbody.querySelectorAll('tr')].map(tr=>({
         desc: tr.querySelector('.i-desc').value,
