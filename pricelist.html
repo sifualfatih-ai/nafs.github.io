@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Price List Layanan — Nafs Project</title>
+<meta name="description" content="Daftar layanan Nafs Project: berbasis AI dan konvensional, lengkap dengan paket langganan." />
+<style>
+  :root{
+    --bg:#11071e; --card:#1f1438; --panel:#1a0f2d; --line:#2d2050;
+    --text:#efeaff; --muted:#c7b7f0; --accent:#7c3aed; --accent2:#a78bfa;
+    --green:#22c55e; --radius:18px;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{
+    margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(124,58,237,.20), transparent 60%),
+      var(--bg);
+    padding:24px;
+  }
+  .wrap{width:min(1080px,94vw); margin:0 auto}
+  .head{display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
+       border:1px solid var(--line); background:transparent; color:var(--text); text-decoration:none}
+  .btn:hover{background:#ffffff10}
+  h1{margin:0}
+  .muted{color:var(--muted)}
+
+  /* Paket all-in-one */
+  .packs{display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr)); margin:18px 0 24px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px}
+  .price{font-size:28px; font-weight:800}
+  .cta{background:var(--green); color:#06280f; font-weight:800; border:none; padding:10px 14px; border-radius:10px; cursor:pointer}
+  .cta:hover{filter:brightness(1.02)}
+
+  /* Accordion */
+  .block{margin:12px 0 22px}
+  .block h2{margin:0 0 8px}
+  details{background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-top:10px}
+  summary{
+    list-style:none; cursor:pointer; padding:14px 16px; font-weight:700;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  summary::-webkit-details-marker{display:none}
+  .chev{transition:transform .2s ease}
+  details[open] .chev{transform:rotate(90deg)}
+  .inner{padding:0 16px 14px}
+  .item{display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px dashed var(--line)}
+  .item:first-child{border-top:none}
+  .tag{font-size:12px; padding:2px 8px; border:1px solid var(--line); border-radius:999px; color:var(--muted)}
+  .buy{background:var(--accent); color:#fff; border:none; padding:8px 12px; border-radius:10px; cursor:pointer}
+  .buy:hover{filter:brightness(1.02)}
+
+  @media(max-width:860px){ .packs{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <a class="btn" href="./">← Kembali</a>
+      <h1>Price List Layanan</h1>
+      <span></span>
+    </div>
+    <p class="muted" style="margin:6px 0 16px">Pilih layanan sesuai kebutuhan: **Berbasis AI** untuk efisiensi & otomatisasi, atau **Konvensional** untuk proses manual yang presisi. Paket langganan tersedia di bawah ini.</p>
+
+    <!-- Paket All-In-One -->
+    <section class="packs" aria-label="Paket langganan">
+      <div class="card">
+        <h3 style="margin:0 0 6px">All-in-One <span class="tag">Bulanan</span></h3>
+        <p class="muted" style="margin:0 0 10px">Akses generator, template premium, optimasi konten dasar, & konsultasi 1×/bulan.</p>
+        <div style="display:flex; justify-content:space-between; align-items:end">
+          <div>
+            <div class="price">Rp 149.000</div>
+            <div class="muted">per bulan</div>
+          </div>
+          <a class="cta" href="https://wa.me/6285134882357?text=Langganan%20All-in-One%20Bulanan" target="_blank" rel="noopener">Langganan</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 6px">All-in-One <span class="tag">Tahunan</span></h3>
+        <p class="muted" style="margin:0 0 10px">Semua fitur paket bulanan + bonus 2 bulan gratis & review strategi triwulan.</p>
+        <div style="display:flex; justify-content:space-between; align-items:end">
+          <div>
+            <div class="price">Rp 1.490.000</div>
+            <div class="muted">per tahun</div>
+          </div>
+          <a class="cta" href="https://wa.me/6285134882357?text=Langganan%20All-in-One%20Tahunan" target="_blank" rel="noopener">Langganan</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Berbasis AI -->
+    <section class="block" aria-label="Layanan berbasis AI">
+      <h2>Berbasis AI</h2>
+
+      <details>
+        <summary>
+          Konten & Copywriting <span class="chev">▶</span>
+        </summary>
+        <div class="inner">
+          <div class="item">
+            <div>
+              <b>Paket Caption Sosmed</b> <span class="tag">10 posting</span>
+              <div class="muted">Riset cepat + 3 variasi CTA per caption.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 89.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Paket%20Caption%2010%20posting%20(AI)" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+
+          <div class="item">
+            <div>
+              <b>Script Video Pendek</b> <span class="tag">5 video</span>
+              <div class="muted">Hook, outline 3–5 beat, dan CTA; cocok TikTok/Shorts.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 119.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Script%20Video%205%20(AI)" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Desain & Gambar AI <span class="chev">▶</span>
+        </summary>
+        <div class="inner">
+          <div class="item">
+            <div>
+              <b>Generate Produk Mockup</b> <span class="tag">10 gambar</span>
+              <div class="muted">Mockup kemasan/produk dengan latar sesuai brief.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 149.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Mockup%20Produk%2010%20(AI)" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+
+          <div class="item">
+            <div>
+              <b>Template Iklan (AI-Assist)</b> <span class="tag">15 desain</span>
+              <div class="muted">Variasi visual untuk A/B test + copy pendek.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 179.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Template%20Iklan%2015%20(AI)" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Otomasi & Optimasi <span class="chev">▶</span>
+        </summary>
+        <div class="inner">
+          <div class="item">
+            <div>
+              <b>Optimasi Listing Marketplace</b>
+              <div class="muted">Judul, deskripsi, keyword, & 3 varian foto AI-enhanced.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 99.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Optimasi%20Listing%20(AI)" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Konvensional -->
+    <section class="block" aria-label="Layanan konvensional">
+      <h2>Konvensional</h2>
+
+      <details>
+        <summary>
+          Desain Grafis <span class="chev">▶</span>
+        </summary>
+        <div class="inner">
+          <div class="item">
+            <div>
+              <b>Logo Simple</b>
+              <div class="muted">2 konsep, 3 kali revisi, file PNG + SVG.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 199.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Logo%20Simple" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+
+          <div class="item">
+            <div>
+              <b>Desain Feed 9 Kotak</b>
+              <div class="muted">Satu tema, grid 3×3, file siap unggah.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 249.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Desain%20Feed%209%20Kotak" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Penulisan & Editing <span class="chev">▶</span>
+        </summary>
+        <div class="inner">
+          <div class="item">
+            <div>
+              <b>Copy Landing Page</b>
+              <div class="muted">1 halaman: headline, benefit, social-proof, CTA.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 299.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Copy%20Landing%20Page" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+
+          <div class="item">
+            <div>
+              <b>Edit Ejaan & Tata Bahasa</b> <span class="tag">≤ 1.500 kata</span>
+              <div class="muted">Proofreading dasar untuk artikel/dokumen.</div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center">
+              <span><b>Rp 79.000</b></span>
+              <a class="buy" href="https://wa.me/6285134882357?text=Order%20Edit%20Ejaan%201500%20kata" target="_blank" rel="noopener">Beli</a>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+  </div>
+</body>
+</html>
