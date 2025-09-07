@@ -1,12 +1,15 @@
-// Selalu arahkan ke index.html di ROOT situs (aman untuk GitHub Pages)
-const HOMEPAGE_URL = new URL("/index.html", location.origin).href;
+// === BASE PATH GitHub Pages (WAJIB pakai /nafs.github.io/) ===
+const BASE = new URL("/nafs.github.io/", location.origin).href;            // -> https://sifualfatih-ai.github.io/nafs.github.io/
+const HERE = "/nafs.github.io/react/vite/";                                // halaman premium
 
-// supaya bisa balik lagi setelah login
-const here = (location.pathname + location.search) || "/react/vite/";
+// HALAMAN UTAMA & HOME
+const HOMEPAGE_URL = BASE;                                                 // https://.../nafs.github.io/
+const HOME_URL     = BASE + "home";                                        // https://.../nafs.github.io/home
 
-// URL login/logout via index.html + redirect balik
-const LOGIN_URL  = new URL(`/index.html?login=1&r=${encodeURIComponent(here)}`,  location.origin).href;
-const LOGOUT_URL = new URL(`/index.html?logout=1&r=${encodeURIComponent(here)}`, location.origin).href;
+// LOGIN / LOGOUT via index.html di ROOT + redirect balik
+const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;
+const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;
+
 
 
 function Badge({ children }) {
@@ -114,7 +117,7 @@ function NafsPremiumApp() {
 
   function handleClick(label) {
     if (label === "Halaman Utama") {
-    window.location.href = HOMEPAGE_URL;   // buka index.html
+    window.location.href = HOMEPAGE_URL;   // https://sifualfatih-ai.github.io/nafs.github.io/
     return;
    }
     setActive(label);
