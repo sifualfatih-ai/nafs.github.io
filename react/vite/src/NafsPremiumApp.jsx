@@ -1,13 +1,12 @@
-// ABSOLUTE URLs – tanpa "index.html"
-const BASE = "https://sifualfatih-ai.github.io/nafs.github.io/";           // halaman utama
+/* ---- KONFIG URL ABSOLUT GITHUB PAGES ---- */
+const BASE = "https://sifualfatih-ai.github.io/nafs.github.io/";            // halaman utama
 const HERE = "https://sifualfatih-ai.github.io/nafs.github.io/react/vite/"; // nafspremium
 
-const HOMEPAGE_URL = BASE;                                                 // buka beranda
-const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;        // buka modal login
-const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;       // logout
+const HOMEPAGE_URL = BASE;                                                  // buka beranda umum
+const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;         // buka modal login
+const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;        // logout
 
-
-
+/* ==== UI KOMPONEN ==== */
 function Badge({ children }) {
   return (
     <span className="ml-2 px-2 py-0.5 text-[10px] rounded-full border bg-purple-500/10 text-purple-300 border-purple-400/30">
@@ -16,13 +15,13 @@ function Badge({ children }) {
   );
 }
 
-function SideItem({ icon, label, right, active, onClick }) {
+function SideItem({ icon, label, right, active, onClick, elevate = false, dimmed = false }) {
   return (
     <button
       onClick={onClick}
-      className={`group w-full flex items-center gap-2 p-2.5 rounded-xl transition-all text-left hover:bg-white/5 ${
-        active ? "bg-white/10 ring-1 ring-white/10" : ""
-      }`}
+      className={`group w-full flex items-center gap-2 p-2.5 rounded-xl text-left transition-all
+        hover:bg-white/5 ${active ? "bg-white/10 ring-1 ring-white/10" : ""}
+        ${elevate ? "relative z-50" : ""} ${dimmed ? "opacity-60" : ""}`}
     >
       <span className="h-4 w-4 text-white/80">{icon}</span>
       <span className="text-[13px] text-white/90">{label}</span>
@@ -50,9 +49,8 @@ function ModelSelect({ value, onChange, disabled }) {
           disabled={disabled}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none ${
-            disabled ? "opacity-60 cursor-not-allowed" : ""
-          }`}
+          className={`w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none
+            ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
         >
           {models.map((m) => (
             <option key={m} className="bg-[#1a0b2e]" value={m}>
@@ -84,15 +82,9 @@ function NafsPremiumApp() {
   const [model, setModel] = React.useState("Gemini 2.5 Flash");
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  // cek sesi login dari localStorage
   React.useEffect(() => {
     setIsLoggedIn(localStorage.getItem("nafs_isLoggedIn") === "1");
   }, []);
-
-  // URL login & logout dengan redirect balik ke halaman sekarang
-  const here = (location.pathname + location.search) || "/react/vite/";
-  const LOGIN_URL  = `/index.html?login=1&r=${encodeURIComponent(here)}`;
-  const LOGOUT_URL = `/index.html?logout=1&r=${encodeURIComponent(here)}`;
 
   const items = [
     { label: "Chat", icon: "💬" },
@@ -104,7 +96,6 @@ function NafsPremiumApp() {
     { label: "Tiktok Affiliate", icon: "🔗", right: <span className="text-[10px] text-white/50">Konten UGC</span> },
     { label: "Foto Produk", icon: "📷", right: <span className="text-[10px] text-white/50">Konten UGC</span> },
   ];
-
   const secondary = [
     { label: "E-Course", icon: "🎓", right: <span className="text-[10px] text-white/50">Tiktok Affiliate</span> },
     { label: "Halaman Utama", icon: "🏠" },
@@ -112,15 +103,27 @@ function NafsPremiumApp() {
   ];
 
   function handleClick(label) {
+    if (!isLoggedIn && label !== "Halaman Utama") return; // freeze saat belum login
     if (label === "Halaman Utama") {
-    window.location.href = HOMEPAGE_URL; 
-    return;
-   }
+      window.location.href = HOMEPAGE_URL;
+      return;
+    }
     setActive(label);
   }
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#2a0f4a] via-[#1a0b2e] to-[#0c0516] text-white">
+      {/* ====== OVERLAY PEMBEKU (aktif hanya saat belum login) ====== */}
+      {!isLoggedIn && (
+        <div
+          className="fixed inset-0 z-40"
+          aria-hidden="true"
+          title="Silakan login untuk mengakses semua fitur"
+          // transparan, cukup menangkap klik
+          style={{ background: "transparent" }}
+        />
+      )}
+
       <div className="mx-auto max-w-[1400px] p-3 lg:p-6">
         <div className="flex gap-3 lg:gap-6">
           {/* Sidebar */}
@@ -149,15 +152,20 @@ function NafsPremiumApp() {
                     : <>Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.</>}
                 </p>
 
+                {/* Tombol LOGIN / KELUAR (selalu bisa diklik) */}
                 <div className="mt-2 flex gap-2">
                   {!isLoggedIn ? (
-                    <a href={LOGIN_URL}
-                       className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]">
+                    <a
+                      href={LOGIN_URL}
+                      className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]"
+                    >
                       🔐 Login
                     </a>
                   ) : (
-                    <a href={LOGOUT_URL}
-                       className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]">
+                    <a
+                      href={LOGOUT_URL}
+                      className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]"
+                    >
                       🚪 Keluar
                     </a>
                   )}
@@ -174,6 +182,8 @@ function NafsPremiumApp() {
                     right={it.right}
                     active={active === it.label}
                     onClick={() => handleClick(it.label)}
+                    /* Saat belum login: semua menu dimmed */
+                    dimmed={!isLoggedIn}
                   />
                 ))}
               </div>
@@ -188,6 +198,9 @@ function NafsPremiumApp() {
                     right={it.right}
                     active={active === it.label}
                     onClick={() => handleClick(it.label)}
+                    /* Halaman Utama harus tetap bisa diklik => naikkan z-index */
+                    elevate={!isLoggedIn && it.label === "Halaman Utama"}
+                    dimmed={!isLoggedIn && it.label !== "Halaman Utama"}
                   />
                 ))}
               </div>
@@ -213,28 +226,38 @@ function NafsPremiumApp() {
                 <div className="w-full lg:w-72">
                   <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
                 </div>
+
                 <div className="flex-1 grid grid-cols-1">
-                  <div className={`rounded-xl border border-white/10 p-3 text-sm ${
+                  <div
+                    className={`rounded-xl border border-white/10 p-3 text-sm ${
                       isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
-                    }`}>
+                    }`}
+                  >
                     {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
                   </div>
                 </div>
+
+                {/* Tombol Login/Mulai Chat di footer (selalu boleh diklik) */}
                 <div className="w-full lg:w-auto grid place-items-center">
                   {!isLoggedIn ? (
-                    <a href={LOGIN_URL}
-                       className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">
+                    <a
+                      href={LOGIN_URL}
+                      className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                    >
                       🔐 Login untuk Menggunakan Chat
                     </a>
                   ) : (
-                    <a href="#"
-                       onClick={(e)=>e.preventDefault()}
-                       className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">
+                    <a
+                      href="#"
+                      onClick={(e) => e.preventDefault()}
+                      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                    >
                       💬 Mulai Chat
                     </a>
                   )}
                 </div>
               </div>
+
               <div className="mt-2 flex items-center gap-2 text-[11px] text-white/50">
                 <span>🪄</span>
                 <span>{isLoggedIn ? "Anda sudah login Premium." : "Berlangganan diperlukan untuk akses penuh."}</span>
@@ -247,5 +270,5 @@ function NafsPremiumApp() {
   );
 }
 
-// Ekspos ke global supaya bisa dipakai App.jsx
+/* Ekspor ke global supaya dipakai App.jsx (Babel CDN) */
 window.NafsPremiumApp = NafsPremiumApp;
