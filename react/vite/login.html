@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Login Nafs</title></head>
+  <body style="font-family:system-ui;padding:24px">
+    <script>
+      // Simulasikan login & simpan sesi
+      localStorage.setItem('nafs_isLoggedIn','1');
+      // Redirect ke tujuan (r) atau ke dashboard default
+      const back = new URLSearchParams(location.search).get('r') || '/react/vite/';
+      location.replace(back);
+    </script>
+    <p>Melakukan login…</p>
+  </body>
+</html>
