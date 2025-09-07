@@ -1,1 +1,7 @@
-app/nafs-premium/page.jsx
+import NafsPremiumApp from "./NafsPremiumApp";
+
+function App() {
+  return <NafsPremiumApp />;
+}
+
+export default App;
