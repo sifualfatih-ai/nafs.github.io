@@ -1,8 +1,13 @@
-// buka halaman utama tanpa login
-const HOMEPAGE_URL = "/index.html";
+// Selalu arahkan ke index.html di ROOT situs (aman untuk GitHub Pages)
+const HOMEPAGE_URL = new URL("/index.html", location.origin).href;
 
 // supaya bisa balik lagi setelah login
 const here = (location.pathname + location.search) || "/react/vite/";
+
+// URL login/logout via index.html + redirect balik
+const LOGIN_URL  = new URL(`/index.html?login=1&r=${encodeURIComponent(here)}`,  location.origin).href;
+const LOGOUT_URL = new URL(`/index.html?logout=1&r=${encodeURIComponent(here)}`, location.origin).href;
+
 
 function Badge({ children }) {
   return (
