@@ -188,23 +188,18 @@
 </script>
 
 <script>
-  const params = new URLSearchParams(location.search);
-  const backUrl = params.get('r') || '/react/vite/';
+  const params  = new URLSearchParams(location.search);
+  const backUrl = params.get('r') || 'https://sifualfatih-ai.github.io/nafs.github.io/react/vite/';
 
   function openLoginModal() {
     const btn = document.getElementById('openlogin');
     if (btn) btn.click();
     else {
-      // fallback kalau tombol tidak ada
       const overlay = document.getElementById('overlay');
-      if (overlay) {
-        overlay.style.display = 'flex';
-        overlay.setAttribute('aria-hidden','false');
-      }
+      if (overlay) { overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false'); }
     }
   }
 
-  // dipanggil setelah login valid
   window.__nafsLoginSuccess = function () {
     localStorage.setItem('nafs_isLoggedIn','1');
     location.replace(backUrl);
@@ -215,7 +210,7 @@
     location.replace(backUrl);
   };
 
-  if (params.get('login') === '1') openLoginModal();
+  if (params.get('login')  === '1') openLoginModal();
   if (params.get('logout') === '1') window.__nafsLogout();
 </script>
 
