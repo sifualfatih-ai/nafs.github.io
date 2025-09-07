@@ -1,14 +1,14 @@
-// === BASE PATH GitHub Pages (WAJIB pakai /nafs.github.io/) ===
-const BASE = new URL("/nafs.github.io/", location.origin).href;            // -> https://sifualfatih-ai.github.io/nafs.github.io/
-const HERE = "/nafs.github.io/react/vite/";                                // halaman premium
+// ---- ABSOLUTE URLs (sesuai GitHub Pages kamu) ----
+const BASE = "https://sifualfatih-ai.github.io/nafs.github.io/";          // halaman utama
+const HERE = "https://sifualfatih-ai.github.io/nafs.github.io/react/vite/"; // nafspremium
 
-// HALAMAN UTAMA & HOME
-const HOMEPAGE_URL = BASE;                                                 // https://.../nafs.github.io/
-const HOME_URL     = BASE + "home";                                        // https://.../nafs.github.io/home
+// menuju halaman utama (tanpa login)
+const HOMEPAGE_URL = BASE; // atau BASE + "index.html"
 
-// LOGIN / LOGOUT via index.html di ROOT + redirect balik
-const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;
-const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;
+// login/logout via index.html + balik ke nafspremium
+const LOGIN_URL  = BASE + `index.html?login=1&r=${encodeURIComponent(HERE)}`;
+const LOGOUT_URL = BASE + `index.html?logout=1&r=${encodeURIComponent(HERE)}`;
+
 
 
 
