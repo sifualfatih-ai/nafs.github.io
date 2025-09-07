@@ -1,3 +1,9 @@
+// buka halaman utama tanpa login
+const HOMEPAGE_URL = "/index.html";
+
+// supaya bisa balik lagi setelah login
+const here = (location.pathname + location.search) || "/react/vite/";
+
 function Badge({ children }) {
   return (
     <span className="ml-2 px-2 py-0.5 text-[10px] rounded-full border bg-purple-500/10 text-purple-300 border-purple-400/30">
@@ -81,8 +87,8 @@ function NafsPremiumApp() {
 
   // URL login & logout dengan redirect balik ke halaman sekarang
   const here = (location.pathname + location.search) || "/react/vite/";
-  const LOGIN_URL = `/react/vite/login.html?r=${encodeURIComponent(here)}`;
-  const LOGOUT_URL = `/react/vite/logout.html?r=${encodeURIComponent(here)}`;
+  const LOGIN_URL  = `/index.html?login=1&r=${encodeURIComponent(here)}`;
+  const LOGOUT_URL = `/index.html?logout=1&r=${encodeURIComponent(here)}`;
 
   const items = [
     { label: "Chat", icon: "💬" },
@@ -103,9 +109,9 @@ function NafsPremiumApp() {
 
   function handleClick(label) {
     if (label === "Halaman Utama") {
-      alert("Membuka halaman utama Nafs (akses tanpa login) …");
-      return;
-    }
+    window.location.href = HOMEPAGE_URL;   // buka index.html
+    return;
+   }
     setActive(label);
   }
 
