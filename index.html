@@ -174,7 +174,7 @@
       <p class="hint">Hubungi admin Nafs untuk mendapatkan akses.</p>
       <div class="actions">
         <button id="closeLogin" class="ghost">Batal</button>
-        <button class="solid">Masuk</button>
+        <button class="solid" onclick="window.__nafsLoginSuccess()">Masuk</button>
       </div>
     </div>
   </div>
@@ -186,5 +186,39 @@
   document.getElementById('closeLogin').onclick = ()=>{ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); };
   overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); }});
 </script>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const backUrl = params.get('r') || '/react/vite/';
+
+  function openLoginModal() {
+    const btn = document.getElementById('openlogin');
+    if (btn) btn.click();
+    else {
+      // fallback kalau tombol tidak ada
+      const overlay = document.getElementById('overlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.setAttribute('aria-hidden','false');
+      }
+    }
+  }
+
+  // dipanggil setelah login valid
+  window.__nafsLoginSuccess = function () {
+    localStorage.setItem('nafs_isLoggedIn','1');
+    location.replace(backUrl);
+  };
+
+  window.__nafsLogout = function () {
+    localStorage.removeItem('nafs_isLoggedIn');
+    location.replace(backUrl);
+  };
+
+  if (params.get('login') === '1') openLoginModal();
+  if (params.get('logout') === '1') window.__nafsLogout();
+</script>
+
+
 </body>
 </html>
