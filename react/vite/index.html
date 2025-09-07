@@ -4,22 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nafs Premium</title>
-    <!-- Tailwind CDN: cara termudah tanpa build -->
+    <!-- Tailwind (tanpa instalasi) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      // optional: tema warna ungu lebih pekat
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {},
-          },
-        },
-      };
-    </script>
   </head>
   <body class="bg-[#0c0516]">
     <div id="root"></div>
-    <!-- Vite dev (ignore saat GH Pages), React bundle hasil build akan menggantikan ini -->
-    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- React + ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel untuk baca JSX langsung di browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Urutan penting: komponen -> App -> main -->
+    <script type="text/babel" src="src/NafsPremiumApp.jsx"></script>
+    <script type="text/babel" src="src/App.jsx"></script>
+    <script type="text/babel" src="src/main.jsx"></script>
   </body>
 </html>
