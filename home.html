@@ -64,6 +64,11 @@
     .btn-accent { background: var(--accent); color: #0b0a12; }
     .btn-accent:hover { filter: brightness(1.05); }
     .nav-wrap { border: 1px solid var(--border); }
+    /* Pricing slider helpers */
+    #priceScroller::-webkit-scrollbar{ display:none; }
+    .price-card{ transform: scale(.96); opacity:.9; transition: transform .35s ease, box-shadow .35s ease, opacity .2s ease; }
+    .price-card.active{ transform: scale(1); opacity:1; box-shadow: 0 0 0 1px var(--border), 0 20px 50px -20px rgba(0,0,0,.35); }
+    .price-card.is-popular.active{ box-shadow: 0 0 0 2px rgba(34,197,94,.5), 0 24px 60px -24px rgba(0,0,0,.45); }
   </style>
 </head>
 <body class="theme-dark">
@@ -121,7 +126,7 @@
         <div>
           <span class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs" style="border-color: rgba(34,197,94,.3); color: #6ee7b7; background: rgba(34,197,94,.1);">⚡ Otomatisasi AI All‑in‑One</span>
           <h1 class="mt-5 text-4xl font-extrabold leading-tight md:text-5xl">
-            Automasi Alur Kerja Anda<br/>
+            Otomatiskan Alur Kerja Anda<br/>
             <span style="color: var(--accent);">dengan Nafs Project</span>
           </h1>
           <p class="mt-4" style="color: var(--text-dim);">Kami menyediakan serangkaian alat AI yang komprehensif untuk kreator, affiliate, UMKM, dan industri kecil/menengah. Buat proses Anda lebih cepat, murah, dan produktif.</p>
@@ -132,7 +137,7 @@
         </div>
         <div class="relative">
           <div class="card shine rounded-3xl p-6">
-            <img class="mx-auto h-60 w-60 rounded-full ring-4 object-cover" style="ring-color: rgba(255,255,255,.1);" src="nafslogo.jpeg" alt="Avatar"/>
+            <img class="mx-auto h-60 w-60 rounded-full ring-4 object-cover" style="ring-color: rgba(255,255,255,.1);" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=500&auto=format&fit=crop" alt="Avatar"/>
             <h3 class="mt-6 text-center text-2xl font-bold">Satu Dashboard, Banyak Tool</h3>
             <p class="mt-2 text-center" style="color: var(--text-dim);">Video, gambar, suara, dan automasi—semua dalam satu tempat.</p>
           </div>
@@ -185,26 +190,101 @@
     </div>
   </section>
 
-  <!-- Harga -->
+  <!-- Harga (Slider) -->
   <section id="harga" class="py-20" style="background: var(--surface-2);">
-    <div class="mx-auto max-w-7xl px-4 text-center">
-      <h2 class="text-3xl font-extrabold md:text-4xl">Harga Sederhana & Transparan</h2>
-      <p class="mt-3" style="color: var(--text-dim);">Akses seumur hidup. Tanpa biaya tersembunyi.</p>
-      <div class="mt-10 grid gap-6 md:grid-cols-3">
-        <div class="card p-6">
-          <h3 class="text-xl font-bold">Veo 3 Pro</h3>
-          <div class="mt-3 text-3xl font-extrabold" style="color: var(--accent);">Rp 425K</div>
-          <a href="#" class="mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-2 font-semibold transition btn-accent">Memulai</a>
-        </div>
-        <div class="card p-6" style="box-shadow: 0 0 0 2px rgba(34,197,94,.4) inset;">
-          <h3 class="text-xl font-bold">Paket Veo 2 & 3</h3>
-          <div class="mt-3 text-3xl font-extrabold" style="color: var(--accent);">Rp 399K</div>
-          <a href="#" class="mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-2 font-semibold transition btn-accent">Memulai</a>
-        </div>
-        <div class="card p-6">
-          <h3 class="text-xl font-bold">Veo 2 Pro</h3>
-          <div class="mt-3 text-3xl font-extrabold" style="color: var(--accent);">Rp 250K</div>
-          <a href="#" class="mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-2 font-semibold transition btn-accent">Memulai</a>
+    <div class="mx-auto max-w-7xl px-4">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-3xl font-extrabold md:text-4xl">Harga Sederhana & Transparan</h2>
+        <p class="mt-3" style="color: var(--text-dim);">Akses seumur hidup. Tanpa biaya tersembunyi.</p>
+      </div>
+
+      <!-- Wrapper -->
+      <div class="relative mt-10">
+        <!-- Left Arrow -->
+        <button id="pricePrev" class="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border shadow-sm hover:opacity-90" style="background: var(--surface-3); border-color: var(--border);">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <!-- Right Arrow -->
+        <button id="priceNext" class="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border shadow-sm hover:opacity-90" style="background: var(--surface-3); border-color: var(--border);">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+        </button>
+
+        <!-- Scroller -->
+        <div id="priceScroller" class="overflow-x-auto snap-x snap-mandatory flex gap-6 scroll-smooth px-1 md:px-8" style="scrollbar-width: none;">
+          <!-- Card 1 -->
+          <article class="price-card snap-center flex-none w-[90%] sm:w-[70%] md:w-[55%] lg:w-[38%] xl:w-[33%] card p-6 md:p-8">
+            <div class="flex items-start justify-between">
+              <div class="inline-flex h-9 w-9 items-center justify-center rounded-xl" style="background: rgba(34,197,94,.12); color: var(--accent);">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21z"/></svg>
+              </div>
+            </div>
+            <h3 class="mt-3 text-xl font-bold">Veo 2 Pro</h3>
+            <div class="mt-2 text-3xl font-extrabold" style="color: var(--accent);">Rp 250K <span class="ml-2 text-base line-through opacity-60">Rp 350K</span>
+              <span class="ml-2 rounded-full px-2.5 py-0.5 text-xs font-semibold" style="background: rgba(34,197,94,.12); color: var(--accent);">Hemat 29%</span>
+            </div>
+            <p class="mt-1 text-sm" style="color: var(--text-dim);">Pembayaran sekali</p>
+            <ul class="mt-5 space-y-2 text-sm" style="color: var(--text-dim);">
+              <li>✔ Video Generation dengan Veo 2</li>
+              <li><strong>✔ 4K Ultra HD Quality</strong></li>
+              <li>✔ Unlimited generations</li>
+              <li>✔ Instant processing</li>
+              <li>✔ All premium features</li>
+              <li>✔ Direct API access</li>
+            </ul>
+            <a href="#" class="mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold transition btn-accent">Get Started</a>
+          </article>
+
+          <!-- Card 2 (Popular) -->
+          <article class="price-card is-popular snap-center flex-none w-[90%] sm:w-[70%] md:w-[55%] lg:w-[38%] xl:w-[33%] card p-6 md:p-8">
+            <div class="relative">
+              <span class="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-semibold" style="background: var(--accent); color:#0b0a12;">Most Popular</span>
+            </div>
+            <div class="flex items-start justify-between">
+              <div class="inline-flex h-9 w-9 items-center justify-center rounded-xl" style="background: rgba(34,197,94,.12); color: var(--accent);">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3l-1 9 8-2-7 5 1 6-6-4-6 4 2-7-4-4 6-1z"/></svg>
+              </div>
+            </div>
+            <h3 class="mt-3 text-xl font-bold">Veo 3 Pro</h3>
+            <div class="mt-2 text-3xl font-extrabold" style="color: var(--accent);">Rp 225K <span class="ml-2 text-base line-through opacity-60">Rp 300K</span>
+              <span class="ml-2 rounded-full px-2.5 py-0.5 text-xs font-semibold" style="background: rgba(34,197,94,.12); color: var(--accent);">Hemat 25%</span>
+            </div>
+            <p class="mt-1 text-sm" style="color: var(--text-dim);">Pembayaran sekali</p>
+            <ul class="mt-5 space-y-2 text-sm" style="color: var(--text-dim);">
+              <li>✔ Video Generation dengan Veo 3</li>
+              <li><strong>✔ Next‑Gen AI Technology</strong></li>
+              <li>✔ Unlimited generations</li>
+              <li>✔ Priority processing</li>
+              <li>✔ Advanced AI features</li>
+              <li>✔ Fastest rendering speed</li>
+            </ul>
+            <a href="#" class="mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold transition btn-accent">Get Started</a>
+          </article>
+
+          <!-- Card 3 (Best Value) -->
+          <article class="price-card snap-center flex-none w-[90%] sm:w-[70%] md:w-[55%] lg:w-[38%] xl:w-[33%] card p-6 md:p-8">
+            <div class="relative">
+              <span class="absolute -top-5 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-semibold" style="background: var(--accent); color:#0b0a12;">Best Value</span>
+            </div>
+            <div class="flex items-start justify-between">
+              <div class="inline-flex h-9 w-9 items-center justify-center rounded-xl" style="background: rgba(34,197,94,.12); color: var(--accent);">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l4 4-4 4-4-4 4-4zm0 8l4 4-4 4-4-4 4-4z"/></svg>
+              </div>
+            </div>
+            <h3 class="mt-3 text-xl font-bold">Bundle Veo 2 & 3</h3>
+            <div class="mt-2 text-3xl font-extrabold" style="color: var(--accent);">Rp 399K <span class="ml-2 text-base line-through opacity-60">Rp 650K</span>
+              <span class="ml-2 rounded-full px-2.5 py-0.5 text-xs font-semibold" style="background: rgba(34,197,94,.12); color: var(--accent);">Hemat 39%</span>
+            </div>
+            <p class="mt-1 text-sm" style="color: var(--text-dim);">Pembayaran sekali</p>
+            <ul class="mt-5 space-y-2 text-sm" style="color: var(--text-dim);">
+              <li>✔ Akses ke KEDUA: Veo 2 & Veo 3</li>
+              <li>✔ Fleksibilitas maksimum & opsi</li>
+              <li>✔ Unlimited generations di keduanya</li>
+              <li>✔ Priority support included</li>
+              <li><strong>✔ Hemat Rp 251K (39% OFF)</strong></li>
+              <li>✔ Best value untuk profesional</li>
+            </ul>
+            <a href="#" class="mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold transition btn-accent">Get Started</a>
+          </article>
         </div>
       </div>
     </div>
@@ -297,6 +377,33 @@
       applyTheme(next);
       localStorage.setItem('nafs-theme', next);
     }));
+  
+    // ===== Pricing slider logic (center highlight)
+    const scroller = document.getElementById('priceScroller');
+    const prevBtn = document.getElementById('pricePrev');
+    const nextBtn = document.getElementById('priceNext');
+
+    function setActive(){
+      if(!scroller) return;
+      const cards = Array.from(scroller.querySelectorAll('.price-card'));
+      let closest = null; let min = Infinity;
+      const rect = scroller.getBoundingClientRect();
+      const mid = rect.left + rect.width/2;
+      cards.forEach(c=>{
+        const r = c.getBoundingClientRect();
+        const center = r.left + r.width/2;
+        const d = Math.abs(center - mid);
+        if(d < min){ min = d; closest = c; }
+      });
+      cards.forEach(c=> c.classList.toggle('active', c===closest));
+    }
+
+    scroller?.addEventListener('scroll', ()=>{ window.clearTimeout(scroller._t); scroller._t = setTimeout(setActive, 80); });
+    window.addEventListener('resize', setActive);
+    setTimeout(setActive, 80);
+
+    prevBtn?.addEventListener('click', ()=> scroller.scrollBy({left: -scroller.clientWidth*0.8, behavior:'smooth'}));
+    nextBtn?.addEventListener('click', ()=> scroller.scrollBy({left:  scroller.clientWidth*0.8, behavior:'smooth'}));
   </script>
 </body>
 </html>
