@@ -1,14 +1,10 @@
-// ---- ABSOLUTE URLs (sesuai GitHub Pages kamu) ----
-const BASE = "https://sifualfatih-ai.github.io/nafs.github.io/";          // halaman utama
+// ABSOLUTE URLs – tanpa "index.html"
+const BASE = "https://sifualfatih-ai.github.io/nafs.github.io/";           // halaman utama
 const HERE = "https://sifualfatih-ai.github.io/nafs.github.io/react/vite/"; // nafspremium
 
-// menuju halaman utama (tanpa login)
-const HOMEPAGE_URL = BASE; // atau BASE + "index.html"
-
-// login/logout via index.html + balik ke nafspremium
-const LOGIN_URL  = BASE + `index.html?login=1&r=${encodeURIComponent(HERE)}`;
-const LOGOUT_URL = BASE + `index.html?logout=1&r=${encodeURIComponent(HERE)}`;
-
+const HOMEPAGE_URL = BASE;                                                 // buka beranda
+const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;        // buka modal login
+const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;       // logout
 
 
 
@@ -117,7 +113,7 @@ function NafsPremiumApp() {
 
   function handleClick(label) {
     if (label === "Halaman Utama") {
-    window.location.href = HOMEPAGE_URL;   // https://sifualfatih-ai.github.io/nafs.github.io/
+    window.location.href = HOMEPAGE_URL; 
     return;
    }
     setActive(label);
