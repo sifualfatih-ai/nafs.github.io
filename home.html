@@ -64,11 +64,25 @@
     .btn-accent { background: var(--accent); color: #0b0a12; }
     .btn-accent:hover { filter: brightness(1.05); }
     .nav-wrap { border: 1px solid var(--border); }
+
     /* Pricing slider helpers */
     #priceScroller::-webkit-scrollbar{ display:none; }
     .price-card{ transform: scale(.96); opacity:.9; transition: transform .35s ease, box-shadow .35s ease, opacity .2s ease; }
     .price-card.active{ transform: scale(1); opacity:1; box-shadow: 0 0 0 1px var(--border), 0 20px 50px -20px rgba(0,0,0,.35); }
     .price-card.is-popular.active{ box-shadow: 0 0 0 2px rgba(34,197,94,.5), 0 24px 60px -24px rgba(0,0,0,.45); }
+
+    /* --- Dots untuk pricing slider (tambahan) --- */
+    .price-dots{
+      display:flex; justify-content:center; gap:.5rem; margin-top:1rem;
+    }
+    .price-dots button{
+      width:10px; height:10px; border-radius:9999px;
+      background: var(--surface-4); border:1px solid var(--border);
+      opacity:.6; transition: transform .2s, opacity .2s, background .2s;
+    }
+    .price-dots button.active{
+      background: var(--accent); opacity:1; transform: scale(1.15);
+    }
   </style>
 </head>
 <body class="theme-dark">
@@ -125,7 +139,7 @@
     <div class="mx-auto max-w-7xl px-4">
       <div class="grid items-center gap-10 md:grid-cols-2">
         <div>
-          <span class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs" style="border-color: rgba(34,197,94,.3); color: #6ee7b7; background: rgba(34,197,94,.1);">⚡ Otomatisasi AI All‑in‑One</span>
+          <span class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs" style="border-color: rgba(34,197,94,.3); color: #6ee7b7; background: rgba(34,197,94,.1);">⚡ Otomatisasi AI All-in-One</span>
           <h1 class="mt-5 text-4xl font-extrabold leading-tight md:text-5xl">
             Automasi Alur Kerja Anda<br/>
             <span style="color: var(--accent);">dengan Nafs Project</span>
@@ -163,7 +177,7 @@
         </div>
         <div class="card p-6">
           <h3 class="font-semibold text-lg">Generator Suara</h3>
-          <p class="mt-2" style="color: var(--text-dim);">Sulih suara ultra‑realistis dalam berbagai bahasa.</p>
+          <p class="mt-2" style="color: var(--text-dim);">Sulih suara ultra-realistis dalam berbagai bahasa.</p>
         </div>
       </div>
     </div>
@@ -177,7 +191,7 @@
         <ol class="mt-4 space-y-3" style="color: var(--text-dim);">
           <li>1. Masukkan permintaan/ide Anda.</li>
           <li>2. Pilih gaya visual atau suara yang diinginkan.</li>
-          <li>3. Hasil jadi otomatis—bisa diunduh & di‑share.</li>
+          <li>3. Hasil jadi otomatis—bisa diunduh & di-share.</li>
         </ol>
       </div>
       <div class="card p-8">
@@ -429,6 +443,88 @@
 
     prevBtn?.addEventListener('click', ()=> scroller.scrollBy({left: -scroller.clientWidth*0.8, behavior:'smooth'}));
     nextBtn?.addEventListener('click', ()=> scroller.scrollBy({left:  scroller.clientWidth*0.8, behavior:'smooth'}));
+
+    /* ===== Dots + Autoplay + Snap Swipe (tambahan) ===== */
+    (function(){
+      if(!scroller) return;
+
+      // pastikan snap & swipe enak di mobile
+      scroller.style.scrollSnapType = 'x mandatory';
+      scroller.style.touchAction = 'pan-x';
+
+      const cards = Array.from(scroller.querySelectorAll('.price-card'));
+
+      // --- Buat DOTS otomatis
+      const wrapper = scroller.parentElement;           // elemen pembungkus (ada tombol panah)
+      const dotsWrap = document.createElement('div');
+      dotsWrap.className = 'price-dots';
+      wrapper.appendChild(dotsWrap);
+
+      const dots = cards.map((card, i) => {
+        const b = document.createElement('button');
+        b.setAttribute('aria-label', 'Slide ' + (i+1));
+        b.addEventListener('click', () => {
+          card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+        dotsWrap.appendChild(b);
+        return b;
+      });
+
+      function getClosestIndex(){
+        const rect = scroller.getBoundingClientRect();
+        const mid = rect.left + rect.width/2;
+        let idx = 0, min = Infinity;
+        cards.forEach((c, i) => {
+          const r = c.getBoundingClientRect();
+          const d = Math.abs((r.left + r.width/2) - mid);
+          if (d < min) { min = d; idx = i; }
+        });
+        return idx;
+      }
+
+      function updateDots(){
+        const idx = getClosestIndex();
+        dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+      }
+
+      scroller.addEventListener('scroll', () => {
+        clearTimeout(scroller._dotsT);
+        scroller._dotsT = setTimeout(updateDots, 80);
+      });
+      window.addEventListener('resize', updateDots);
+      setTimeout(updateDots, 120);
+
+      // --- AUTOPLAY (5 detik), pause saat hover & saat section tak terlihat
+      let currentIndex = 0;
+      function calcCurrent(){ currentIndex = getClosestIndex(); }
+      function goTo(i){
+        const target = cards[(i + cards.length) % cards.length];
+        target?.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+      }
+
+      let timer = null;
+      function play(){
+        if(timer) return;
+        timer = setInterval(() => {
+          calcCurrent();
+          goTo(currentIndex + 1);
+        }, 5000); // 5 detik
+      }
+      function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+
+      // pause saat hover (desktop)
+      wrapper.addEventListener('mouseenter', stop);
+      wrapper.addEventListener('mouseleave', play);
+
+      // pause bila section tidak terlihat (hemat resource)
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => e.isIntersecting ? play() : stop());
+      }, { threshold: 0.55 });
+      io.observe(wrapper);
+
+      // mulai setelah render
+      setTimeout(() => { updateDots(); play(); }, 200);
+    })();
   </script>
 </body>
 </html>
