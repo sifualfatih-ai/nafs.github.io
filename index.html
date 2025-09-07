@@ -1,87 +1,94 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Nafs Project — Link</title>
-<meta name="description" content="Sebagai Mitra Affiliate, UMKM dan industri kecil">
-<style>
-  :root{
-    /* Tema ungu */
-    --bg:#11071e;              /* ungu tua latar */
-    --bg2:#1a0f2d;             /* panel gelap */
-    --card:#1f1438;
-    --line:#2d2050;
-    --text:#efeaff;
-    --muted:#c7b7f0;
-    --btn:#2a1f4a;
-    --btn-hover:#3a2b69;
-    --accent:#7c3aed;          /* ungu aksen */
-    --accent-2:#a78bfa;
-    --green:#22c55e;           /* login khusus */
-    --radius:18px;
-    --shadow:0 12px 30px rgba(0,0,0,.35);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
-    background:
-      radial-gradient(1200px 700px at 50% -10%, rgba(124,58,237,.20), transparent 60%),
-      var(--bg);
-    display:grid; place-items:center; padding:28px;
-  }
-  .wrap{width:min(860px, 94vw)}
-  .card{background:var(--card); border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow); padding:28px}
-  .avatar{width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #00000033; box-shadow:0 0 0 3px #ffffff22; display:block; margin:0 auto 14px}
-  h1{margin:0 0 6px; text-align:center; font-size:34px}
-  .subtitle{margin:0; text-align:center; color:var(--muted)}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nafs Project — Link</title>
+  <meta name="description" content="Sebagai Mitra Affiliate, UMKM dan industri kecil">
 
-  /* ikon bulat medsos */
-  .socials{display:flex; gap:16px; justify-content:center; margin:18px 0 8px}
-  .circle{
-    width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
-    border:1px solid var(--line); background:var(--bg2); cursor:pointer; text-decoration:none; color:var(--text);
-    transition:transform .15s ease, background .2s ease;
-  }
-  .circle:hover{transform:translateY(-2px); background:var(--btn-hover)}
-  .circle svg{width:22px; height:22px}
+  <!-- Favicon (hindari 404) -->
+  <!-- Relatif (karena file nafslogo.jpeg berada di root yang sama dengan index.html) -->
+  <link rel="icon" href="nafslogo.jpeg" />
+  <!-- Absolut ke GitHub Pages (jaga-jaga) -->
+  <link rel="shortcut icon" href="/nafs.github.io/nafslogo.jpeg" type="image/jpeg" />
 
-  /* daftar tombol utama */
-  .links{display:grid; gap:12px; margin-top:14px}
-  .btn{
-    display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:16px;
-    background:var(--btn); border:1px solid var(--line); color:var(--text); text-decoration:none; font-weight:600;
-  }
-  .btn:hover{background:var(--btn-hover)}
-  .btn svg{width:18px; height:18px}
+  <style>
+    :root{
+      /* Tema ungu */
+      --bg:#11071e;              /* ungu tua latar */
+      --bg2:#1a0f2d;             /* panel gelap */
+      --card:#1f1438;
+      --line:#2d2050;
+      --text:#efeaff;
+      --muted:#c7b7f0;
+      --btn:#2a1f4a;
+      --btn-hover:#3a2b69;
+      --accent:#7c3aed;          /* ungu aksen */
+      --accent-2:#a78bfa;
+      --green:#22c55e;           /* login khusus */
+      --radius:18px;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
+      background:
+        radial-gradient(1200px 700px at 50% -10%, rgba(124,58,237,.20), transparent 60%),
+        var(--bg);
+      display:grid; place-items:center; padding:28px;
+    }
+    .wrap{width:min(860px, 94vw)}
+    .card{background:var(--card); border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow); padding:28px}
+    .avatar{width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #00000033; box-shadow:0 0 0 3px #ffffff22; display:block; margin:0 auto 14px}
+    h1{margin:0 0 6px; text-align:center; font-size:34px}
+    .subtitle{margin:0; text-align:center; color:var(--muted)}
 
-  /* tombol login khusus (hijau) */
-  .login-cta{
-    margin-top:18px; display:flex; justify-content:center;
-  }
-  .login-cta button{
-    appearance:none; border:none; background:var(--green); color:#06280f; font-weight:800;
-    padding:12px 16px; border-radius:12px; cursor:pointer;
-  }
+    /* ikon bulat medsos */
+    .socials{display:flex; gap:16px; justify-content:center; margin:18px 0 8px}
+    .circle{
+      width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
+      border:1px solid var(--line); background:var(--bg2); cursor:pointer; text-decoration:none; color:var(--text);
+      transition:transform .15s ease, background .2s ease;
+    }
+    .circle:hover{transform:translateY(-2px); background:var(--btn-hover)}
+    .circle svg{width:22px; height:22px}
 
-  /* footer */
-  .foot{margin-top:10px; text-align:center; color:#cbbcff88; font-size:13px}
+    /* daftar tombol utama */
+    .links{display:grid; gap:12px; margin-top:14px}
+    .btn{
+      display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:16px;
+      background:var(--btn); border:1px solid var(--line); color:var(--text); text-decoration:none; font-weight:600;
+    }
+    .btn:hover{background:var(--btn-hover)}
+    .btn svg{width:18px; height:18px}
 
-  /* modal login mengambang */
-  .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:20px}
-  .modal{width:min(520px, 92vw); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px}
-  .modal h3{margin:0 0 8px}
-  .row{display:grid; gap:8px; margin-top:10px}
-  .row label{font-size:13px; color:var(--muted)}
-  .row input{
-    width:100%; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--bg2); color:var(--text);
-  }
-  .modal .actions{display:flex; gap:10px; margin-top:14px; justify-content:flex-end}
-  .ghost{background:transparent; border:1px solid var(--line); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer}
-  .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
-  .hint{margin-top:8px; color:var(--muted); font-size:13px}
-</style>
+    /* tombol login khusus (hijau) */
+    .login-cta{
+      margin-top:18px; display:flex; justify-content:center;
+    }
+    .login-cta button{
+      appearance:none; border:none; background:var(--green); color:#06280f; font-weight:800;
+      padding:12px 16px; border-radius:12px; cursor:pointer;
+    }
+
+    /* footer */
+    .foot{margin-top:10px; text-align:center; color:#cbbcff88; font-size:13px}
+
+    /* modal login mengambang */
+    .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:20px}
+    .modal{width:min(520px, 92vw); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px}
+    .modal h3{margin:0 0 8px}
+    .row{display:grid; gap:8px; margin-top:10px}
+    .row label{font-size:13px; color:var(--muted)}
+    .row input{
+      width:100%; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--bg2); color:var(--text);
+    }
+    .modal .actions{display:flex; gap:10px; margin-top:14px; justify-content:flex-end}
+    .ghost{background:transparent; border:1px solid var(--line); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer}
+    .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
+    .hint{margin-top:8px; color:var(--muted); font-size:13px}
+  </style>
 </head>
 <body>
 
@@ -109,51 +116,26 @@
 
       <!-- Tombol daftar -->
       <div class="links" role="navigation" aria-label="Tautan utama">
-        <!--
-        <a class="btn" href="studio.html">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 4a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7.4 7.4 0 0 0-2-.9l-.4-2.5H9.8l-.4 2.5a7.4 7.4 0 0 0-2 .9l-2.3-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7.4 7.4 0 0 0 2 .9l.4 2.5h4.4l.4-2.5a7.4 7.4 0 0 0 2-.9l2.3 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>
-          Nafs Tools ( Nafs Only )
-        </a>
-      -->
-       
         <a class="btn" href="generator.html">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
           Prompt Generator ( Free )
         </a>
 
-        <!--
-        <a class="btn" href="premium.html">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9.5 8H3l5 3.6L5.6 18 12 14.3 18.4 18 16 11.6 21 8h-6.5z"/></svg>
-          Item Premium ( Buy )
-        </a>
-        -->
-
-
-        
-      <a class="btn" href="home.html">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
-  Halaman Umum
+        <a class="btn" href="home.html">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          Halaman Umum
         </a>
 
-        
         <a class="btn" href="https://sifualfatih-ai.github.io/nafs.github.io/react/vite/">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
-  Halaman Pelanggan
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          Halaman Pelanggan
         </a>
-        
+      </div>
 
-        <!--
-        <a class="btn" href="invoice.html">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
-  INV
-        </a>
-        -->
-        
-</div>
       <!-- Tombol login khusus (modal) -->
       <div class="login-cta">
         <button id="openLogin">Login Khusus</button>
-       </div>
+      </div>
 
       <p class="foot">© 2025 Nafs Project</p>
     </section>
@@ -179,41 +161,45 @@
     </div>
   </div>
 
-<script>
-  // modal login
-  const overlay = document.getElementById('overlay');
-  document.getElementById('openLogin').onclick = ()=>{ overlay.style.display='flex'; overlay.setAttribute('aria-hidden','false'); };
-  document.getElementById('closeLogin').onclick = ()=>{ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); };
-  overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); }});
-</script>
+  <script>
+    // Modal login (manual open/close)
+    const overlay = document.getElementById('overlay');
+    document.getElementById('openLogin').onclick  = ()=>{ overlay.style.display='flex'; overlay.setAttribute('aria-hidden','false'); };
+    document.getElementById('closeLogin').onclick = ()=>{ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); };
+    overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); }});
+  </script>
 
-<script>
-  const params  = new URLSearchParams(location.search);
-  const backUrl = params.get('r') || 'https://sifualfatih-ai.github.io/nafs.github.io/react/vite/';
+  <script>
+    // Handle query ?login=1 / ?logout=1 dari nafspremium + redirect balik
+    const params  = new URLSearchParams(location.search);
+    const backUrl = params.get('r') || 'https://sifualfatih-ai.github.io/nafs.github.io/react/vite/';
 
-  function openLoginModal() {
-    const btn = document.getElementById('openLogin');
-    if (btn) btn.click();
-    else {
-      const overlay = document.getElementById('overlay');
-      if (overlay) { overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false'); }
+    function openLoginModal() {
+      const btn = document.getElementById('openLogin'); // ID yang benar (L besar)
+      if (btn) btn.click();
+      else {
+        const overlay = document.getElementById('overlay');
+        if (overlay) {
+          overlay.style.display = 'flex';
+          overlay.setAttribute('aria-hidden','false');
+        }
+      }
     }
-  }
 
-  window.__nafsLoginSuccess = function () {
-    localStorage.setItem('nafs_isLoggedIn','1');
-    location.replace(backUrl);
-  };
+    // panggil ini SETELAH login sukses (disimulasikan via tombol "Masuk")
+    window.__nafsLoginSuccess = function () {
+      localStorage.setItem('nafs_isLoggedIn','1');
+      location.replace(backUrl);
+    };
 
-  window.__nafsLogout = function () {
-    localStorage.removeItem('nafs_isLoggedIn');
-    location.replace(backUrl);
-  };
+    window.__nafsLogout = function () {
+      localStorage.removeItem('nafs_isLoggedIn');
+      location.replace(backUrl);
+    };
 
-  if (params.get('login')  === '1') openLoginModal();
-  if (params.get('logout') === '1') window.__nafsLogout();
-</script>
-
+    if (params.get('login')  === '1') openLoginModal();
+    if (params.get('logout') === '1') window.__nafsLogout();
+  </script>
 
 </body>
 </html>
