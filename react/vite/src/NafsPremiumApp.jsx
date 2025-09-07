@@ -30,16 +30,19 @@ function SectionTitle({ children }) {
   );
 }
 
-function ModelSelect({ value, onChange }) {
+function ModelSelect({ value, onChange, disabled }) {
   const models = ["Gemini 2.5 Flash", "GPT-5 Thinking", "Llama 3.1", "Claude 3.5 Sonnet"];
   return (
     <div className="w-full">
       <label className="text-xs text-white/60">Model</label>
       <div className="relative mt-1">
         <select
+          disabled={disabled}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none"
+          className={`w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none ${
+            disabled ? "opacity-60 cursor-not-allowed" : ""
+          }`}
         >
           {models.map((m) => (
             <option key={m} className="bg-[#1a0b2e]" value={m}>
@@ -69,6 +72,17 @@ function ContentPlaceholder({ current }) {
 function NafsPremiumApp() {
   const [active, setActive] = React.useState("Chat");
   const [model, setModel] = React.useState("Gemini 2.5 Flash");
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  // cek sesi login dari localStorage
+  React.useEffect(() => {
+    setIsLoggedIn(localStorage.getItem("nafs_isLoggedIn") === "1");
+  }, []);
+
+  // URL login & logout dengan redirect balik ke halaman sekarang
+  const here = (location.pathname + location.search) || "/react/vite/";
+  const LOGIN_URL = `/react/vite/login.html?r=${encodeURIComponent(here)}`;
+  const LOGOUT_URL = `/react/vite/logout.html?r=${encodeURIComponent(here)}`;
 
   const items = [
     { label: "Chat", icon: "💬" },
@@ -117,11 +131,27 @@ function NafsPremiumApp() {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-3 mb-3">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-purple-300">✨</span>
-                  <span className="font-medium">Akses Premium</span>
+                  <span className="font-medium">{isLoggedIn ? "Premium Aktif" : "Akses Premium"}</span>
                 </div>
                 <p className="text-[11px] text-white/60 mt-2 leading-relaxed">
-                  Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.
+                  {isLoggedIn
+                    ? "Langganan aktif. Nikmati semua fitur premium."
+                    : <>Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.</>}
                 </p>
+
+                <div className="mt-2 flex gap-2">
+                  {!isLoggedIn ? (
+                    <a href={LOGIN_URL}
+                       className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]">
+                      🔐 Login
+                    </a>
+                  ) : (
+                    <a href={LOGOUT_URL}
+                       className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]">
+                      🚪 Keluar
+                    </a>
+                  )}
+                </div>
               </div>
 
               <SectionTitle>Menu</SectionTitle>
@@ -171,22 +201,33 @@ function NafsPremiumApp() {
             <div className="border-t border-white/10 p-3">
               <div className="flex flex-col lg:flex-row items-stretch gap-3">
                 <div className="w-full lg:w-72">
-                  <ModelSelect value={model} onChange={setModel} />
+                  <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
                 </div>
                 <div className="flex-1 grid grid-cols-1">
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-sm text-white/60">
-                    Silakan login untuk memulai chat.
+                  <div className={`rounded-xl border border-white/10 p-3 text-sm ${
+                      isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
+                    }`}>
+                    {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
                   </div>
                 </div>
                 <div className="w-full lg:w-auto grid place-items-center">
-                  <button className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">
-                    🔐 Login untuk Menggunakan Chat
-                  </button>
+                  {!isLoggedIn ? (
+                    <a href={LOGIN_URL}
+                       className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">
+                      🔐 Login untuk Menggunakan Chat
+                    </a>
+                  ) : (
+                    <a href="#"
+                       onClick={(e)=>e.preventDefault()}
+                       className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">
+                      💬 Mulai Chat
+                    </a>
+                  )}
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-2 text-[11px] text-white/50">
                 <span>🪄</span>
-                <span>Berlangganan diperlukan untuk akses penuh.</span>
+                <span>{isLoggedIn ? "Anda sudah login Premium." : "Berlangganan diperlukan untuk akses penuh."}</span>
               </div>
             </div>
           </main>
