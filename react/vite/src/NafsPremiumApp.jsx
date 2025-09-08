@@ -1,10 +1,10 @@
 /* ---- KONFIG URL ABSOLUT GITHUB PAGES ---- */
-const BASE = "https://sifualfatih-ai.github.io/nafs.github.io/";            // halaman utama
-const HERE = "https://sifualfatih-ai.github.io/nafs.github.io/react/vite/"; // nafspremium
+const BASE = "https://nafsflow.com/";
+const HERE = "https://nafsflow.com/react/vite/";
 
-const HOMEPAGE_URL = BASE;                                                  // buka beranda umum
-const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;         // buka modal login
-const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;        // logout
+const HOMEPAGE_URL = BASE;
+const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;
+const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;
 
 /* ==== UI KOMPONEN ==== */
 function Badge({ children }) {
