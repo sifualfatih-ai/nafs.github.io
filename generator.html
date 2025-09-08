@@ -31,8 +31,10 @@
     background:var(--panel); color:var(--text)
   }
   textarea{min-height:120px}
-  /* textarea lebih tinggi untuk Scene agar friendly */
+  /* textarea lebih tinggi agar friendly */
   #veo_scene{min-height:160px}
+  #cg_topic{min-height:160px}           /* ChatGPT: Tujuan/Topik diperluas */
+  #nb_context{min-height:160px}         /* Nano: Input/Context diperluas */
   .actions{display:flex; gap:10px; flex-wrap:wrap}
   .btn{background:var(--btn); border:1px solid var(--line); color:var(--text); border-radius:12px; padding:10px 14px; cursor:pointer}
   .btn:hover{background:var(--btnh)}
@@ -78,18 +80,19 @@
       <!-- ====== BLOK FIELD CHATGPT ====== -->
       <div id="blkChatGPT" class="grid" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: ChatGPT (hasil berbahasa Indonesia)</span></div>
-        <div>
+
+        <!-- Tujuan/Topik jadi textarea lebar -->
+        <div class="full">
           <label>Tujuan/Topik</label>
-          <input id="cg_topic" placeholder="contoh: promosi sewa motor harian, diskon 20%">
+          <textarea id="cg_topic" placeholder="contoh: promosi sewa motor harian, diskon 20%&#10;Tambahkan detail penting, benefit, konteks brand, gaya bahasa, dll."></textarea>
         </div>
+
         <div>
           <label>Target audiens</label>
           <input id="cg_audience" placeholder="contoh: mahasiswa & pekerja harian di kota X">
         </div>
-        <div>
-          <label>Gaya/Nada</label>
-          <input id="cg_tone" placeholder="contoh: ramah, to the point, ajakan kuat">
-        </div>
+
+        <!-- Gaya/Nada DIHAPUS -->
         <div>
           <label>Batasan/Rule (opsional)</label>
           <input id="cg_rules" placeholder="contoh: maksimal 120 kata, sertakan CTA & no WA">
@@ -99,14 +102,18 @@
       <!-- ====== BLOK FIELD NANO BANANA ====== -->
       <div id="blkNano" class="grid hidden" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: Nano Banana (hasil berbahasa Indonesia)</span></div>
+
         <div>
           <label>Objective</label>
           <input id="nb_objective" placeholder="contoh: buat 5 ide konten edukasi produk A">
         </div>
-        <div>
+
+        <!-- Input/Context jadi textarea lebar -->
+        <div class="full">
           <label>Input / Context</label>
-          <input id="nb_context" placeholder="contoh: deskripsi singkat produk, keunggulan, harga">
+          <textarea id="nb_context" placeholder="contoh: deskripsi singkat produk, keunggulan, harga, target, platform, angle konten, dll."></textarea>
         </div>
+
         <div>
           <label>Persona / Style</label>
           <input id="nb_persona" placeholder="contoh: ahli pemasaran UMKM, friendly & solutif">
@@ -119,10 +126,8 @@
           <label>Panjang / Limit</label>
           <input id="nb_length" placeholder="contoh: tiap ide ≤ 60 kata">
         </div>
-        <div>
-          <label>Constraint / Do & Don’t</label>
-          <input id="nb_constraints" placeholder="contoh: hindari klaim berlebihan; wajib sertakan CTA">
-        </div>
+
+        <!-- Constraint / Do & Don't DIHAPUS -->
       </div>
 
       <!-- ====== BLOK FIELD VEO 2/3 ====== -->
@@ -257,7 +262,6 @@
   function buildChatGPT(){
     const topic = $('cg_topic').value.trim();
     const aud   = $('cg_audience').value.trim();
-    const tone  = $('cg_tone').value.trim();
     const rules = $('cg_rules').value.trim();
 
     return lines(
@@ -265,7 +269,7 @@
 
 Instruksi:
 - Tulis dalam Bahasa Indonesia yang alami.
-- Gunakan nada ${tone || 'profesional & persuasif'}.
+- Gunakan nada profesional & persuasif.
 - Patuhi batasan berikut${rules ? `: ${rules}` : '.'}
 
 Konteks:
@@ -287,7 +291,6 @@ CTA:`
     const per  = $('nb_persona').value.trim();
     const fmt  = $('nb_format').value.trim();
     const len  = $('nb_length').value.trim();
-    const cons = $('nb_constraints').value.trim();
 
     return lines(
 `Tulis dalam Bahasa Indonesia.
@@ -300,9 +303,6 @@ ${ctx || '-'}
 
 Persona/Style:
 ${per || 'ramah, jelas, membantu'}
-
-Aturan:
-${cons || '-'}
 
 Format keluaran yang harus diikuti (tanpa tambahan teks lain):
 ${fmt || '1) Judul singkat\n2) Ringkasan ≤ 60 kata\n3) CTA'}
