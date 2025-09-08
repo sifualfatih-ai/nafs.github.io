@@ -114,33 +114,46 @@
         </a>
       </div>
 
+      
       <!-- Tombol daftar -->
-      <div class="links" role="navigation" aria-label="Tautan utama">
-        <a class="btn" href="home.html">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
-          Halaman Umum
-        </a>
+<div class="links" role="navigation" aria-label="Tautan utama">
+  <!-- Halaman Umum (tetap pakai class .btn yang lama) -->
+  <a class="btn" href="home.html">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/>
+    </svg>
+    Halaman Umum
+  </a>
 
-      <a
-  class="inline-flex w-full items-center gap-2 rounded-xl
-         bg-violet-500 hover:bg-violet-400 text-black
-         ring-1 ring-violet-400 shadow-[0_10px_30px_-10px_rgba(139,92,246,.7)]
-         px-5 py-3 font-semibold transition">
-  Halaman Pelanggan
-</a>
-Kelas penting: bg-violet-500 hover:bg-violet-400 text-black ring-violet-400 + shadow ungu.
+  <!-- Halaman Pelanggan (ungu cerah) -->
+  <!-- Ganti href di bawah jika perlu: bisa ke /react/vite/ atau URL premium kamu -->
+  <a
+    href="react/vite/"
+    class="inline-flex w-full items-center gap-2 rounded-xl
+           bg-violet-500 hover:bg-violet-400 text-black
+           ring-1 ring-violet-400 shadow-[0_10px_30px_-10px_rgba(139,92,246,.7)]
+           px-5 py-3 font-semibold transition focus:outline-none
+           focus:ring-2 focus:ring-violet-300"
+  >
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+      <path d="M4 6h16v2H4zm0 5h10v2H4zm0 5h14v2H4z"/>
+    </svg>
+    Halaman Pelanggan
+  </a>
 
-        <a class="btn" href="generator.html">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
-          Prompt Generator ( Free )
-        </a>
+  <!-- Prompt Generator (tetap pakai class .btn yang lama) -->
+  <a class="btn" href="generator.html">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/>
+    </svg>
+    Prompt Generator ( Free )
+  </a>
+</div>
 
-        
-      </div>
 
       <!-- Tombol login khusus (modal) -->
       <div class="login-cta">
-        <button id="openLogin">Login Khusus</button>
+        <button id="openLogin">Login Langganan</button>
       </div>
 
       <p class="foot">© 2025 Nafs Flow</p>
