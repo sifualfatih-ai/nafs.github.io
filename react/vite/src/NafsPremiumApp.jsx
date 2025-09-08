@@ -215,7 +215,7 @@ function NafsPremiumApp() {
               </div>
               <div className="flex items-center gap-2 text-xs text-white/50">
                 <span>🌐</span>
-                <span>Tampilan konsisten di semua menu</span>
+                <span>Halaman Khusus Langganan Premium</span>
               </div>
             </div>
 
