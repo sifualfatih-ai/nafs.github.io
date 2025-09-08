@@ -31,8 +31,10 @@
     background:var(--panel); color:var(--text)
   }
   textarea{min-height:120px}
-  /* Scene textarea lebih tinggi agar friendly */
+  /* textarea lebih tinggi agar friendly */
   #veo_scene{min-height:160px}
+  #cg_topic{min-height:160px}           /* ChatGPT: Tujuan/Topik diperluas */
+  #nb_context{min-height:160px}         /* Nano: Input/Context diperluas */
   .actions{display:flex; gap:10px; flex-wrap:wrap}
   .btn{background:var(--btn); border:1px solid var(--line); color:var(--text); border-radius:12px; padding:10px 14px; cursor:pointer}
   .btn:hover{background:var(--btnh)}
@@ -51,8 +53,8 @@
       <a class="btn" href="./">← Kembali</a>
     </div>
 
-    <h1>Prompt BOT 1.0</h1>
-    <p class="sub">Membuat prompt yang tersusun rapi & terstruktur yang siap copy-paste di ChatGPT/Nano Banana/Gemini Veo 2 & 3.</p>
+    <h1>Prompt BOT Gen1.0</h1>
+    <p class="sub">Membuat prompt terstruktur yang tersusun rapi & siap copy-paste di ChatGPT/Nano Banana/Gemini Veo</p>
 
     <section class="card">
       <!-- BARIS ATAS: PLATFORM + BAHASA (untuk ChatGPT/Nano) -->
@@ -78,14 +80,19 @@
       <!-- ====== BLOK FIELD CHATGPT ====== -->
       <div id="blkChatGPT" class="grid" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: ChatGPT (hasil berbahasa Indonesia)</span></div>
+
+        <!-- Tujuan/Topik jadi textarea lebar -->
         <div class="full">
           <label>Tujuan/Topik</label>
-          <input id="cg_topic" placeholder="contoh: promosi sewa motor harian, diskon 20%">
+          <textarea id="cg_topic" placeholder="contoh: promosi sewa motor harian, diskon 20%&#10;Tambahkan detail penting, benefit, konteks brand, gaya bahasa, dll."></textarea>
         </div>
+
         <div>
           <label>Target audiens</label>
           <input id="cg_audience" placeholder="contoh: mahasiswa & pekerja harian di kota X">
         </div>
+
+        <!-- Gaya/Nada DIHAPUS -->
         <div>
           <label>Batasan/Rule (opsional)</label>
           <input id="cg_rules" placeholder="contoh: maksimal 120 kata, sertakan CTA & no WA">
@@ -95,26 +102,32 @@
       <!-- ====== BLOK FIELD NANO BANANA ====== -->
       <div id="blkNano" class="grid hidden" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: Nano Banana (hasil berbahasa Indonesia)</span></div>
-        <div class="full">
+
+        <div>
           <label>Objective</label>
           <input id="nb_objective" placeholder="contoh: buat 5 ide konten edukasi produk A">
         </div>
+
+        <!-- Input/Context jadi textarea lebar -->
         <div class="full">
           <label>Input / Context</label>
-          <textarea id="nb_context" placeholder="contoh: deskripsi singkat produk, keunggulan, harga"></textarea>
+          <textarea id="nb_context" placeholder="contoh: deskripsi singkat produk, keunggulan, harga, target, platform, angle konten, dll."></textarea>
         </div>
+
         <div>
           <label>Persona / Style</label>
           <input id="nb_persona" placeholder="contoh: ahli pemasaran UMKM, friendly & solutif">
         </div>
         <div>
           <label>Output Format</label>
-          <input id="nb_format" placeholder="contoh: daftar bernomor (judul: ...; ringkasan: ...; CTA: ...)">
+          <input id="nb_format" placeholder="contoh: daftar bernomor (judul: ...; ringkasan: ...)">
         </div>
         <div>
           <label>Panjang / Limit</label>
           <input id="nb_length" placeholder="contoh: tiap ide ≤ 60 kata">
         </div>
+
+        <!-- Constraint / Do & Don't DIHAPUS -->
       </div>
 
       <!-- ====== BLOK FIELD VEO 2/3 ====== -->
@@ -242,7 +255,6 @@
 
   // UTIL
   const lines = (...xs)=> xs.filter(Boolean).join('\n');
-  const orDash = v => (v && v.trim()) ? v.trim() : '-';
 
   // ==== PROMPT BUILDERS ====
 
@@ -253,60 +265,50 @@
     const rules = $('cg_rules').value.trim();
 
     return lines(
-`Anda adalah asisten penulis konten untuk UMKM.
+`Anda adalah asisten penulis konten UMKM.
 
 Instruksi:
 - Tulis dalam Bahasa Indonesia yang alami.
-- Jalankan batasan berikut${rules ? `: ${rules}` : '.'}
+- Gunakan nada profesional & persuasif.
+- Patuhi batasan berikut${rules ? `: ${rules}` : '.'}
 
 Konteks:
-- Tujuan/Topik: ${orDash(topic)}
-- Target Audiens: ${orDash(aud)}
+- Tujuan/Topik: ${topic || '-'}
+- Target Audiens: ${aud || '-'}
 
 Tugas:
-Tulis copy promosi terstruktur tanpa label tambahan, dengan format:
+Tulis copy yang terstruktur dengan format berikut tanpa label tambahan:
 Headline:
 Copy:
 CTA:`
     );
   }
 
-  // Nano Banana: benar-benar membangun prompt terstruktur
+  // Nano Banana: prompt bersih, siap tempel
   function buildNano(){
     const obj  = $('nb_objective').value.trim();
     const ctx  = $('nb_context').value.trim();
-    const per  = $('nb_persona').value.trim() || 'ahli pemasaran UMKM yang ramah, jelas, dan solutif';
+    const per  = $('nb_persona').value.trim();
     const fmt  = $('nb_format').value.trim();
-    const len  = $('nb_length').value.trim() || '≤ 60 kata per item';
-
-    // Tentukan skema keluaran default bila user tidak mengisi "Output Format"
-    const schema = fmt || `Daftar bernomor. Untuk setiap item tulis pola:
-Judul: <maks 6 kata>
-Ringkasan: <${len}>
-CTA: <ajakan singkat>`;
-
+    const len  = $('nb_length').value.trim();
 
     return lines(
-`PERAN & TUJUAN
-- Kamu adalah asisten kreatif "Nano Banana".
-- Goal: ${orDash(obj)}.
+`Tulis dalam Bahasa Indonesia.
 
-BAHAN/KONTEKS
-${orDash(ctx)}
+Tujuan:
+${obj || '-'}
 
-GAYA
-- Persona/Style: ${per}.
-- Bahasa Indonesia, nada positif & persuasif, hindari klaim berlebihan, tanpa emoji kecuali diminta.
+Konteks:
+${ctx || '-'}
 
-ATURAN UMUM
-- Setiap butir harus ringkas (${len}), jelas, dan actionable.
-- Jangan menambahkan label atau penjelasan lain di luar format keluaran.
-- Hindari pengulangan kalimat antar butir.
+Persona/Style:
+${per || 'ramah, jelas, membantu'}
 
-SKEMA KELUARAN (WAJIB DIIKUTI)
-${schema}
+Format keluaran yang harus diikuti (tanpa tambahan teks lain):
+${fmt || '1) Judul singkat\n2) Ringkasan ≤ 60 kata\n3) CTA'}
 
-HASILKAN SEKARANG.`
+Batas panjang:
+${len || 'seperlunya, ringkas & to the point'}`
     );
   }
 
@@ -321,74 +323,43 @@ HASILKAN SEKARANG.`
       fps: $('veo_fps').value,
       ar: $('veo_ar').value,
       extra: $('veo_extra').value.trim(),
-      lang: $('veo_lang').value || 'Indonesia'
     };
   }
 
-  // Veo Default (ID) — prompt sutradara yang presisi
+  // Veo Default (ID)
   function buildVeoDefault(){
     const d = collectVeo();
-    const scene = orDash(d.scene);
-    const extra = orDash(d.extra);
-
+    const lang = $('veo_lang').value || 'Indonesia';
     return lines(
-`Anda adalah sutradara video. Tulis prompt ${d.lang} yang spesifik dan siap pakai untuk Gemini Veo.
+`Buat prompt video untuk Gemini Veo dalam bahasa ${lang} dengan struktur ringkas:
 
-SCENE BRIEF
-${scene}
-
-VISUAL SPECS
-- Camera: ${d.angle} dengan gerak ${d.motion}
+- Adegan inti: ${d.scene || '-'}
+- Camera: ${d.angle}, motion ${d.motion}
 - Lighting: ${d.lighting}
-- Mode: ${d.mode}
-- FPS: ${d.fps}
-- Aspect Ratio: ${d.ar}
+- Mode video: ${d.mode}
+- FPS: ${d.fps} | Aspect Ratio: ${d.ar}
+- Detail tambahan: ${d.extra || '-'}
 
-OUTPUT RULES
-- Narasikan apa yang terlihat di frame, bukan instruksi teknis ke model.
-- Hindari kalimat ambigu; gunakan kata kerja visual (mis. "kamera bergerak perlahan", "asap tipis mengepul").
-- Maksimalkan kontinuitas, transisi mulus, dan fokus subjek.
-- Detail tambahan: ${extra}
-
-SHOT PLAN (3 shot, contoh durasi 2–3–3 detik)
-1) Pembuka (establishing): gambarkan konteks/lingkungan utama.
-2) Aksi utama: subjek melakukan aksi inti; jelaskan gerak kamera & elemen pendukung.
-3) Penutup: close-up/hero shot; tekankan mood final.
-
-HASILKAN prompt tunggal yang mengalir, mengacu pada rencana di atas (tanpa judul bagian).`
+Fokus pada visual konkret, aksi di frame, dan kontinuitas shot. Hindari instruksi teknis yang ambigu.`
     );
   }
 
-  // Veo JSON (EN) — payload siap pakai dengan specs + shot list
+  // Veo JSON (EN)
   function buildVeoJSON(modelVer){
     const d = collectVeo();
-    const shot1 = (d.scene || 'Establishing the environment');
-    const shot2 = 'Main action focusing on subject; describe camera movement and key details';
-    const shot3 = 'Closing hero/close-up shot with mood reinforcement';
-
     const payload = {
       model: `gemini-veo-${modelVer}`,
       prompt_type: "structured",
       language: "en",
-      specs: {
-        fps: Number(d.fps || 24),
-        aspect_ratio: d.ar || "16:9",
-        mode: d.mode || "live-action",
-        lighting: d.lighting || "natural morning",
-        camera: { angle: d.angle || "eye-level", motion: d.motion || "static" }
-      },
-      scene_brief: d.scene || "",
-      extra: d.extra || "",
-      shots: [
-        { id: 1, label: "establishing", seconds: 2,  description: shot1 },
-        { id: 2, label: "action",       seconds: 3,  description: shot2 },
-        { id: 3, label: "closing",      seconds: 3,  description: shot3 }
-      ],
-      output_rules: [
-        "Describe what is seen in frame, not tool instructions.",
-        "Use clear, concrete visuals; avoid ambiguity.",
-        "Keep continuity and smooth transitions."
-      ]
+      video: {
+        scene: d.scene || "",
+        camera: { angle: d.angle, motion: d.motion },
+        lighting: d.lighting,
+        mode: d.mode,
+        fps: Number(d.fps),
+        aspect_ratio: d.ar,
+        extra: d.extra || ""
+      }
     };
     return JSON.stringify(payload, null, 2);
   }
@@ -407,4 +378,20 @@ HASILKAN prompt tunggal yang mengalir, mengacu pada rencana di atas (tanpa judul
         out = buildVeoJSON(ver);
       }
     }
-    $('out').value = out || 'Lengkapi field
+    $('out').value = out || 'Lengkapi field terlebih dulu 🙂';
+  };
+
+  $('btnCopy').onclick = async ()=>{
+    try{
+      await navigator.clipboard.writeText($('out').value);
+      alert('Prompt disalin ✅');
+    }catch{ alert('Gagal menyalin'); }
+  };
+
+  $('btnClear').onclick = ()=>{
+    document.querySelectorAll('input, textarea').forEach(el=>{ if(el.id!=='out') el.value=''; });
+    $('out').value = '';
+  };
+</script>
+</body>
+</html>
