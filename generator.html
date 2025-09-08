@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
- <a class="btn" href="./">← Kembali</a>
-  <title>Prompt Generator</title>
+<title>Prompt Generator 1.0</title>
 <style>
   :root{
     --bg:#11071e; --panel:#1a0f2d; --panel2:#1f1438;
@@ -32,6 +31,8 @@
     background:var(--panel); color:var(--text)
   }
   textarea{min-height:120px}
+  /* textarea lebih tinggi untuk Scene agar friendly */
+  #veo_scene{min-height:160px}
   .actions{display:flex; gap:10px; flex-wrap:wrap}
   .btn{background:var(--btn); border:1px solid var(--line); color:var(--text); border-radius:12px; padding:10px 14px; cursor:pointer}
   .btn:hover{background:var(--btnh)}
@@ -40,12 +41,18 @@
   .muted{color:var(--muted)}
   .hint{font-size:12px; color:var(--muted)}
   .hidden{display:none}
+  .topbar{display:flex; align-items:center; gap:12px; margin-bottom:8px}
+  .topbar a{text-decoration:none}
 </style>
 </head>
 <body>
   <main class="wrap">
-    <h1>BOT Prompt Builder</h1>
-    <p class="sub">Membuat Prompt Dengan Struktur Yang Tersusun Rapi untuk ChatGPT / Nano Banana / Gemini Veo 2 & 3.</p>
+    <div class="topbar">
+      <a class="btn" href="./">← Kembali</a>
+    </div>
+
+    <h1>Prompt Generator 1.0</h1>
+    <p class="sub">Membuat prompt yang rapi & siap tempel untuk ChatGPT / Nano Banana / Gemini Veo 2 & 3.</p>
 
     <section class="card">
       <!-- BARIS ATAS: PLATFORM + BAHASA (untuk ChatGPT/Nano) -->
@@ -68,7 +75,7 @@
         </div>
       </div>
 
-      <!-- ====== BLOK FIELD CHATGPT (default) ====== -->
+      <!-- ====== BLOK FIELD CHATGPT ====== -->
       <div id="blkChatGPT" class="grid" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: ChatGPT (hasil berbahasa Indonesia)</span></div>
         <div>
@@ -106,7 +113,7 @@
         </div>
         <div>
           <label>Output Format</label>
-          <input id="nb_format" placeholder="contoh: daftar bernomor (judul: & ringkasan:)">
+          <input id="nb_format" placeholder="contoh: daftar bernomor (judul: ...; ringkasan: ...)">
         </div>
         <div>
           <label>Panjang / Limit</label>
@@ -139,13 +146,10 @@
 
         <div class="full"><hr style="border:none;border-top:1px solid var(--line)"></div>
 
-        <div>
+        <!-- Scene diperluas menjadi textarea -->
+        <div class="full">
           <label>Scene / Deskripsi inti</label>
-          <input id="veo_scene" placeholder="contoh: pedagang kopi keliling pagi hari di gang kota">
-        </div>
-        <div>
-          <label>Subject / Fokus</label>
-          <input id="veo_subject" placeholder="contoh: gerobak kopi & barista tersenyum">
+          <textarea id="veo_scene" placeholder="contoh: pedagang kopi keliling pagi hari di gang kota; detail adegan, suasana, dan pergerakan objek..."></textarea>
         </div>
 
         <div>
@@ -246,51 +250,72 @@
 
   // UTIL
   const lines = (...xs)=> xs.filter(Boolean).join('\n');
-  const bullet = arr => arr.filter(Boolean).map(x=>`- ${x}`).join('\n');
 
-  // BUILDERS
+  // ==== PROMPT BUILDERS ====
+
+  // ChatGPT: prompt bersih, siap tempel
   function buildChatGPT(){
-    const lang = 'Indonesia'; // selalu output Indonesia (sesuai syarat)
     const topic = $('cg_topic').value.trim();
-    const aud = $('cg_audience').value.trim();
-    const tone = $('cg_tone').value.trim();
+    const aud   = $('cg_audience').value.trim();
+    const tone  = $('cg_tone').value.trim();
     const rules = $('cg_rules').value.trim();
 
     return lines(
-`Anda adalah asisten penulis untuk UMKM. Tulis dalam bahasa ${lang}.`,
-topic && `Tujuan/topik: ${topic}.`,
-aud && `Target audiens: ${aud}.`,
-tone && `Gaya/nada: ${tone}.`,
-rules && `Batasan/aturan: ${rules}.`,
-`Buat output terstruktur yang mudah di-salin. Sertakan CTA di akhir bila relevan.`
+`Anda adalah asisten penulis konten UMKM.
+
+Instruksi:
+- Tulis dalam Bahasa Indonesia yang alami.
+- Gunakan nada ${tone || 'profesional & persuasif'}.
+- Patuhi batasan berikut${rules ? `: ${rules}` : '.'}
+
+Konteks:
+- Tujuan/Topik: ${topic || '-'}
+- Target Audiens: ${aud || '-'}
+
+Tugas:
+Tulis copy yang terstruktur dengan format berikut tanpa label tambahan:
+Headline:
+Copy:
+CTA:`
     );
   }
 
+  // Nano Banana: prompt bersih, siap tempel
   function buildNano(){
-    // Output Indonesia
-    const obj = $('nb_objective').value.trim();
-    const ctx = $('nb_context').value.trim();
-    const per = $('nb_persona').value.trim();
-    const fmt = $('nb_format').value.trim();
-    const len = $('nb_length').value.trim();
+    const obj  = $('nb_objective').value.trim();
+    const ctx  = $('nb_context').value.trim();
+    const per  = $('nb_persona').value.trim();
+    const fmt  = $('nb_format').value.trim();
+    const len  = $('nb_length').value.trim();
     const cons = $('nb_constraints').value.trim();
 
     return lines(
-`MODE: Nano Banana — tulis dalam Bahasa Indonesia.`,
-obj && `Objective: ${obj}.`,
-ctx && `Context: ${ctx}.`,
-per && `Persona/Style: ${per}.`,
-fmt && `Output format: ${fmt}.`,
-len && `Length limit: ${len}.`,
-cons && `Constraints: ${cons}.`,
-`Gunakan bahasa yang jelas dan dapat langsung dipakai tanpa pengeditan berat.`
+`Tulis dalam Bahasa Indonesia.
+
+Tujuan:
+${obj || '-'}
+
+Konteks:
+${ctx || '-'}
+
+Persona/Style:
+${per || 'ramah, jelas, membantu'}
+
+Aturan:
+${cons || '-'}
+
+Format keluaran yang harus diikuti (tanpa tambahan teks lain):
+${fmt || '1) Judul singkat\n2) Ringkasan ≤ 60 kata\n3) CTA'}
+
+Batas panjang:
+${len || 'seperlunya, ringkas & to the point'}`
     );
   }
 
+  // Kumpulkan nilai Veo
   function collectVeo(){
     return {
       scene: $('veo_scene').value.trim(),
-      subject: $('veo_subject').value.trim(),
       angle: $('veo_angle').value,
       motion: $('veo_motion').value,
       lighting: $('veo_light').value,
@@ -301,25 +326,26 @@ cons && `Constraints: ${cons}.`,
     };
   }
 
+  // Veo Default (ID)
   function buildVeoDefault(){
-    // Output Indonesia
     const d = collectVeo();
+    const lang = $('veo_lang').value || 'Indonesia';
     return lines(
-`Buat deskripsi prompt video untuk Gemini Veo (bahasa Indonesia) dengan struktur jelas.`,
-bullet([
-  d.scene && `Adegan: ${d.scene}`,
-  d.subject && `Subjek utama: ${d.subject}`,
-  `Camera: ${d.angle}, motion ${d.motion}`,
-  `Lighting: ${d.lighting}`,
-  `Mode video: ${d.mode}, FPS: ${d.fps}, Aspect ratio: ${d.ar}`,
-  d.extra && `Detail tambahan: ${d.extra}`
-]),
-`Fokus pada visual konkret, aksi di frame, dan kontinuitas shot. Hindari instruksi teknis yang ambigu.`
+`Buat prompt video untuk Gemini Veo dalam bahasa ${lang} dengan struktur ringkas:
+
+- Adegan inti: ${d.scene || '-'}
+- Camera: ${d.angle}, motion ${d.motion}
+- Lighting: ${d.lighting}
+- Mode video: ${d.mode}
+- FPS: ${d.fps} | Aspect Ratio: ${d.ar}
+- Detail tambahan: ${d.extra || '-'}
+
+Fokus pada visual konkret, aksi di frame, dan kontinuitas shot. Hindari instruksi teknis yang ambigu.`
     );
   }
 
+  // Veo JSON (EN)
   function buildVeoJSON(modelVer){
-    // Output English (JSON prompt)
     const d = collectVeo();
     const payload = {
       model: `gemini-veo-${modelVer}`,
@@ -327,11 +353,7 @@ bullet([
       language: "en",
       video: {
         scene: d.scene || "",
-        subject: d.subject || "",
-        camera: {
-          angle: d.angle,
-          motion: d.motion
-        },
+        camera: { angle: d.angle, motion: d.motion },
         lighting: d.lighting,
         mode: d.mode,
         fps: Number(d.fps),
