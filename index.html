@@ -7,9 +7,7 @@
   <meta name="description" content="Sebagai Mitra Affiliate, UMKM dan industri kecil">
 
   <!-- Favicon (hindari 404) -->
-  <!-- Relatif (karena file nafslogo.jpeg berada di root yang sama dengan index.html) -->
   <link rel="icon" href="nafslogo.jpeg" />
-  <!-- Absolut ke GitHub Pages (jaga-jaga) -->
   <link rel="shortcut icon" href="/nafs.github.io/nafslogo.jpeg" type="image/jpeg" />
 
   <style>
@@ -88,6 +86,19 @@
     .ghost{background:transparent; border:1px solid var(--line); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer}
     .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
     .hint{margin-top:8px; color:var(--muted); font-size:13px}
+
+    /* === Khusus tombol Halaman Pelanggan: ungu cerah === */
+    .violet-btn{
+      display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:16px;
+      background:#7c3aed;                /* ungu cerah */
+      color:#0b0a12;                      /* teks gelap agar kontras */
+      text-decoration:none; font-weight:600;
+      border:2px solid #a78bfa;           /* ring ungu muda */
+      box-shadow:0 10px 30px -10px rgba(139,92,246,.65); /* shadow ungu */
+      transition:filter .2s ease, transform .15s ease;
+    }
+    .violet-btn:hover{ background:#8b5cf6; filter:brightness(1.03); }
+    .violet-btn svg{ width:18px; height:18px; }
   </style>
 </head>
 <body>
@@ -114,44 +125,26 @@
         </a>
       </div>
 
-      
-     <!-- Tombol daftar -->
-<div class="links" role="navigation" aria-label="Tautan utama">
-  <!-- Halaman Umum (standar) -->
-  <a href="home.html"
-     class="inline-flex w-full items-center gap-2 rounded-xl
-            bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text)]
-            ring-1 ring-[var(--border)] px-5 py-3 font-semibold transition">
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-      <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/>
-    </svg>
-    Halaman Umum
-  </a>
+      <!-- Tombol daftar -->
+      <div class="links" role="navigation" aria-label="Tautan utama">
+        <!-- Halaman Umum (tetap) -->
+        <a href="home.html" class="btn">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          Halaman Umum
+        </a>
 
-  <!-- Halaman Pelanggan (ungu cerah) -->
-  <a href="react/vite/"
-     class="inline-flex w-full items-center gap-2 rounded-xl
-            bg-violet-500 hover:bg-violet-400 text-black
-            ring-2 ring-violet-400 shadow-[0_10px_30px_-10px_rgba(139,92,246,.65)]
-            px-5 py-3 font-semibold transition">
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-      <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/>
-    </svg>
-    Halaman Pelanggan
-  </a>
+        <!-- Halaman Pelanggan (ungu cerah) -->
+        <a href="react/vite/" class="violet-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          Halaman Pelanggan
+        </a>
 
-  <!-- Prompt Generator (standar) -->
-  <a href="generator.html"
-     class="inline-flex w-full items-center gap-2 rounded-xl
-            bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text)]
-            ring-1 ring-[var(--border)] px-5 py-3 font-semibold transition">
-    <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-      <path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/>
-    </svg>
-    Prompt Generator ( Free )
-  </a>
-</div>
-
+        <!-- Prompt Generator (tetap) -->
+        <a href="generator.html" class="btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
+          Prompt Generator ( Free )
+        </a>
+      </div>
 
       <!-- Tombol login khusus (modal) -->
       <div class="login-cta">
@@ -193,10 +186,10 @@
   <script>
     // Handle query ?login=1 / ?logout=1 dari nafspremium + redirect balik
     const params  = new URLSearchParams(location.search);
-   const backUrl = params.get('r') || 'https://nafsflow.com/react/vite/';
+    const backUrl = params.get('r') || 'https://nafsflow.com/react/vite/';
 
     function openLoginModal() {
-      const btn = document.getElementById('openLogin'); // ID yang benar (L besar)
+      const btn = document.getElementById('openLogin');
       if (btn) btn.click();
       else {
         const overlay = document.getElementById('overlay');
@@ -207,12 +200,10 @@
       }
     }
 
-    // panggil ini SETELAH login sukses (disimulasikan via tombol "Masuk")
     window.__nafsLoginSuccess = function () {
       localStorage.setItem('nafs_isLoggedIn','1');
       location.replace(backUrl);
     };
-
     window.__nafsLogout = function () {
       localStorage.removeItem('nafs_isLoggedIn');
       location.replace(backUrl);
