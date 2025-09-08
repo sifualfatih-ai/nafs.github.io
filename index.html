@@ -115,35 +115,37 @@
       </div>
 
       
-      <!-- Tombol daftar -->
+     <!-- Tombol daftar -->
 <div class="links" role="navigation" aria-label="Tautan utama">
-  <!-- Halaman Umum (tetap pakai class .btn yang lama) -->
-  <a class="btn" href="home.html">
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <!-- Halaman Umum (standar) -->
+  <a href="home.html"
+     class="inline-flex w-full items-center gap-2 rounded-xl
+            bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text)]
+            ring-1 ring-[var(--border)] px-5 py-3 font-semibold transition">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
       <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/>
     </svg>
     Halaman Umum
   </a>
 
   <!-- Halaman Pelanggan (ungu cerah) -->
-  <!-- Ganti href di bawah jika perlu: bisa ke /react/vite/ atau URL premium kamu -->
-  <a
-    href="react/vite/"
-    class="inline-flex w-full items-center gap-2 rounded-xl
-           bg-violet-500 hover:bg-violet-400 text-black
-           ring-1 ring-violet-400 shadow-[0_10px_30px_-10px_rgba(139,92,246,.7)]
-           px-5 py-3 font-semibold transition focus:outline-none
-           focus:ring-2 focus:ring-violet-300"
-  >
+  <a href="react/vite/"
+     class="inline-flex w-full items-center gap-2 rounded-xl
+            bg-violet-500 hover:bg-violet-400 text-black
+            ring-2 ring-violet-400 shadow-[0_10px_30px_-10px_rgba(139,92,246,.65)]
+            px-5 py-3 font-semibold transition">
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-      <path d="M4 6h16v2H4zm0 5h10v2H4zm0 5h14v2H4z"/>
+      <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/>
     </svg>
     Halaman Pelanggan
   </a>
 
-  <!-- Prompt Generator (tetap pakai class .btn yang lama) -->
-  <a class="btn" href="generator.html">
-    <svg viewBox="0 0 24 24" fill="currentColor">
+  <!-- Prompt Generator (standar) -->
+  <a href="generator.html"
+     class="inline-flex w-full items-center gap-2 rounded-xl
+            bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text)]
+            ring-1 ring-[var(--border)] px-5 py-3 font-semibold transition">
+    <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
       <path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/>
     </svg>
     Prompt Generator ( Free )
