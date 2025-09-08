@@ -33,8 +33,8 @@
   textarea{min-height:120px}
   /* textarea lebih tinggi agar friendly */
   #veo_scene{min-height:160px}
-  #cg_topic{min-height:160px}           /* ChatGPT: Tujuan/Topik diperluas */
-  #nb_context{min-height:160px}         /* Nano: Input/Context diperluas */
+  #cg_topic{min-height:160px}
+  #nb_context{min-height:160px}
   .actions{display:flex; gap:10px; flex-wrap:wrap}
   .btn{background:var(--btn); border:1px solid var(--line); color:var(--text); border-radius:12px; padding:10px 14px; cursor:pointer}
   .btn:hover{background:var(--btnh)}
@@ -126,8 +126,6 @@
           <label>Panjang / Limit</label>
           <input id="nb_length" placeholder="contoh: tiap ide ≤ 60 kata">
         </div>
-
-        <!-- Constraint / Do & Don't DIHAPUS -->
       </div>
 
       <!-- ====== BLOK FIELD VEO 2/3 ====== -->
@@ -255,10 +253,11 @@
 
   // UTIL
   const lines = (...xs)=> xs.filter(Boolean).join('\n');
+  const orDash = v => (v && v.trim()) ? v.trim() : '-';
 
   // ==== PROMPT BUILDERS ====
 
-  // ChatGPT: prompt bersih, siap tempel
+  // ChatGPT: prompt bersih, siap tempel (TIDAK DIUBAH)
   function buildChatGPT(){
     const topic = $('cg_topic').value.trim();
     const aud   = $('cg_audience').value.trim();
@@ -284,31 +283,49 @@ CTA:`
     );
   }
 
-  // Nano Banana: prompt bersih, siap tempel
+  // NANO BANANA — generator benar-benar menyusun prompt instruktif + skema keluaran
   function buildNano(){
     const obj  = $('nb_objective').value.trim();
     const ctx  = $('nb_context').value.trim();
-    const per  = $('nb_persona').value.trim();
+    const per  = $('nb_persona').value.trim() || 'ahli pemasaran UMKM yang ramah, jelas, dan solutif';
     const fmt  = $('nb_format').value.trim();
-    const len  = $('nb_length').value.trim();
+    const len  = $('nb_length').value.trim() || '≤ 60 kata per item';
 
+    // Skema keluaran default bila user tidak mengisi "Output Format"
+    const schema = fmt || `Daftar bernomor. Untuk setiap item gunakan pola:
+Judul: <maks 6 kata>
+Ringkasan: <${len}>
+CTA: <ajakan singkat>`;
+
+
+    // Prompt instruktif yang kuat agar Nano Banana mengikuti format, bukan menyalin
     return lines(
-`Tulis dalam Bahasa Indonesia.
+`ROLE
+Kamu adalah asisten konten "Nano Banana".
 
-Tujuan:
-${obj || '-'}
+GOAL
+${orDash(obj)}
 
-Konteks:
-${ctx || '-'}
+INPUT
+${orDash(ctx)}
 
-Persona/Style:
-${per || 'ramah, jelas, membantu'}
+STYLE
+- Persona/Style: ${per}.
+- Bahasa Indonesia, persuasif, positif, tidak bertele-tele, tanpa emoji kecuali diminta.
 
-Format keluaran yang harus diikuti (tanpa tambahan teks lain):
-${fmt || '1) Judul singkat\n2) Ringkasan ≤ 60 kata\n3) CTA'}
+CONSTRAINTS
+- Jangan mengulang kalimat antar item.
+- Hindari klaim berlebihan atau data yang tidak tersedia.
+- Gunakan kata kerja aktif dan manfaat nyata.
 
-Batas panjang:
-${len || 'seperlunya, ringkas & to the point'}`
+OUTPUT SCHEMA (STRICT)
+${schema}
+
+RESPONSE RULES
+- Tampilkan HASIL AKHIR saja sesuai skema di atas.
+- TANPA heading lain, TANPA catatan, TANPA penjelasan tambahan.
+
+GENERATE NOW.`
     );
   }
 
@@ -323,43 +340,77 @@ ${len || 'seperlunya, ringkas & to the point'}`
       fps: $('veo_fps').value,
       ar: $('veo_ar').value,
       extra: $('veo_extra').value.trim(),
+      lang: $('veo_lang').value || 'Indonesia'
     };
   }
 
-  // Veo Default (ID)
+  // VEO DEFAULT (narasi ID/EN) — prompt sutradara terstruktur, menghasilkan 1 prompt yang mengalir
   function buildVeoDefault(){
     const d = collectVeo();
-    const lang = $('veo_lang').value || 'Indonesia';
+
     return lines(
-`Buat prompt video untuk Gemini Veo dalam bahasa ${lang} dengan struktur ringkas:
+`Anda adalah sutradara video. Tulis prompt ${d.lang} yang spesifik dan siap pakai untuk Gemini Veo.
 
-- Adegan inti: ${d.scene || '-'}
-- Camera: ${d.angle}, motion ${d.motion}
+SCENE BRIEF
+${orDash(d.scene)}
+
+VISUAL SPECS
+- Camera: ${d.angle} dengan gerak ${d.motion}
 - Lighting: ${d.lighting}
-- Mode video: ${d.mode}
-- FPS: ${d.fps} | Aspect Ratio: ${d.ar}
-- Detail tambahan: ${d.extra || '-'}
+- Mode: ${d.mode}
+- FPS: ${d.fps}
+- Aspect Ratio: ${d.ar}
+- Detail tambahan: ${orDash(d.extra)}
 
-Fokus pada visual konkret, aksi di frame, dan kontinuitas shot. Hindari instruksi teknis yang ambigu.`
+OUTPUT RULES
+- Narasikan yang terlihat di frame (bukan instruksi teknis ke model).
+- Gunakan kata kerja visual: "kamera bergerak perlahan", "cahaya hangat menerpa", dst.
+- Jaga kontinuitas & transisi antarscene halus.
+
+SHOT PLAN (3 shot; 2s–3s–3s)
+1) Establishing: buka dengan konteks/lingkungan utama.
+2) Main action: subjek melakukan aksi inti; jelaskan gerak kamera & elemen pendukung.
+3) Closing/hero: close-up atau komposisi dramatis yang menegaskan mood akhir.
+
+Keluarkan SATU paragraf prompt yang mengalir, mengacu pada rencana di atas (tanpa judul bagian).`
     );
   }
 
-  // Veo JSON (EN)
+  // VEO JSON (EN) — payload JSON siap pakai (specs + prompt + shot list)
   function buildVeoJSON(modelVer){
     const d = collectVeo();
+
+    // Build a compact natural-language prompt string (EN) for engines that accept "prompt" field.
+    const promptStr = [
+      `Scene: ${d.scene || 'Describe the environment and subject clearly.'}`,
+      `Camera: ${d.angle} with ${d.motion} motion;`,
+      `Lighting: ${d.lighting}; Mode: ${d.mode}; FPS ${d.fps}; AR ${d.ar}.`,
+      d.extra ? `Extra: ${d.extra}.` : '',
+      'Write vivid, concrete visuals; keep continuity and smooth transitions.'
+    ].filter(Boolean).join(' ');
+
     const payload = {
       model: `gemini-veo-${modelVer}`,
-      prompt_type: "structured",
+      prompt_type: "video_generation",
       language: "en",
-      video: {
-        scene: d.scene || "",
-        camera: { angle: d.angle, motion: d.motion },
-        lighting: d.lighting,
-        mode: d.mode,
-        fps: Number(d.fps),
-        aspect_ratio: d.ar,
-        extra: d.extra || ""
-      }
+      specs: {
+        fps: Number(d.fps || 24),
+        aspect_ratio: d.ar || "16:9",
+        mode: d.mode || "live-action",
+        lighting: d.lighting || "natural morning",
+        camera: { angle: d.angle || "eye-level", motion: d.motion || "static" }
+      },
+      prompt: promptStr,
+      shots: [
+        { id: 1, label: "establishing", seconds: 2, description: "Wide shot to set environment and mood." },
+        { id: 2, label: "action",       seconds: 3, description: "Main subject performs the key action; include camera movement specifics." },
+        { id: 3, label: "closing",      seconds: 3, description: "Hero/close-up shot that reinforces the final mood." }
+      ],
+      rules: [
+        "Describe what is seen in frame, not tool instructions.",
+        "Use clear, concrete visuals; avoid ambiguity.",
+        "Keep continuity and smooth transitions."
+      ]
     };
     return JSON.stringify(payload, null, 2);
   }
