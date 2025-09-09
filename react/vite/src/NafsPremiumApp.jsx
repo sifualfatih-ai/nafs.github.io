@@ -91,13 +91,13 @@ function NafsPremiumApp() {
     { label: "Canvas AI", icon: "🗂️", right: <Badge>New</Badge> },
     { label: "Generate Image", icon: "🖼️" },
     { label: "Generate Video", icon: "🎬" },
-    { label: "Generate Audio", icon: "📣" },
+    { label: "Generate Audio", icon: "🌊" },
+    { label: "Promosi Produk", icon: "📣" },
     { label: "Tiktok Affiliate", icon: "🔗", right: <span className="text-[9px] text-white/50">Konten UGC</span> },
     { label: "Iklan Produk", icon: "📷", right: <span className="text-[9px] text-white/50">Konten UGC</span> },
   ];
   const secondary = [
-    { label: "Web3 Project", icon: "🎓", right: <Badge>e-course</Badge> },
-    { label: "Workflow Bot", icon: "🗂️", right: 
+    { label: "Tutorial", icon: "🎓" },
     { label: "Halaman Utama", icon: "🏠" },
     { label: "Settings", icon: "⚙️" },
   ];
