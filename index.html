@@ -13,17 +13,17 @@
   <style>
     :root{
       /* Tema ungu */
-      --bg:#11071e;              /* ungu tua latar */
-      --bg2:#1a0f2d;             /* panel gelap */
+      --bg:#11071e;
+      --bg2:#1a0f2d;
       --card:#1f1438;
       --line:#2d2050;
       --text:#efeaff;
       --muted:#c7b7f0;
       --btn:#2a1f4a;
       --btn-hover:#3a2b69;
-      --accent:#7c3aed;          /* ungu aksen */
+      --accent:#7c3aed;
       --accent-2:#a78bfa;
-      --green:#22c55e;           /* login khusus */
+      --green:#22c55e;
       --radius:18px;
       --shadow:0 12px 30px rgba(0,0,0,.35);
     }
@@ -61,13 +61,16 @@
     .btn:hover{background:var(--btn-hover)}
     .btn svg{width:18px; height:18px}
 
-    /* tombol login khusus (hijau) */
+    /* tombol login khusus (hijau) — teks mengikuti menu (fw 600, ukuran sekelas menu) */
     .login-cta{
       margin-top:18px; display:flex; justify-content:center;
     }
     .login-cta button{
-      appearance:none; border:none; background:var(--green); color:#06280f; font-weight:800;
+      appearance:none; border:none; background:var(--green); color:#06280f;
       padding:12px 16px; border-radius:12px; cursor:pointer;
+      font-weight:600;          /* mengikuti menu */
+      font-size:15px;           /* nyaman & sekelas .btn */
+      line-height:1.15;
     }
 
     /* footer */
@@ -87,18 +90,44 @@
     .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
     .hint{margin-top:8px; color:var(--muted); font-size:13px}
 
-    /* === Khusus tombol Halaman Pelanggan: ungu cerah === */
+    /* === Khusus tombol Halaman Pelanggan: GRADIENT ungu → ungu tua === */
     .violet-btn{
       display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:16px;
-      background:#7c3aed;                /* ungu cerah */
-      color:#0b0a12;                      /* teks gelap agar kontras */
+      background:linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%);
+      color:#f7f5ff;
       text-decoration:none; font-weight:600;
-      border:2px solid #a78bfa;           /* ring ungu muda */
-      box-shadow:0 10px 30px -10px rgba(139,92,246,.65); /* shadow ungu */
-      transition:filter .2s ease, transform .15s ease;
+      border:1px solid #6d28d9;
+      box-shadow:0 10px 28px -10px rgba(109,40,217,.55);
+      transition:transform .15s ease, filter .2s ease;
     }
-    .violet-btn:hover{ background:#8b5cf6; filter:brightness(1.03); }
+    .violet-btn:hover{ transform:translateY(-1px); filter:brightness(1.03); }
     .violet-btn svg{ width:18px; height:18px; }
+
+    /* =======================
+       RESPONSIVE TWEAKS (desktop & ponsel)
+       Sedikit mengecilkan ukuran font/padding agar ramah di mata
+    ========================*/
+    /* Tablet & bawah */
+    @media (max-width: 992px){
+      h1{font-size:30px}
+      .subtitle{font-size:14px}
+      .btn, .violet-btn{padding:12px 14px}
+      .btn svg, .violet-btn svg{width:16px; height:16px}
+      .circle{width:52px; height:52px}
+    }
+    /* Ponsel */
+    @media (max-width: 560px){
+      body{padding:18px}
+      .card{padding:20px; border-radius:22px}
+      .avatar{width:84px; height:84px}
+      h1{font-size:26px}
+      .subtitle{font-size:13px}
+      .links{gap:10px}
+      .btn, .violet-btn{padding:11px 12px; font-size:14px; border-radius:14px}
+      .login-cta button{font-size:14px; padding:10px 14px}
+      .circle{width:46px; height:46px}
+      .foot{font-size:12px}
+    }
   </style>
 
 <!-- Google tag (gtag.js) -->
@@ -107,11 +136,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-5W7VXFV146');
 </script>
-
-  
 </head>
 <body>
 
@@ -139,30 +165,26 @@
 
       <!-- Tombol daftar -->
       <div class="links" role="navigation" aria-label="Tautan utama">
-        <!-- Halaman Umum (tetap) -->
         <a href="home.html" class="btn">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
           Halaman Umum
         </a>
 
-        <!-- Halaman Pelanggan (ungu cerah) -->
+        <!-- GRADIENT: Halaman Pelanggan -->
         <a href="react/vite/" class="violet-btn">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
           Halaman Pelanggan
         </a>
 
-        <!-- Prompt Generator (tetap) -->
         <a href="generator.html" class="btn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
           Prompt Generator ( Free )
         </a>
 
-        <!-- Flow Builder (tetap) -->
         <a href="flowbuilder.html" class="btn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
           AI Agent Builder (Desktop)
         </a>
-        
       </div>
 
       <!-- Tombol login khusus (modal) -->
@@ -174,7 +196,7 @@
     </section>
   </main>
 
-  <!-- Modal login -->
+  <!-- Modal login (tetap) -->
   <div id="overlay" class="overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
       <h3 id="mTitle">Masuk Akun Khusus</h3>
@@ -194,8 +216,8 @@
     </div>
   </div>
 
+  <!-- JS tetap -->
   <script>
-    // Modal login (manual open/close)
     const overlay = document.getElementById('overlay');
     document.getElementById('openLogin').onclick  = ()=>{ overlay.style.display='flex'; overlay.setAttribute('aria-hidden','false'); };
     document.getElementById('closeLogin').onclick = ()=>{ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); };
@@ -203,10 +225,8 @@
   </script>
 
   <script>
-    // Handle query ?login=1 / ?logout=1 dari nafspremium + redirect balik
     const params  = new URLSearchParams(location.search);
     const backUrl = params.get('r') || 'https://nafsflow.com/react/vite/';
-
     function openLoginModal() {
       const btn = document.getElementById('openLogin');
       if (btn) btn.click();
@@ -218,7 +238,6 @@
         }
       }
     }
-
     window.__nafsLoginSuccess = function () {
       localStorage.setItem('nafs_isLoggedIn','1');
       location.replace(backUrl);
@@ -227,7 +246,6 @@
       localStorage.removeItem('nafs_isLoggedIn');
       location.replace(backUrl);
     };
-
     if (params.get('login')  === '1') openLoginModal();
     if (params.get('logout') === '1') window.__nafsLogout();
   </script>
