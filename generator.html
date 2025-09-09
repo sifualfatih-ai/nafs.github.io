@@ -270,15 +270,39 @@
   // UTIL
   const lines = (...xs)=> xs.filter(Boolean).join('\n');
   const orDash = v => (v && v.trim()) ? v.trim() : '-';
+  const getLang = () => ($('lang')?.value || 'Indonesia');
 
   // ==== PROMPT BUILDERS ====
 
-  // ChatGPT: prompt bersih, siap tempel (TIDAK DIUBAH)
+  // ChatGPT: prompt bersih, siap tempel (disesuaikan bahasa)
   function buildChatGPT(){
     const topic = $('cg_topic').value.trim();
     const aud   = $('cg_audience').value.trim();
     const rules = $('cg_rules').value.trim();
+    const lang  = getLang();
 
+    if (lang === 'English'){
+      return lines(
+`You are a content-writing assistant for small businesses.
+
+Instructions:
+- Write in natural English.
+- Use a professional, persuasive tone.
+- Follow these constraints${rules ? `: ${rules}` : '.'}
+
+Context:
+- Goal/Topic: ${topic || '-'}
+- Target Audience: ${aud || '-'}
+
+Task:
+Write a structured copy in this exact format, with no extra labels:
+Headline:
+Copy:
+CTA:`
+      );
+    }
+
+    // Indonesian (default)
     return lines(
 `Anda adalah asisten penulis konten UMKM.
 
@@ -300,24 +324,38 @@ CTA:`
   }
 
   // NANO BANANA — generator benar-benar menyusun prompt instruktif + skema keluaran
+  // Dirancang agar menganalisis input & template, lalu hanya mengeluarkan hasil akhir (bukan menyalin instruksi).
   function buildNano(){
     const obj  = $('nb_objective').value.trim();
     const ctx  = $('nb_context').value.trim();
-    const per  = $('nb_persona').value.trim() || 'ahli pemasaran UMKM yang ramah, jelas, dan solutif';
+    const lang = getLang();
+
+    const per  = ($('nb_persona').value.trim()) ||
+      (lang==='English'
+        ? 'an SME marketing expert who is friendly, clear, and solutions-oriented'
+        : 'ahli pemasaran UMKM yang ramah, jelas, dan solutif');
+
     const fmt  = $('nb_format').value.trim();
-    const len  = $('nb_length').value.trim() || '≤ 60 kata per item';
+    const len  = ($('nb_length').value.trim()) || (lang==='English' ? '≤ 60 words per item' : '≤ 60 kata per item');
 
     // Skema keluaran default bila user tidak mengisi "Output Format"
-    const schema = fmt || `Daftar bernomor. Untuk setiap item gunakan pola:
+    const schema = fmt || (
+      lang==='English'
+      ? `Numbered list. For each item use:
+Title: <max 6 words>
+Summary: <${len}>
+CTA: <short call-to-action>`
+      : `Daftar bernomor. Untuk setiap item gunakan pola:
 Judul: <maks 6 kata>
 Ringkasan: <${len}>
-CTA: <ajakan singkat>`;
+CTA: <ajakan singkat>`
+    );
 
-
-    // Prompt instruktif yang kuat agar Nano Banana mengikuti format, bukan menyalin
-    return lines(
+    // Prompt instruktif kuat agar Nano Banana melakukan ANALISIS INTERNAL lalu keluaran final sesuai skema.
+    if (lang === 'English'){
+      return lines(
 `ROLE
-Kamu adalah asisten konten "Nano Banana".
+You are "Nano Banana", a structured prompt-following content assistant.
 
 GOAL
 ${orDash(obj)}
@@ -327,19 +365,62 @@ ${orDash(ctx)}
 
 STYLE
 - Persona/Style: ${per}.
-- Bahasa Indonesia, persuasif, positif, tidak bertele-tele, tanpa emoji kecuali diminta.
+- Write in clear, positive, persuasive English; no emojis unless requested.
 
 CONSTRAINTS
-- Jangan mengulang kalimat antar item.
-- Hindari klaim berlebihan atau data yang tidak tersedia.
-- Gunakan kata kerja aktif dan manfaat nyata.
+- Do not repeat sentences across items.
+- Avoid unverifiable claims or hallucinated data.
+- Prefer active verbs and concrete benefits.
+
+TEMPLATE-DRIVEN GENERATION
+- Infer key angles, audience pains, benefits, and hooks from INPUT.
+- Map each idea to one distinct angle.
+- Select wording that fits the OUTPUT SCHEMA strictly.
 
 OUTPUT SCHEMA (STRICT)
 ${schema}
 
 RESPONSE RULES
-- Tampilkan HASIL AKHIR saja sesuai skema di atas.
+- Produce ONLY the final result following the schema above.
+- NO headings other than the schema fields, NO notes, NO explanations.
+- Do not expose your analysis or thinking steps.
+
+GENERATE NOW.`
+      );
+    }
+
+    // Indonesian (default)
+    return lines(
+`ROLE
+Kamu adalah "Nano Banana", asisten konten yang patuh template dan terstruktur.
+
+GOAL
+${orDash(obj)}
+
+INPUT
+${orDash(ctx)}
+
+STYLE
+- Persona/Style: ${per}.
+- Bahasa Indonesia yang jelas, positif, persuasif; tanpa emoji kecuali diminta.
+
+CONSTRAINTS
+- Jangan mengulang kalimat antar item.
+- Hindari klaim berlebihan atau data yang tidak tersedia.
+- Gunakan kata kerja aktif dan manfaat yang nyata.
+
+GENERATIVE TEMPLATE METHOD
+- Identifikasi sudut pembahasan, masalah audiens, manfaat, dan hook dari INPUT.
+- Setiap ide harus memakai sudut yang berbeda.
+- Pilih diksi yang sesuai dan patuhi skema keluaran secara ketat.
+
+OUTPUT SCHEMA (STRICT)
+${schema}
+
+RESPONSE RULES
+- Tampilkan HANYA hasil akhir sesuai skema di atas.
 - TANPA heading lain, TANPA catatan, TANPA penjelasan tambahan.
+- Jangan menampilkan proses analisis atau langkah berpikir.
 
 GENERATE NOW.`
     );
@@ -363,52 +444,57 @@ GENERATE NOW.`
   // VEO DEFAULT (narasi ID/EN) — prompt sutradara terstruktur, menghasilkan 1 prompt yang mengalir
   function buildVeoDefault(){
     const d = collectVeo();
+    const idn = (d.lang !== 'English');
 
     return lines(
-`Anda adalah sutradara video. Tulis prompt ${d.lang} yang spesifik dan siap pakai untuk Gemini Veo.
+`${idn ? 'Anda adalah sutradara video. Tulis prompt ' + d.lang + ' yang spesifik dan siap pakai untuk Gemini Veo.' :
+'You are a film director. Write a specific, production-ready prompt in ' + d.lang + ' for Gemini Veo.'}
 
 SCENE BRIEF
 ${orDash(d.scene)}
 
 VISUAL SPECS
-- Camera: ${d.angle} dengan gerak ${d.motion}
+- Camera: ${d.angle} ${idn ? 'dengan gerak' : 'with'} ${d.motion}
 - Lighting: ${d.lighting}
 - Mode: ${d.mode}
 - FPS: ${d.fps}
 - Aspect Ratio: ${d.ar}
-- Detail tambahan: ${orDash(d.extra)}
+- ${idn ? 'Detail tambahan' : 'Additional details'}: ${orDash(d.extra)}
 
 OUTPUT RULES
-- Narasikan yang terlihat di frame (bukan instruksi teknis ke model).
-- Gunakan kata kerja visual: "kamera bergerak perlahan", "cahaya hangat menerpa", dst.
-- Jaga kontinuitas & transisi antarscene halus.
+- ${idn ? 'Narasi hanya menggambarkan apa yang terlihat di frame (bukan instruksi teknis ke alat).' : 'Describe only what the viewer sees on screen (not tool commands).'}
+- ${idn ? 'Gunakan kata kerja visual (mis. "kamera bergerak perlahan", "cahaya hangat menerpa").' : 'Use visual action verbs (e.g., “the camera glides,” “warm light washes over”).'}
+- ${idn ? 'Jaga kontinuitas dan transisi antarscene halus.' : 'Ensure continuity and smooth transitions between shots.'}
 
 SHOT PLAN (3 shot; 2s–3s–3s)
-1) Establishing: buka dengan konteks/lingkungan utama.
-2) Main action: subjek melakukan aksi inti; jelaskan gerak kamera & elemen pendukung.
-3) Closing/hero: close-up atau komposisi dramatis yang menegaskan mood akhir.
+1) ${idn ? 'Establishing: buka konteks/lingkungan utama.' : 'Establishing: set the main environment and mood.'}
+2) ${idn ? 'Main action: aksi inti subjek; jelaskan gerak kamera & elemen pendukung.' : 'Main action: subject performs the key action; specify camera movement & supporting elements.'}
+3) ${idn ? 'Closing/hero: close-up/komposisi dramatis yang menegaskan mood akhir.' : 'Closing/hero: a close-up or dramatic composition reinforcing the final mood.'}
 
-Keluarkan SATU paragraf prompt yang mengalir, mengacu pada rencana di atas (tanpa judul bagian).`
+${idn ? 'Keluarkan SATU paragraf prompt yang mengalir, mengacu pada rencana di atas (tanpa judul bagian).' :
+'Output ONE flowing paragraph referencing the plan above (no section headers).'}`
     );
   }
 
-  // VEO JSON (EN) — payload JSON siap pakai (specs + prompt + shot list)
+  // VEO JSON (EN) — payload JSON konsisten (specs + prompt + shots)
+  // Disusun agar mengikuti struktur yang konsisten untuk Veo 2/3.
   function buildVeoJSON(modelVer){
     const d = collectVeo();
 
-    // Build a compact natural-language prompt string (EN) for engines that accept "prompt" field.
+    // Natural-language prompt string (EN) for engines that accept a prompt field.
     const promptStr = [
       `Scene: ${d.scene || 'Describe the environment and subject clearly.'}`,
       `Camera: ${d.angle} with ${d.motion} motion;`,
       `Lighting: ${d.lighting}; Mode: ${d.mode}; FPS ${d.fps}; AR ${d.ar}.`,
       d.extra ? `Extra: ${d.extra}.` : '',
-      'Write vivid, concrete visuals; keep continuity and smooth transitions.'
+      'Describe only what appears on screen; ensure continuity and smooth transitions.'
     ].filter(Boolean).join(' ');
 
     const payload = {
       model: `gemini-veo-${modelVer}`,
-      prompt_type: "video_generation",
+      task: "video_generation",
       language: "en",
+      prompt: promptStr,
       specs: {
         fps: Number(d.fps || 24),
         aspect_ratio: d.ar || "16:9",
@@ -416,16 +502,15 @@ Keluarkan SATU paragraf prompt yang mengalir, mengacu pada rencana di atas (tanp
         lighting: d.lighting || "natural morning",
         camera: { angle: d.angle || "eye-level", motion: d.motion || "static" }
       },
-      prompt: promptStr,
       shots: [
         { id: 1, label: "establishing", seconds: 2, description: "Wide shot to set environment and mood." },
-        { id: 2, label: "action",       seconds: 3, description: "Main subject performs the key action; include camera movement specifics." },
-        { id: 3, label: "closing",      seconds: 3, description: "Hero/close-up shot that reinforces the final mood." }
+        { id: 2, label: "action",       seconds: 3, description: "Subject performs the key action; include camera movement specifics." },
+        { id: 3, label: "closing",      seconds: 3, description: "Hero/close-up shot reinforcing the final mood." }
       ],
       rules: [
-        "Describe what is seen in frame, not tool instructions.",
+        "Describe visible content only; avoid tool commands.",
         "Use clear, concrete visuals; avoid ambiguity.",
-        "Keep continuity and smooth transitions."
+        "Maintain continuity and smooth transitions."
       ]
     };
     return JSON.stringify(payload, null, 2);
