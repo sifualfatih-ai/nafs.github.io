@@ -6,74 +6,67 @@
 <link rel="apple-touch-icon" href="nafsweb.ico" />
 <link rel="shortcut icon" href="/nafsweb.ico" type="image/ico" />
     
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NafsFlow – Flow Builder</title>
   <!-- Tailwind via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- React 18 UMD + Babel Standalone (untuk JSX di browser) -->
+  <!-- React 18 UMD + Babel Standalone -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="bg-slate-50">
   <div id="root"></div>
+
   <script type="text/babel">
-    // React global
     const { useState } = React;
 
-    // ====== APP: NafsFlow – Flow Builder (Opsi C) + Template & Simulator ======
     function NafsFlowBuilder() {
       const [steps, setSteps] = useState([]);
       const [selectedId, setSelectedId] = useState(null);
       const [name, setName] = useState("Flow Rental Mobil – Contoh");
 
-      // SIMULATOR
       const [simCtx, setSimCtx] = useState({ nama: "Budi", deposit: 500000, telatJam: 0, email: "budi@example.com" });
-      const [simIdx, setSimIdx] = useState(-1); // -1 = belum mulai
+      const [simIdx, setSimIdx] = useState(-1);
       const [simLogs, setSimLogs] = useState([]);
       const simActive = simIdx >= 0;
 
-      // Palette
       const palette = [
-        { type: "Form",      icon: "📝", desc: "Kumpulkan data awal" },
-        { type: "Task",      icon: "✅", desc: "Tugas manual ber-checklist" },
-        { type: "Approval",  icon: "🛂", desc: "Setuju/Tolak dengan komentar" },
-        { type: "AutoAction",icon: "⚙️", desc: "Panggil API / generate dokumen" },
-        { type: "Wait",      icon: "⏳", desc: "Tunda X jam/hari" },
-        { type: "Router",    icon: "🔀", desc: "Cabang IF/ELSE berbasis data" },
-        { type: "Notify",    icon: "🔔", desc: "Kirim Email/WA" },
+        { type: "Form", icon: "📝", desc: "Kumpulkan data awal" },
+        { type: "Task", icon: "✅", desc: "Tugas manual ber-checklist" },
+        { type: "Approval", icon: "🛂", desc: "Setuju/Tolak dengan komentar" },
+        { type: "AutoAction", icon: "⚙️", desc: "Panggil API / generate dokumen" },
+        { type: "Wait", icon: "⏳", desc: "Tunda X jam/hari" },
+        { type: "Router", icon: "🔀", desc: "Cabang IF/ELSE berbasis data" },
+        { type: "Notify", icon: "🔔", desc: "Kirim Email/WA" },
       ];
 
-      // Helpers
       const newId = () => Math.random().toString(36).slice(2, 9);
       const clone = (v) => JSON.parse(JSON.stringify(v));
       const makeStep = (type) => ({ id: newId(), type, title: defaultTitle(type), assignee: "", slaHours: 0, config: defaultConfig(type) });
 
       function defaultTitle(type) {
-        switch (type) {
-          case "Form": return "Form Intake";
-          case "Task": return "Tugas Manual";
-          case "Approval": return "Approval";
-          case "AutoAction": return "Aksi Otomatis";
-          case "Wait": return "Tunggu";
-          case "Router": return "Router IF/ELSE";
-          case "Notify": return "Notifikasi";
-          default: return type;
-        }
+        const map = {
+          "Form": "Form Intake", "Task": "Tugas Manual", "Approval": "Approval",
+          "AutoAction": "Aksi Otomatis", "Wait": "Tunggu", "Router": "Router IF/ELSE", "Notify": "Notifikasi"
+        };
+        return map[type] || type;
       }
       function defaultConfig(type) {
-        if (type === "Form")      return { fields: [{ name: "nama", type: "text", required: true }, { name: "deposit", type: "number", required: true }] };
-        if (type === "AutoAction")return { action: "webhook", url: "https://api.example.com/hook", method: "POST", payload: {} };
-        if (type === "Wait")      return { duration: 24, unit: "hours" };
-        if (type === "Router")    return { rules: [{ if: "deposit < 500000", goTo: "manual_review" }] };
-        if (type === "Notify")    return { channel: "email", template: "Pengingat" };
-        if (type === "Task")      return { checklist: ["Cek KTP", "Foto kendaraan"] };
-        if (type === "Approval")  return { roles: ["Supervisor"], threshold: 1 };
-        return {};
+        const cfg = {
+          "Form": { fields: [{ name: "nama", type: "text", required: true }, { name: "deposit", type: "number", required: true }] },
+          "AutoAction": { action: "webhook", url: "https://api.example.com/hook", method: "POST", payload: {} },
+          "Wait": { duration: 24, unit: "hours" },
+          "Router": { rules: [{ if: "deposit < 500000", goTo: "manual_review" }] },
+          "Notify": { channel: "email", template: "Pengingat" },
+          "Task": { checklist: ["Cek KTP", "Foto kendaraan"] },
+          "Approval": { roles: ["Supervisor"], threshold: 1 },
+        };
+        return cfg[type] || {};
       }
 
-      // TEMPLATE RENTAL MOBIL – preload cepat
       const loadTemplateRental = () => {
         const t = [
           { type: "Form", title: "Form Pemesanan", assignee: "customer", slaHours: 0, config: { fields: [
@@ -94,13 +87,12 @@
           { type: "Task", title: "Serah Terima Unit", assignee: "kurir", slaHours: 4, config: { checklist: ["Foto kendaraan", "Catat KM", "Tanda tangan"] } },
           { type: "Wait", title: "Pengingat H-1 Pengembalian", assignee: "system", slaHours: 0, config: { duration: 24, unit: "hours" } },
           { type: "Notify", title: "Remind Pengembalian", assignee: "system", slaHours: 0, config: { channel: "email", template: "Pengingat H-1" } },
-          { type: "Task", title: "Pemeriksaan Pengembalian", assignee: "ops", slaHours: 2, config: { checklist: ["Cek bensin", "Foto body", "Hitung denda telat"] } },
-        ].map((s)=> ({ id: newId(), ...s }));
-        setSteps(t);
-        setSelectedId(t[0].id);
+          { type: "Task", title: "Pemeriksaan Pengembalian", assignee: "ops", slaHours: 2,
+            config: { checklist: ["Cek bensin", "Foto body", "Hitung denda telat"] } },
+        ].map(s => ({ id: newId(), ...s }));
+        setSteps(t); setSelectedId(t[0].id);
       };
 
-      // Drag dari palette → canvas
       const onDragStartPalette = (e, type) => { e.dataTransfer.setData("application/x-nafs-step", type); e.dataTransfer.effectAllowed = "copy"; };
       const onDropCanvas = (e, insertIndex = steps.length) => {
         e.preventDefault();
@@ -111,74 +103,75 @@
           const next = clone(steps); next.splice(insertIndex, 0, created);
           setSteps(next); setSelectedId(created.id);
         } else if (moveId) {
-          const idx = steps.findIndex((s) => s.id === moveId); if (idx === -1) return;
+          const idx = steps.findIndex(s => s.id === moveId); if (idx === -1) return;
           const next = clone(steps); const [moved] = next.splice(idx, 1);
           const target = insertIndex > idx ? insertIndex - 1 : insertIndex; next.splice(target, 0, moved);
           setSteps(next); setSelectedId(moved.id);
         }
       };
-      const onDragOver = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; };
+      const onDragOver = e => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; };
       const onDragStartStep = (e, id) => { e.dataTransfer.setData("application/x-nafs-move-id", id); e.dataTransfer.effectAllowed = "move"; };
 
-      // Editing
-      const updateStep = (id, patch) => setSteps((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
-      const removeStep = (id) => setSteps((prev) => prev.filter((s) => s.id !== id));
+      const updateStep = (id, patch) => setSteps(prev => prev.map(s => s.id === id ? { ...s, ...patch } : s));
+      const removeStep = id => setSteps(prev => prev.filter(s => s.id !== id));
 
-      // Export JSON
       const asSpec = () => ({ name, version: 1, createdAt: new Date().toISOString(), steps: steps.map(({ id, ...rest }) => rest) });
       const downloadJson = () => {
         const blob = new Blob([JSON.stringify(asSpec(), null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob); const a = document.createElement("a");
-        a.href = url; a.download = slugify(name) + ".nafsflow.json"; a.click(); URL.revokeObjectURL(url);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = slugify(name) + ".nafsflow.json";
+        a.click();
+        URL.revokeObjectURL(url);
       };
 
-      // ===== SIMULATOR =====
       const startSim = () => { setSimIdx(0); setSimLogs([{ t: now(), m: `Mulai simulasi: ${name}` }]); };
       const resetSim = () => { setSimIdx(-1); setSimLogs([]); };
       const runCurrent = () => {
         const s = steps[simIdx]; if (!s) return;
         let note = "";
-        if (s.type === "Form")      note = `mengisi form (${(s.config?.fields||[]).map(f=>f.name).join(', ')})`;
-        if (s.type === "Approval")  note = `approval oleh ${s.assignee||'role'}`;
-        if (s.type === "Task")      note = `tugas: ${(s.config?.checklist||[]).join('; ')}`;
-        if (s.type === "Wait")      note = `menunggu ~${s.config?.duration||0} ${s.config?.unit||'jam'}`;
-        if (s.type === "Notify")    note = `kirim ${s.config?.channel||'email'} template: ${s.config?.template||'-'}`;
-        if (s.type === "AutoAction")note = `aksi ${s.config?.action||'webhook'} → ${s.config?.url||''}`;
+        if (s.type === "Form") note = `mengisi form (${(s.config?.fields||[]).map(f=>f.name).join(', ')})`;
+        else if (s.type === "Approval") note = `approval oleh ${s.assignee||'role'}`;
+        else if (s.type === "Task") note = `tugas: ${(s.config?.checklist||[]).join('; ')}`;
+        else if (s.type === "Wait") note = `menunggu ~${s.config?.duration||0} ${s.config?.unit||'jam'}`;
+        else if (s.type === "Notify") note = `kirim ${s.config?.channel||'email'} template: ${s.config?.template||'-'}`;
+        else if (s.type === "AutoAction") note = `aksi ${s.config?.action||'webhook'} → ${s.config?.url||''}`;
 
         appendLog(`Step ${simIdx+1}: ${s.title} (${s.type}) — ${note}`);
 
-        // Router: pilih cabang berdasarkan aturan IF/ELSE
         if (s.type === "Router") {
-          const rules = s.config?.rules || [];
-          const targetLabel = evalRouter(rules, simCtx);
-          appendLog(`Router memilih jalur → ${targetLabel || 'tidak ada kecocokan'}`);
-          const idxLabel = steps.findIndex(x => (x.label||'') === targetLabel);
-          if (idxLabel >= 0) { setSimIdx(idxLabel); return; }
+          const r = evalRouter(s.config?.rules || [], simCtx);
+          appendLog(`Router memilih jalur → ${r || 'tidak ada kecocokan'}`);
+          const idx = steps.findIndex(x => (x.label||'') === r);
+          if (idx >= 0) { setSimIdx(idx); return; }
         }
 
-        // Default: langkah berikutnya
-        setSimIdx((i) => Math.min(i + 1, steps.length));
+        setSimIdx(i => Math.min(i + 1, steps.length));
       };
-      function evalRouter(rules, ctx){
-        for (const r of rules){
+      function evalRouter(rules, ctx) {
+        for (const r of rules) {
           try {
-            // Untuk demo di browser (jangan dipakai di server tanpa sandbox)
             const fn = new Function(...Object.keys(ctx), `return (${r.if});`);
-            const ok = fn(...Object.values(ctx));
-            if (ok) return r.goTo;
-          } catch (e) { appendLog(`Gagal evaluasi rule: ${r.if}`); }
+            if (fn(...Object.values(ctx))) return r.goTo;
+          } catch (e) {
+            appendLog(`Gagal evaluasi rule: ${r.if}`);
+          }
         }
         return null;
       }
-      const appendLog = (m) => setSimLogs((l) => [...l, { t: now(), m }]);
+      const appendLog = m => setSimLogs(l => [...l, { t: now(), m }]);
 
       return (
         <div className="min-h-screen bg-slate-50 text-slate-800">
-          {/* Top Bar */}
           <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
             <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
+              <a href="https://nafsflow.com" className="px-3 py-2 rounded-xl border hover:bg-slate-50 flex items-center gap-2">
+                ← Menu Utama
+              </a>
               <div className="h-9 w-9 rounded-xl bg-slate-900 text-white grid place-items-center font-bold">NF</div>
-              <input className="px-3 py-2 rounded-xl border w-72" value={name} onChange={(e) => setName(e.target.value)} />
+              <input className="px-3 py-2 rounded-xl border w-72"
+                     value={name} onChange={(e) => setName(e.target.value)} />
               <div className="ml-auto flex items-center gap-2">
                 <button onClick={loadTemplateRental} className="px-3 py-2 rounded-xl border">Load Template Rental Mobil</button>
                 <button onClick={downloadJson} className="px-3 py-2 rounded-xl bg-slate-900 text-white">Export JSON</button>
@@ -187,12 +180,11 @@
           </header>
 
           <div className="mx-auto max-w-7xl px-4 py-6 grid grid-cols-12 gap-6">
-            {/* Palette */}
             <aside className="col-span-12 lg:col-span-3 space-y-3">
               <div className="text-sm text-slate-500">Blok Langkah</div>
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
-                {palette.map((p) => (
-                  <div key={p.type} draggable onDragStart={(e) => onDragStartPalette(e, p.type)}
+                {palette.map(p => (
+                  <div key={p.type} draggable onDragStart={e => onDragStartPalette(e, p.type)}
                        className="p-4 rounded-2xl border bg-white cursor-grab active:cursor-grabbing"
                        title="Tarik ke kanvas untuk menambahkan">
                     <div className="font-medium flex items-center gap-2">{p.icon} {p.type}</div>
@@ -203,45 +195,46 @@
 
               <TipsCard />
 
-              {/* SIMULATOR PANEL */}
               <div className="mt-6 p-4 rounded-2xl border bg-white">
                 <div className="font-medium">Simulator</div>
                 <div className="text-xs text-slate-500 mt-1">Uji alur tanpa backend</div>
                 <div className="mt-3 grid grid-cols-1 gap-2">
-                  <LabeledInput label="Nama" value={simCtx.nama} onChange={(v)=>setSimCtx({...simCtx, nama:v})} />
-                  <LabeledNumber label="Deposit" value={simCtx.deposit} onChange={(v)=>setSimCtx({...simCtx, deposit:v})} />
-                  <LabeledNumber label="Telat (jam)" value={simCtx.telatJam} onChange={(v)=>setSimCtx({...simCtx, telatJam:v})} />
-                  <LabeledInput label="Email" value={simCtx.email} onChange={(v)=>setSimCtx({...simCtx, email:v})} />
+                  <LabeledInput label="Nama" value={simCtx.nama} onChange={v => setSimCtx({ ...simCtx, nama: v })} />
+                  <LabeledNumber label="Deposit" value={simCtx.deposit} onChange={v => setSimCtx({ ...simCtx, deposit: v })} />
+                  <LabeledNumber label="Telat (jam)" value={simCtx.telatJam} onChange={v => setSimCtx({ ...simCtx, telatJam: v })} />
+                  <LabeledInput label="Email" value={simCtx.email} onChange={v => setSimCtx({ ...simCtx, email: v })} />
+
                   <div className="flex gap-2 mt-2">
                     {!simActive ? (
-                      <button className="px-3 py-2 rounded-xl bg-slate-900 text-white" onClick={startSim} disabled={steps.length===0}>Mulai</button>
+                      <button className="px-3 py-2 rounded-xl bg-slate-900 text-white"
+                              onClick={startSim} disabled={steps.length===0}>Mulai</button>
                     ) : (
                       <>
                         <button className="px-3 py-2 rounded-xl border" onClick={runCurrent} disabled={simIdx>=steps.length}>Jalankan Step</button>
-                        <button className="px-3 py-2 rounded-xl border" onClick={()=>setSimIdx(simIdx+1)} disabled={simIdx>=steps.length}>Lewati</button>
+                        <button className="px-3 py-2 rounded-xl border" onClick={() => setSimIdx(simIdx+1)} disabled={simIdx>=steps.length}>Lewati</button>
                         <button className="px-3 py-2 rounded-xl border" onClick={resetSim}>Reset</button>
                       </>
                     )}
                   </div>
+
                   <div className="mt-3 max-h-48 overflow-auto rounded-xl border bg-slate-50 p-2 text-xs">
-                    {simLogs.map((l,i)=> (<div key={i} className="py-0.5"><span className="text-slate-400">[{l.t}]</span> {l.m}</div>))}
+                    {simLogs.map((l, i) => (
+                      <div key={i} className="py-0.5"><span className="text-slate-400">[{l.t}]</span> {l.m}</div>
+                    ))}
                   </div>
                 </div>
               </div>
             </aside>
 
-            {/* Canvas */}
             <main className="col-span-12 lg:col-span-9">
-              <section onDrop={(e) => onDropCanvas(e)} onDragOver={onDragOver}
+              <section onDrop={e => onDropCanvas(e)} onDragOver={onDragOver}
                        className="p-4 rounded-3xl border-2 border-dashed bg-white min-h-[240px]"
                        title="Tarik blok dari kiri ke area ini">
-                {steps.length === 0 && (<EmptyHint />)}
+                {steps.length === 0 ? <EmptyHint /> : null}
                 <div className="space-y-3">
                   {steps.map((s, i) => (
-                    <div key={s.id} draggable
-                         onDragStart={(e) => onDragStartStep(e, s.id)}
-                         onDragOver={(e) => onDragOver(e)}
-                         onDrop={(e) => onDropCanvas(e, i)}
+                    <div key={s.id} draggable onDragStart={(e) => onDragStartStep(e, s.id)}
+                         onDragOver={e => onDragOver(e)} onDrop={e => onDropCanvas(e, i)}
                          onClick={() => setSelectedId(s.id)}
                          className={`p-4 rounded-2xl border cursor-grab active:cursor-grabbing ${selectedId === s.id ? 'ring-2 ring-slate-900 border-slate-900' : 'bg-slate-50'}`}>
                       <div className="flex items-start gap-3">
@@ -250,16 +243,16 @@
                           <div className="flex items-center gap-2">
                             <input className="font-medium bg-transparent outline-none"
                                    value={s.title}
-                                   onChange={(e) => updateStep(s.id, { title: e.target.value })} />
+                                   onChange={e => updateStep(s.id, { title: e.target.value })} />
                             <span className="text-xs px-2 py-0.5 rounded-full border bg-white text-slate-600">{s.type}</span>
-                            {s.label && <span className="text-[10px] px-1.5 py-0.5 rounded border bg-white text-slate-500">label: {s.label}</span>}
+                            {s.label ? <span className="text-[10px] px-1.5 py-0.5 rounded border bg-white text-slate-500">label: {s.label}</span> : null}
                           </div>
                           <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
-                            <LabeledInput label="Assignee/Role" value={s.assignee} onChange={(v) => updateStep(s.id, { assignee: v })} placeholder="ops, admin, supervisor" />
-                            <LabeledNumber label="SLA (jam)" value={s.slaHours} onChange={(v) => updateStep(s.id, { slaHours: v })} />
+                            <LabeledInput label="Assignee/Role" value={s.assignee} onChange={v => updateStep(s.id, { assignee: v })} placeholder="ops, admin, supervisor" />
+                            <LabeledNumber label="SLA (jam)" value={s.slaHours} onChange={v => updateStep(s.id, { slaHours: v })} />
                             <ConfigBadge type={s.type} />
                           </div>
-                          <ConfigEditor step={s} onChange={(cfg) => updateStep(s.id, { config: cfg })} />
+                          <ConfigEditor step={s} onChange={cfg => updateStep(s.id, { config: cfg })} />
                         </div>
                         <button onClick={() => removeStep(s.id)} className="text-slate-500 hover:text-red-600">✕</button>
                       </div>
@@ -268,7 +261,6 @@
                 </div>
               </section>
 
-              {/* JSON Preview */}
               <section className="mt-6 p-4 rounded-3xl border bg-white">
                 <div className="flex items-center justify-between">
                   <div className="font-medium">Spesifikasi JSON (pratinjau)</div>
@@ -284,138 +276,165 @@
       );
     }
 
-    // ===== Helpers & Subcomponents =====
-    function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''); }
-    function now(){ const d=new Date(); return d.toLocaleTimeString(); }
-    function iconFor(t){ return t === 'Form' ? '📝' : t === 'Task' ? '✅' : t === 'Approval' ? '🛂' : t === 'AutoAction' ? '⚙️' : t === 'Wait' ? '⏳' : t === 'Router' ? '🔀' : '🔔'; }
+    function slugify(s) {
+      return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    }
+    function now() {
+      const d = new Date();
+      return d.toLocaleTimeString();
+    }
+    function iconFor(t) {
+      return t === 'Form' ? '📝' : t === 'Task' ? '✅' : t === 'Approval' ? '🛂' : t === 'AutoAction' ? '⚙️' : t === 'Wait' ? '⏳' : t === 'Router' ? '🔀' : '🔔';
+    }
 
     function LabeledInput({ label, value, onChange, placeholder }) {
       return (
-        <label className="text-xs text-slate-600">{label}
-          <input className="mt-1 w-full px-3 py-2 rounded-xl border bg-white" value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+        <label className="text-xs text-slate-600">
+          {label}
+          <input className="mt-1 w-full px-3 py-2 rounded-xl border bg-white" value={value} placeholder={placeholder}
+                 onChange={e => onChange(e.target.value)} />
         </label>
       );
     }
     function LabeledNumber({ label, value, onChange }) {
       return (
-        <label className="text-xs text-slate-600">{label}
-          <input type="number" className="mt-1 w-full px-3 py-2 rounded-xl border bg-white" value={value} min={0} onChange={(e) => onChange(Number(e.target.value))} />
+        <label className="text-xs text-slate-600">
+          {label}
+          <input type="number" className="mt-1 w-full px-3 py-2 rounded-xl border bg-white" value={value} min={0}
+                 onChange={e => onChange(Number(e.target.value))} />
         </label>
       );
     }
-    function ConfigBadge({ type }){
+    function ConfigBadge({ type }) {
       const text = type === 'AutoAction' ? 'Webhook/API' : type === 'Router' ? 'IF/ELSE' : type === 'Wait' ? 'Timer' : type === 'Notify' ? 'Messaging' : 'General';
-      return <div className="text-xs px-2 py-2 rounded-xl border bg-white text-slate-600">{text}</div>;
+      return (
+        <div className="text-xs px-2 py-2 rounded-xl border bg-white text-slate-600">{text}</div>
+      );
     }
 
-    function ConfigEditor({ step, onChange }){
+    function ConfigEditor({ step, onChange }) {
       const { type, config } = step;
       if (type === 'Form') return (
         <div className="mt-3">
           <div className="text-xs text-slate-500">Field Form</div>
           {(config.fields || []).map((f, idx) => (
             <div key={idx} className="mt-2 grid grid-cols-3 gap-2">
-              <LabeledInput label="Nama" value={f.name} onChange={(v)=>updateField(idx,{...f,name:v})} />
-              <LabeledInput label="Tipe" value={f.type} onChange={(v)=>updateField(idx,{...f,type:v})} />
-              <label className="text-xs text-slate-600 flex items-end"><input type="checkbox" className="mr-2" checked={!!f.required} onChange={(e)=>updateField(idx,{...f,required:e.target.checked})} /> Wajib</label>
+              <LabeledInput label="Nama" value={f.name} onChange={v => updateField(idx, { ...f, name: v })} />
+              <LabeledInput label="Tipe" value={f.type} onChange={v => updateField(idx, { ...f, type: v })} />
+              <label className="text-xs text-slate-600 flex items-end">
+                <input type="checkbox" className="mr-2" checked={!!f.required}
+                       onChange={e => updateField(idx, { ...f, required: e.target.checked })} /> Wajib
+              </label>
             </div>
           ))}
           <div className="mt-2 flex gap-2">
-            <button className="px-3 py-2 rounded-xl border" onClick={()=>onChange({ ...config, fields: [...(config.fields||[]), { name: "field_baru", type: "text", required: false }] })}>Tambah Field</button>
-            <button className="px-3 py-2 rounded-xl border" onClick={()=>onChange({ ...config, fields: [] })}>Reset</button>
+            <button className="px-3 py-2 rounded-xl border"
+                    onClick={() => onChange({ ...config, fields: [...(config.fields || []), { name: "field_baru", type: "text", required: false }] })}>
+              Tambah Field
+            </button>
+            <button className="px-3 py-2 rounded-xl border" onClick={() => onChange({ ...config, fields: [] })}>
+              Reset
+            </button>
           </div>
         </div>
       );
       if (type === 'AutoAction') return (
         <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
-          <LabeledInput label="URL" value={config.url||''} onChange={(v)=>onChange({ ...config, url: v })} />
-          <LabeledInput label="Method" value={config.method||'POST'} onChange={(v)=>onChange({ ...config, method: v })} />
-          <LabeledInput label="Action" value={config.action||'webhook'} onChange={(v)=>onChange({ ...config, action: v })} />
+          <LabeledInput label="URL" value={config.url || ''} onChange={v => onChange({ ...config, url: v })} />
+          <LabeledInput label="Method" value={config.method || 'POST'} onChange={v => onChange({ ...config, method: v })} />
+          <LabeledInput label="Action" value={config.action || 'webhook'} onChange={v => onChange({ ...config, action: v })} />
         </div>
       );
       if (type === 'Wait') return (
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <LabeledNumber label="Durasi" value={config.duration||0} onChange={(v)=>onChange({ ...config, duration: v })} />
-          <LabeledInput label="Unit" value={config.unit||'hours'} onChange={(v)=>onChange({ ...config, unit: v })} />
+          <LabeledNumber label="Durasi" value={config.duration || 0} onChange={v => onChange({ ...config, duration: v })} />
+          <LabeledInput label="Unit" value={config.unit || 'hours'} onChange={v => onChange({ ...config, unit: v })} />
         </div>
       );
       if (type === 'Router') return (
         <div className="mt-3">
           <div className="text-xs text-slate-500">Aturan Cabang</div>
-          {(config.rules||[]).map((r, idx) => (
+          {(config.rules || []).map((r, idx) => (
             <div key={idx} className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-2">
-              <LabeledInput label="IF" value={r.if} onChange={(v)=>updateRule(idx,{...r,if:v})} />
-              <LabeledInput label="GoTo (label)" value={r.goTo} onChange={(v)=>updateRule(idx,{...r,goTo:v})} />
-              <button className="self-end px-3 py-2 rounded-xl border" onClick={()=>removeRule(idx)}>Hapus</button>
+              <LabeledInput label="IF" value={r.if} onChange={v => updateRule(idx, { ...r, if: v })} />
+              <LabeledInput label="GoTo (label)" value={r.goTo} onChange={v => updateRule(idx, { ...r, goTo: v })} />
+              <button className="self-end px-3 py-2 rounded-xl border" onClick={() => removeRule(idx)}>
+                Hapus
+              </button>
             </div>
           ))}
-          <button className="mt-2 px-3 py-2 rounded-xl border" onClick={()=>onChange({ ...config, rules: [...(config.rules||[]), { if: "", goTo: "" }] })}>Tambah Rule</button>
+          <button className="mt-2 px-3 py-2 rounded-xl border" onClick={() => onChange({ ...config, rules: [...(config.rules || []), { if: "", goTo: "" }] })}>
+            Tambah Rule
+          </button>
         </div>
       );
       if (type === 'Notify') return (
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <LabeledInput label="Channel" value={config.channel||'email'} onChange={(v)=>onChange({ ...config, channel: v })} />
-          <LabeledInput label="Template" value={config.template||''} onChange={(v)=>onChange({ ...config, template: v })} />
+          <LabeledInput label="Channel" value={config.channel || 'email'} onChange={v => onChange({ ...config, channel: v })} />
+          <LabeledInput label="Template" value={config.template || ''} onChange={v => onChange({ ...config, template: v })} />
         </div>
       );
       if (type === 'Task') return (
         <div className="mt-3">
           <div className="text-xs text-slate-500">Checklist</div>
-          {(config.checklist||[]).map((c, idx) => (
+          {(config.checklist || []).map((c, idx) => (
             <div key={idx} className="mt-2 grid grid-cols-5 gap-2">
-              <div className="col-span-4"><LabeledInput label={`Item ${idx+1}`} value={c} onChange={(v)=>updateChecklist(idx, v)} /></div>
-              <button className="self-end px-3 py-2 rounded-xl border" onClick={()=>removeChecklist(idx)}>Hapus</button>
+              <div className="col-span-4"><LabeledInput label={`Item ${idx+1}`} value={c} onChange={v => updateChecklist(idx, v)} /></div>
+              <button className="self-end px-3 py-2 rounded-xl border" onClick={() => removeChecklist(idx)}>
+                Hapus
+              </button>
             </div>
           ))}
-          <button className="mt-2 px-3 py-2 rounded-xl border" onClick={()=>onChange({ ...config, checklist: [...(config.checklist||[]), "Item baru"] })}>Tambah Item</button>
+          <button className="mt-2 px-3 py-2 rounded-xl border" onClick={() => onChange({ ...config, checklist: [...(config.checklist || []), "Item baru"] })}>
+            Tambah Item
+          </button>
         </div>
       );
       if (type === 'Approval') return (
         <div className="mt-3">
           <div className="text-xs text-slate-500">Peran pemberi persetujuan</div>
           <div className="grid grid-cols-5 gap-2">
-            <div className="col-span-4"><LabeledInput label="Roles (comma-separated)" value={(config.roles||[]).join(', ')} onChange={(v)=>onChange({ ...config, roles: v.split(',').map(s=>s.trim()).filter(Boolean) })} /></div>
-            <LabeledNumber label="Minimal Approver" value={config.threshold||1} onChange={(v)=>onChange({ ...config, threshold: v })} />
+            <div className="col-span-4"><LabeledInput label="Roles (comma-separated)" value={(config.roles||[]).join(', ')} onChange={v => onChange({ ...config, roles: v.split(',').map(s => s.trim()).filter(Boolean) })} /></div>
+            <LabeledNumber label="Minimal Approver" value={config.threshold || 1} onChange={v => onChange({ ...config, threshold: v })} />
           </div>
         </div>
       );
       return null;
 
-      // Helpers (scoped)
-      function updateField(idx, next){ const fields = [...(config.fields||[])]; fields[idx] = next; onChange({ ...config, fields }); }
-      function updateRule(idx, next){ const rules = [...(config.rules||[])]; rules[idx] = next; onChange({ ...config, rules }); }
-      function removeRule(idx){ const rules = [...(config.rules||[])]; rules.splice(idx,1); onChange({ ...config, rules }); }
-      function updateChecklist(idx, val){ const list = [...(config.checklist||[])]; list[idx] = val; onChange({ ...config, checklist: list }); }
-      function removeChecklist(idx){ const list = [...(config.checklist||[])]; list.splice(idx,1); onChange({ ...config, checklist: list }); }
+      function updateField(idx, next) { const f = [...(config.fields || [])]; f[idx] = next; onChange({ ...config, fields: f }); }
+      function updateRule(idx, next) { const r = [...(config.rules || [])]; r[idx] = next; onChange({ ...config, rules: r }); }
+      function removeRule(idx) { const r = [...(config.rules || [])]; r.splice(idx, 1); onChange({ ...config, rules: r }); }
+      function updateChecklist(idx, val) { const c = [...(config.checklist || [])]; c[idx] = val; onChange({ ...config, checklist: c }); }
+      function removeChecklist(idx) { const c = [...(config.checklist || [])]; c.splice(idx, 1); onChange({ ...config, checklist: c }); }
     }
 
-    function TipsCard(){
+    function TipsCard() {
       return (
         <div className="mt-6 p-4 rounded-2xl border bg-white">
           <div className="font-medium">Tips cepat</div>
           <ul className="mt-2 text-sm text-slate-600 list-disc pl-5 space-y-1">
             <li>Tarik blok ke kanvas untuk menambah langkah.</li>
             <li>Klik kartu untuk mengedit judul, assignee, SLA, dan konfigurasi.</li>
-            <li>Seret kartu untuk menyusun ulang urutan.</li>
-            <li>Gunakan <span className="font-medium">Load Template Rental Mobil</span> lalu jalankan <span className="font-medium">Simulator</span>.</li>
+            <li>Seret kartu untuk menyusun ulang.</li>
+            <li>Gunakan <span className="font-medium">Load Template Rental Mobil</span> lalu jalankan <span class="font-medium">Simulator</span>.</li>
             <li>Export JSON untuk dipakai di backend/eksekutor.</li>
           </ul>
         </div>
       );
     }
-    function EmptyHint(){
+
+    function EmptyHint() {
       return (
         <div className="grid place-items-center py-10 text-center text-slate-500">
           <div>
             <div className="text-4xl">🧩</div>
             <div className="mt-2 font-medium">Tarik blok dari kiri untuk mulai membuat alur</div>
-            <div className="text-sm">Atau klik <span className="font-semibold">Load Template Rental Mobil</span> untuk contoh.</div>
+            <div className="text-sm">Atau klik <span class="font-semibold">Load Template Rental Mobil</span> untuk contoh.</div>
           </div>
         </div>
       );
     }
 
-    // Mount
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<NafsFlowBuilder />);
   </script>
