@@ -1,0 +1,44 @@
+name: Build & Deploy /react/vite
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'react/vite/**'
+      - '.github/workflows/deploy-react-vite.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: react/vite/package.json
+
+      - name: Install deps
+        working-directory: react/vite
+        run: npm ci
+
+      - name: Build
+        working-directory: react/vite
+        run: npm run build
+
+      - name: Copy dist → /react/vite (overwrite)
+        run: |
+          rsync -av --delete react/vite/dist/ react/vite/
+
+      - name: Commit build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "deploy: update /react/vite build" || echo "no changes"
+          git push
