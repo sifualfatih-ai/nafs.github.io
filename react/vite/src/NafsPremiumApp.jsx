@@ -767,48 +767,51 @@ function NafsPremiumApp() {
               <ContentPlaceholder current={active} />
             )}
 
-            <div className="border-t border-white/10 p-3">
-              <div className="flex flex-col lg:flex-row items-stretch gap-3">
-                <div className="w-full lg:w-72">
-                  <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
-                </div>
+            {/* Footer chat hanya tampil di halaman Chat */}
+            {active === "Chat" && (
+              <div className="border-t border-white/10 p-3">
+                <div className="flex flex-col lg:flex-row items-stretch gap-3">
+                  <div className="w-full lg:w-72">
+                    <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
+                  </div>
 
-                <div className="flex-1 grid grid-cols-1">
-                  <div
-                    className={`rounded-xl border border-white/10 p-3 text-sm ${
-                      isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
-                    }`}
-                  >
-                    {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
+                  <div className="flex-1 grid grid-cols-1">
+                    <div
+                      className={`rounded-xl border border-white/10 p-3 text-sm ${
+                        isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
+                      }`}
+                    >
+                      {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
+                    </div>
+                  </div>
+
+                  {/* Tombol Login/Mulai Chat di footer */}
+                  <div className="w-full lg:w-auto grid place-items-center">
+                    {!isLoggedIn ? (
+                      <a
+                        href={LOGIN_URL}
+                        className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                      >
+                        🔐 Login untuk Menggunakan Chat
+                      </a>
+                    ) : (
+                      <a
+                        href="#"
+                        onClick={(e) => e.preventDefault()}
+                        className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                      >
+                        💬 Mulai Chat
+                      </a>
+                    )}
                   </div>
                 </div>
 
-                {/* Tombol Login/Mulai Chat di footer */}
-                <div className="w-full lg:w-auto grid place-items-center">
-                  {!isLoggedIn ? (
-                    <a
-                      href={LOGIN_URL}
-                      className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
-                    >
-                      🔐 Login untuk Menggunakan Chat
-                    </a>
-                  ) : (
-                    <a
-                      href="#"
-                      onClick={(e) => e.preventDefault()}
-                      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
-                    >
-                      💬 Mulai Chat
-                    </a>
-                  )}
+                <div className="mt-2 flex items-center gap-2 text-[11px] text-white/50">
+                  <span>🪄</span>
+                  <span>{isLoggedIn ? "Anda sudah login Premium." : "Berlangganan diperlukan untuk akses penuh."}</span>
                 </div>
               </div>
-
-              <div className="mt-2 flex items-center gap-2 text-[11px] text-white/50">
-                <span>🪄</span>
-                <span>{isLoggedIn ? "Anda sudah login Premium." : "Berlangganan diperlukan untuk akses penuh."}</span>
-              </div>
-            </div>
+            )}
           </main>
         </div>
       </div>
