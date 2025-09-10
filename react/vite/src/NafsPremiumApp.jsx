@@ -6,6 +6,11 @@ const HOMEPAGE_URL = BASE;
 const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;
 const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;
 
+/* ---- KONFIG API PROXY (Railway) ---- */
+const API_BASE = "https://nafsgithubio-production.up.railway.app"; // ganti jika domain service kamu berbeda
+const DEFAULT_MODEL = "openai/gpt-4o-mini";
+const TENANT_ID = "public";
+
 /* ==== UI KOMPONEN ==== */
 function Badge({ children }) {
   return (
@@ -75,12 +80,12 @@ function Field({ label, children, hint }) {
   );
 }
 
-function GhostInput({ as = "input", ...rest }) {
+function GhostInput({ as = "input", className = "", ...rest }) {
   const C = as;
   return (
     <C
       {...rest}
-      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400/30"
+      className={`w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400/30 ${className}`}
     />
   );
 }
@@ -241,12 +246,6 @@ function GenerateVideoView({ isLoggedIn, model, setModel, loginUrl }) {
         <div className="h-full min-h-[360px] rounded-xl bg-black/40 border border-white/10 overflow-hidden">
           <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">
             Hasil
-          </div>
-          <div className="h-[calc(100%-40px)] grid place-items-center text-center p-6">
-            <div>
-              <div className="text-4xl text-white/50">📹</div>
-              <p className="mt-2 text-xs text-white/50">Hasil video Anda akan muncul di sini.</p>
-            </div>
           </div>
         </div>
       </div>
@@ -540,20 +539,15 @@ function IklanProdukView({ isLoggedIn, loginUrl }) {
 
 /* ===== Tampilan khusus: Canvas AI (UI saja) ===== */
 function CanvasAIView() {
-  // Tampilan mengikuti referensi: area kanvas besar di kanan + panel chat mengambang kiri bawah
   return (
     <div className="relative flex-1 p-4">
       <div className="grid grid-cols-1 lg:grid-cols-[420px_minmax(0,1fr)] gap-4 h-full">
-        {/* Kolom kiri: hanya untuk ruang kosong & panel chat di bawah */}
         <div className="relative">
-          {/* Chat mini fixed di kiri bawah (dalam area view) */}
           <div className="absolute left-0 bottom-0">
             <div className="flex items-end gap-3">
-              {/* kotak chat */}
               <div className="rounded-2xl bg-white/90 text-black shadow-2xl w-[320px] h-[120px] overflow-hidden">
                 <div className="w-full h-full"></div>
               </div>
-              {/* bar samping kecil */}
               <div className="h-[120px] w-5 rounded-2xl bg-black/40 shadow" />
             </div>
             <div className="mt-2 flex items-center justify-between">
@@ -565,20 +559,15 @@ function CanvasAIView() {
           </div>
         </div>
 
-        {/* Kolom kanan: kanvas utama */}
         <div className="rounded-3xl border border-white/10 bg-white/5 h-[72vh] lg:h-[76vh] overflow-hidden flex flex-col">
-          {/* header tab (Kode/Pratinjau) */}
           <div className="p-3">
             <div className="ml-auto w-fit rounded-full bg-[#30184f] px-1 py-1 flex gap-1">
               <button className="px-3 py-1 text-[12px] rounded-full bg-[#4a3168] text-white/80">Kode</button>
               <button className="px-3 py-1 text-[12px] rounded-full bg-white text-black">Pratinjau</button>
             </div>
           </div>
-          {/* area pratinjau */}
           <div className="flex-1 bg-white/90 m-3 rounded-2xl grid place-items-center">
-            <div className="text-[13px] text-black/70">
-              Tampilan kode HTML di kolom ini
-            </div>
+            <div className="text-[13px] text-black/70">Tampilan kode HTML di kolom ini</div>
           </div>
         </div>
       </div>
@@ -592,9 +581,45 @@ function NafsPremiumApp() {
   const [model, setModel] = React.useState("Gemini 2.5 Flash");
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
+  // ==== state untuk fitur Chat minimal ====
+  const [chatText, setChatText] = React.useState("");
+  const [chatReply, setChatReply] = React.useState("");
+  const [chatLoading, setChatLoading] = React.useState(false);
+
   React.useEffect(() => {
     setIsLoggedIn(localStorage.getItem("nafs_isLoggedIn") === "1");
   }, []);
+
+  async function sendChat() {
+    if (!chatText.trim()) return;
+    setChatLoading(true);
+    try {
+      const resp = await fetch(`${API_BASE}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-tenant-id": TENANT_ID
+        },
+        body: JSON.stringify({
+          model: DEFAULT_MODEL,        // sementara pakai default proxy
+          stream: false,
+          messages: [
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user",   content: chatText.trim() }
+          ]
+        })
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      const content = data?.choices?.[0]?.message?.content ?? "(no content)";
+      setChatReply(content);
+    } catch (e) {
+      console.error(e);
+      setChatReply("❌ Gagal memanggil API.");
+    } finally {
+      setChatLoading(false);
+    }
+  }
 
   const items = [
     { label: "Chat", icon: "💬" },
@@ -767,48 +792,57 @@ function NafsPremiumApp() {
               <ContentPlaceholder current={active} />
             )}
 
-            {/* Footer chat hanya tampil di halaman Chat */}
+            {/* ====== FOOTER: CHAT (hanya saat tab Chat) ====== */}
             {active === "Chat" && (
               <div className="border-t border-white/10 p-3">
-                <div className="flex flex-col lg:flex-row items-stretch gap-3">
-                  <div className="w-full lg:w-72">
-                    <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
+                <div className="grid gap-3">
+                  {/* Output / jawaban */}
+                  <div className="rounded-xl border border-white/10 p-3 bg-white/10 text-white/90 min-h-[88px] whitespace-pre-wrap">
+                    {chatReply || "— belum ada balasan —"}
                   </div>
 
-                  <div className="flex-1 grid grid-cols-1">
-                    <div
-                      className={`rounded-xl border border-white/10 p-3 text-sm ${
-                        isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
-                      }`}
-                    >
-                      {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
+                  {/* Bar input + model + tombol */}
+                  <div className="flex flex-col lg:flex-row items-stretch gap-3">
+                    <div className="w-full lg:w-72">
+                      <ModelSelect value={model} onChange={setModel} disabled />
+                      <div className="text-[11px] text-white/40 mt-1">Untuk demo, model diset ke {DEFAULT_MODEL} via proxy</div>
+                    </div>
+
+                    <div className="flex-1">
+                      <GhostInput
+                        placeholder={isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
+                        value={chatText}
+                        onChange={(e)=>setChatText(e.target.value)}
+                        onKeyDown={(e)=>{ if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); isLoggedIn && sendChat(); } }}
+                        disabled={!isLoggedIn || chatLoading}
+                        className="bg-white/10"
+                      />
+                    </div>
+
+                    <div className="w-full lg:w-auto grid place-items-center">
+                      {!isLoggedIn ? (
+                        <a
+                          href={LOGIN_URL}
+                          className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                        >
+                          🔐 Login untuk Menggunakan Chat
+                        </a>
+                      ) : (
+                        <button
+                          onClick={sendChat}
+                          disabled={chatLoading}
+                          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg disabled:opacity-60"
+                        >
+                          {chatLoading ? "Mengirim…" : "💬 Kirim"}
+                        </button>
+                      )}
                     </div>
                   </div>
 
-                  {/* Tombol Login/Mulai Chat di footer */}
-                  <div className="w-full lg:w-auto grid place-items-center">
-                    {!isLoggedIn ? (
-                      <a
-                        href={LOGIN_URL}
-                        className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
-                      >
-                        🔐 Login untuk Menggunakan Chat
-                      </a>
-                    ) : (
-                      <a
-                        href="#"
-                        onClick={(e) => e.preventDefault()}
-                        className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
-                      >
-                        💬 Mulai Chat
-                      </a>
-                    )}
+                  <div className="mt-1 flex items-center gap-2 text-[11px] text-white/50">
+                    <span>🪄</span>
+                    <span>{isLoggedIn ? "Anda sudah login Premium." : "Berlangganan diperlukan untuk akses penuh."}</span>
                   </div>
-                </div>
-
-                <div className="mt-2 flex items-center gap-2 text-[11px] text-white/50">
-                  <span>🪄</span>
-                  <span>{isLoggedIn ? "Anda sudah login Premium." : "Berlangganan diperlukan untuk akses penuh."}</span>
                 </div>
               </div>
             )}
