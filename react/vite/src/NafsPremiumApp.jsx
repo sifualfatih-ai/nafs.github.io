@@ -1,4 +1,6 @@
 /* ===================== IMPORTS ===================== */
+import React from "react"; // <-- tambahkan ini
+
 // komponen kecil & input
 import { Badge, SideItem, SectionTitle, GhostInput } from "./components/Common.jsx";
 
