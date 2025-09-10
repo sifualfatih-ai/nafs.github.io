@@ -23,16 +23,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: react/vite/package-lock.json
 
       - name: Install deps
         working-directory: react/vite
-        run: npm ci
+        run: npm install --no-fund --no-audit
 
       - name: Build
         working-directory: react/vite
         run: npm run build
+
+      - name: Verify dist
+        run: |
+          if [ ! -d "react/vite/dist" ]; then
+            echo "❌ Build gagal: folder react/vite/dist tidak ditemukan."
+            exit 1
+          fi
+          ls -la react/vite/dist
 
       - name: Copy dist → /react/vite (overwrite)
         run: |
