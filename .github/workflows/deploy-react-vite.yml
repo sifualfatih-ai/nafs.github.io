@@ -32,19 +32,21 @@ jobs:
         working-directory: react/vite
         run: npm run build
 
-      - name: Verify dist
+      - name: Show dist (debug)
         run: |
-          if [ ! -d "react/vite/dist" ]; then
-            echo "❌ Build gagal: folder react/vite/dist tidak ditemukan."
-            exit 1
-          fi
+          echo "=== DIST LISTING ==="
           ls -la react/vite/dist
+          echo "=== DIST ASSETS ==="
+          ls -la react/vite/dist/assets || true
 
-     - name: Copy dist → /react/vite (overwrite)
-  run: |
-    rm -rf react/vite/assets
-    rm -f  react/vite/index.html
-    cp -a react/vite/dist/. react/vite/
+      - name: Copy dist → /react/vite (overwrite)
+        run: |
+          rm -rf react/vite/assets
+          rm -f  react/vite/index.html
+          cp -a react/vite/dist/. react/vite/
+          echo "=== DEST AFTER COPY ==="
+          ls -la react/vite
+          ls -la react/vite/assets
 
       - name: Commit build output
         run: |
