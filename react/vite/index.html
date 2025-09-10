@@ -1,43 +1,12 @@
 <!doctype html>
 <html lang="id">
   <head>
-  
-    <link rel="icon" sizes="any" href="nafsweb.ico">
-    <link rel="icon" type="image/x-icon" href="nafsweb.ico">
-    <link rel="shortcut icon" href="nafsweb.ico">
-    <link rel="apple-touch-icon" href="nafsweb.ico">
-    
-    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nafs Premium</title>
-    <!-- Tailwind (tanpa instalasi) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5W7VXFV146"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5W7VXFV146');
-</script>
-
-    
   </head>
-  <body class="bg-[#0c0516]">
+  <body>
     <div id="root"></div>
-
-    <!-- React + ReactDOM CDN -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- Babel untuk baca JSX langsung di browser -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- Urutan penting: komponen -> App -> main -->
-    <script type="text/babel" src="src/NafsPremiumApp.jsx"></script>
-    <script type="text/babel" src="src/App.jsx"></script>
-    <script type="text/babel" src="src/main.jsx"></script>
+    <script type="module" src="/react/vite/src/main.jsx"></script>
   </body>
 </html>
