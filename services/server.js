@@ -9,7 +9,10 @@ const PORT = process.env.PORT || 8787;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_REFERER = process.env.OPENROUTER_REFERER || 'https://your-domain.example';
 const OPENROUTER_TITLE = process.env.OPENROUTER_TITLE || 'Your App Name';
+
+// CORS: dukung banyak origin dipisah koma (mis: "https://nafsflow.com,https://nafs.github.io")
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || '*';
+const ALLOWED_ORIGINS = FRONTEND_ORIGIN.split(',').map(s => s.trim()).filter(Boolean);
 
 // Per-tenant controls
 const TENANT_HEADER = process.env.TENANT_HEADER || 'x-tenant-id';
@@ -24,7 +27,16 @@ if (!OPENROUTER_API_KEY) {
 const app = express();
 app.use(express.json({ limit: '3mb' }));
 app.use(morgan('tiny'));
-app.use(cors({ origin: FRONTEND_ORIGIN, credentials: true }));
+
+// CORS middleware
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // non-browser / curl
+    const ok = ALLOWED_ORIGINS.includes('*') || ALLOWED_ORIGINS.includes(origin);
+    cb(ok ? null : new Error('Not allowed by CORS'), ok);
+  },
+  credentials: true
+}));
 
 // === In-memory rate/quota (swap to Redis in production) ===
 const buckets = new Map(); // tenant => { minuteWindowStart, countInWindow, dayStart, dailyCount }
@@ -99,20 +111,23 @@ app.post('/api/chat', async (req, res) => {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': OPENROUTER_REFERER,
-        'X-Title': OPENROUTER_TITLE
+        'X-Title': OPENROUTER_TITLE,
+        'Accept-Encoding': 'identity' // hindari kompresi upstream
       },
       body: JSON.stringify(body)
     });
 
     res.status(resp.status);
+    // hanya teruskan header aman; skip encoding & length agar browser tidak salah decoding
     for (const [k, v] of resp.headers) {
       const kl = k.toLowerCase();
       if (kl.startsWith('content-') || kl.startsWith('transfer-')) {
+        if (kl === 'content-encoding' || kl === 'content-length') continue;
         res.setHeader(k, v);
       }
     }
 
-    // stream passthrough
+    // Streaming passthrough bila tersedia
     if (resp.body && resp.body.getReader) {
       const reader = resp.body.getReader();
       while (true) {
@@ -123,7 +138,7 @@ app.post('/api/chat', async (req, res) => {
       return res.end();
     }
 
-    // non-stream
+    // Fallback non-stream
     const text = await resp.text();
     res.send(text);
   } catch (err) {
@@ -146,11 +161,22 @@ app.post('/api/openrouter/*', async (req, res) => {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': OPENROUTER_REFERER,
-        'X-Title': OPENROUTER_TITLE
+        'X-Title': OPENROUTER_TITLE,
+        'Accept-Encoding': 'identity'
       },
       body: JSON.stringify(req.body || {})
     });
-    res.status(resp.status).set('Content-Type', resp.headers.get('content-type') || 'application/json');
+
+    res.status(resp.status);
+    const ct = resp.headers.get('content-type') || 'application/json';
+    res.setHeader('Content-Type', ct);
+    for (const [k, v] of resp.headers) {
+      const kl = k.toLowerCase();
+      if (kl.startsWith('content-') || kl.startsWith('transfer-')) {
+        if (kl === 'content-encoding' || kl === 'content-length') continue;
+        res.setHeader(k, v);
+      }
+    }
     const text = await resp.text();
     res.send(text);
   } catch (e) {
