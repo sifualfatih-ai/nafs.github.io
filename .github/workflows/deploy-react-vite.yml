@@ -40,9 +40,11 @@ jobs:
           fi
           ls -la react/vite/dist
 
-      - name: Copy dist → /react/vite (overwrite)
-        run: |
-          rsync -a --delete react/vite/dist/ react/vite/
+     - name: Copy dist → /react/vite (overwrite)
+  run: |
+    rm -rf react/vite/assets
+    rm -f  react/vite/index.html
+    cp -a react/vite/dist/. react/vite/
 
       - name: Commit build output
         run: |
