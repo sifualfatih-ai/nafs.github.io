@@ -129,6 +129,8 @@ function GenerateImageView({ isLoggedIn, model, setModel, loginUrl }) {
               <GhostInput as="textarea" rows={2} placeholder="e.g., blurry, low quality, text" disabled={!isLoggedIn} />
             </Field>
 
+            {/* (biarkan pemilihan model diatur otomatis oleh API key) */}
+            {/* ModelSelect di view ini tetap ada sesuai kode asli; tidak diubah */}
             <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
 
             <Field label="Aspect Ratio">
@@ -618,6 +620,7 @@ function NafsPremiumApp() {
       setChatReply("❌ Gagal memanggil API.");
     } finally {
       setChatLoading(false);
+      setChatText("");                 // ← BERSIHKAN INPUT SETELAH EKSEKUSI
     }
   }
 
@@ -801,19 +804,15 @@ function NafsPremiumApp() {
                     {chatReply || "— belum ada balasan —"}
                   </div>
 
-                  {/* Bar input + model + tombol */}
+                  {/* Bar input + tombol (blok Model DIHAPUS) */}
                   <div className="flex flex-col lg:flex-row items-stretch gap-3">
-                    <div className="w-full lg:w-72">
-                      <ModelSelect value={model} onChange={setModel} disabled />
-                      <div className="text-[11px] text-white/40 mt-1">Untuk demo, model diset ke {DEFAULT_MODEL} via proxy</div>
-                    </div>
-
                     <div className="flex-1">
                       <GhostInput
+                        as="textarea"                 // ← textarea supaya bisa enter baris baru
+                        rows={4}
                         placeholder={isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
                         value={chatText}
                         onChange={(e)=>setChatText(e.target.value)}
-                        onKeyDown={(e)=>{ if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); isLoggedIn && sendChat(); } }}
                         disabled={!isLoggedIn || chatLoading}
                         className="bg-white/10"
                       />
