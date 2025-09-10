@@ -64,6 +64,28 @@ function ModelSelect({ value, onChange, disabled }) {
   );
 }
 
+/* === komponen bantu UI untuk tampilan Generate Image === */
+function Field({ label, children, hint }) {
+  return (
+    <div className="space-y-1">
+      <label className="text-xs text-white/60">{label}</label>
+      {children}
+      {hint && <p className="text-[11px] text-white/40">{hint}</p>}
+    </div>
+  );
+}
+
+function GhostInput({ as = "input", ...rest }) {
+  const C = as;
+  return (
+    <C
+      {...rest}
+      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400/30"
+    />
+  );
+}
+
+/* ===== Placeholder default untuk tab lain ===== */
 function ContentPlaceholder({ current }) {
   return (
     <div className="flex-1 grid place-items-center">
@@ -77,6 +99,80 @@ function ContentPlaceholder({ current }) {
   );
 }
 
+/* ===== Tampilan khusus: Generate Image (UI saja) ===== */
+function GenerateImageView({ isLoggedIn, model, setModel, loginUrl }) {
+  return (
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)]">
+      {/* panel kiri (form) */}
+      <div className="p-4 border-b lg:border-b-0 lg:border-r border-white/10 space-y-3">
+        <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3">
+          <div className="text-[13px] font-medium mb-3">Generate Image</div>
+
+          <div className="space-y-3">
+            <Field label="Gambar Referensi (Opsional)">
+              <div className="border border-dashed border-white/15 rounded-lg px-4 py-6 text-center bg-white/[0.02]">
+                <div className="text-white/60 text-xl">⬆️</div>
+                <div className="text-xs text-white/50 mt-1">Klik untuk unggah</div>
+              </div>
+            </Field>
+
+            <Field label="Prompt">
+              <GhostInput as="textarea" rows={4} placeholder="A cinematic shot of a lone astronaut..." disabled={!isLoggedIn} />
+            </Field>
+
+            <Field label="Negative Prompt (Opsional)">
+              <GhostInput as="textarea" rows={2} placeholder="e.g., blurry, low quality, text" disabled={!isLoggedIn} />
+            </Field>
+
+            <ModelSelect value={model} onChange={setModel} disabled={!isLoggedIn} />
+
+            <Field label="Aspect Ratio">
+              <div className="relative">
+                <GhostInput placeholder="9:16" disabled={!isLoggedIn} />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50">▾</span>
+              </div>
+            </Field>
+
+            <div className="flex gap-2 pt-1">
+              {isLoggedIn ? (
+                <button
+                  onClick={(e)=>e.preventDefault()}
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
+                >
+                  Generate
+                </button>
+              ) : (
+                <a
+                  href={loginUrl}
+                  className="relative z-50 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
+                >
+                  🔐 Login untuk Generate
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* panel kanan (hasil) */}
+      <div className="p-4">
+        <div className="h-full min-h-[360px] rounded-xl bg-black/40 border border-white/10 overflow-hidden">
+          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">
+            Hasil
+          </div>
+          <div className="h-[calc(100%-40px)] grid place-items-center text-center p-6">
+            <div>
+              <div className="text-4xl text-white/50">🖼️</div>
+              <p className="mt-2 text-xs text-white/50">Hasil gambar Anda akan muncul di sini.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ===================== APP ===================== */
 function NafsPremiumApp() {
   const [active, setActive] = React.useState("Chat");
   const [model, setModel] = React.useState("Gemini 2.5 Flash");
@@ -119,7 +215,6 @@ function NafsPremiumApp() {
           className="fixed inset-0 z-40"
           aria-hidden="true"
           title="Silakan login untuk mengakses semua fitur"
-          // transparan, cukup menangkap klik
           style={{ background: "transparent" }}
         />
       )}
@@ -182,7 +277,6 @@ function NafsPremiumApp() {
                     right={it.right}
                     active={active === it.label}
                     onClick={() => handleClick(it.label)}
-                    /* Saat belum login: semua menu dimmed */
                     dimmed={!isLoggedIn}
                   />
                 ))}
@@ -198,7 +292,6 @@ function NafsPremiumApp() {
                     right={it.right}
                     active={active === it.label}
                     onClick={() => handleClick(it.label)}
-                    /* Halaman Utama harus tetap bisa diklik => naikkan z-index */
                     elevate={!isLoggedIn && it.label === "Halaman Utama"}
                     dimmed={!isLoggedIn && it.label !== "Halaman Utama"}
                   />
@@ -219,7 +312,17 @@ function NafsPremiumApp() {
               </div>
             </div>
 
-            <ContentPlaceholder current={active} />
+            {/* === di sini kita tampilkan UI khusus jika tab "Generate Image" === */}
+            {active === "Generate Image" ? (
+              <GenerateImageView
+                isLoggedIn={isLoggedIn}
+                model={model}
+                setModel={setModel}
+                loginUrl={LOGIN_URL}
+              />
+            ) : (
+              <ContentPlaceholder current={active} />
+            )}
 
             <div className="border-t border-white/10 p-3">
               <div className="flex flex-col lg:flex-row items-stretch gap-3">
