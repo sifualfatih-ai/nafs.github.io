@@ -258,20 +258,13 @@ function GenerateVideoView({ isLoggedIn, model, setModel, loginUrl }) {
 function GenerateAudioView({ isLoggedIn, loginUrl }) {
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-[520px_minmax(0,1fr)]">
-      {/* panel kiri: naskah + aktor suara + pengaturan */}
+      {/* panel kiri */}
       <div className="p-4 border-b lg:border-b-0 lg:border-r border-white/10 space-y-4">
-        {/* 1. Tulis Naskah */}
         <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3">
           <div className="text-[13px] font-medium mb-2">1. Tulis Naskah Anda</div>
-          <GhostInput
-            as="textarea"
-            rows={7}
-            placeholder="Ketik atau tempel naskah voice over di sini…"
-            disabled={!isLoggedIn}
-          />
+          <GhostInput as="textarea" rows={7} placeholder="Ketik atau tempel naskah voice over di sini…" disabled={!isLoggedIn}/>
         </div>
 
-        {/* 2. Pilih Aktor Suara */}
         <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3">
           <div className="text-[13px] font-medium mb-2">2. Pilih Aktor Suara</div>
 
@@ -287,16 +280,12 @@ function GenerateAudioView({ isLoggedIn, loginUrl }) {
               <button
                 key={i}
                 disabled={!isLoggedIn}
-                className={`text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition ${
-                  !isLoggedIn && "opacity-60 cursor-not-allowed"
-                }`}
+                className={`text-left rounded-lg border border-white/10 p-3 bg-white/5 hover:bg-white/10 transition ${!isLoggedIn && "opacity-60 cursor-not-allowed"}`}
               >
                 <div className="text-sm font-medium">{v.name}</div>
                 <div className="text-[11px] text-white/60">{v.desc}</div>
                 <div className="mt-2">
-                  <span className="inline-block text-[11px] px-2 py-1 rounded bg-white/10 border border-white/10">
-                    🔊 Dengar Contoh
-                  </span>
+                  <span className="inline-block text-[11px] px-2 py-1 rounded bg-white/10 border border-white/10">🔊 Dengar Contoh</span>
                 </div>
               </button>
             ))}
@@ -305,38 +294,25 @@ function GenerateAudioView({ isLoggedIn, loginUrl }) {
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="text-xs text-white/60">Kecepatan Bicara</div>
             <div className="sm:col-span-2 flex items-center gap-3">
-              <input type="range" min="50" max="150" defaultValue="100" disabled={!isLoggedIn}
-                     className="w-full accent-fuchsia-500"/>
+              <input type="range" min="50" max="150" defaultValue="100" disabled={!isLoggedIn} className="w-full accent-fuchsia-500"/>
               <span className="text-xs text-white/70">1.00x</span>
             </div>
           </div>
 
           <div className="mt-3">
             {isLoggedIn ? (
-              <button
-                onClick={(e)=>e.preventDefault()}
-                className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
-              >
-                Generate Voice Over
-              </button>
+              <button onClick={(e)=>e.preventDefault()} className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">Generate Voice Over</button>
             ) : (
-              <a
-                href={loginUrl}
-                className="relative z-50 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
-              >
-                🔐 Silakan login untuk menggunakan fitur ini
-              </a>
+              <a href={loginUrl} className="relative z-50 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">🔐 Silakan login untuk menggunakan fitur ini</a>
             )}
           </div>
         </div>
       </div>
 
-      {/* panel kanan: hasil VO */}
+      {/* panel kanan */}
       <div className="p-4">
         <div className="h-full min-h-[360px] rounded-xl bg-black/40 border border-white/10 overflow-hidden">
-          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">
-            Hasil Voice Over
-          </div>
+          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">Hasil Voice Over</div>
           <div className="h-[calc(100%-40px)] grid place-items-center text-center p-6">
             <div>
               <div className="text-4xl text-white/50">🎙️</div>
@@ -351,26 +327,18 @@ function GenerateAudioView({ isLoggedIn, loginUrl }) {
 
 /* ===== Tampilan khusus: Promosi Produk (UI saja) ===== */
 function PromoProdukView({ isLoggedIn, loginUrl }) {
-  const vibeOptions = [
-    "Energetic & Fun",
-    "Cinematic & Epic",
-    "Modern & Clean",
-    "Natural & Organic",
-    "Tech & Futuristic",
-  ];
-  const lightOptions = ["Studio Light", "Dramatic", "Natural Light", "Neon"];
+  const vibeOptions = ["Energetic & Fun","Cinematic & Epic","Modern & Clean","Natural & Organic","Tech & Futuristic"];
+  const lightOptions = ["Studio Light","Dramatic","Natural Light","Neon"];
 
   return (
     <div className="flex-1 p-4">
       <div className="mb-3">
         <div className="text-xl font-semibold">Iklan Produk AI</div>
-        <div className="text-[12px] text-white/60">
-          Buat storyboard iklan video 6-scene dari satu gambar produk.
-        </div>
+        <div className="text-[12px] text-white/60">Buat storyboard iklan video 6-scene dari satu gambar produk.</div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)] gap-4">
-        {/* KIRI */}
+        {/* kiri */}
         <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3 space-y-4">
           <div>
             <div className="text-[13px] font-semibold mb-2">1. Unggah Produk</div>
@@ -386,58 +354,30 @@ function PromoProdukView({ isLoggedIn, loginUrl }) {
             <div className="text-[12px] text-white/60 mb-2">Vibe</div>
             <div className="grid grid-cols-2 gap-2 mb-3">
               {vibeOptions.map((v) => (
-                <button
-                  key={v}
-                  disabled={!isLoggedIn}
-                  className={`rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${
-                    !isLoggedIn && "opacity-60 cursor-not-allowed"
-                  }`}
-                >
-                  {v}
-                </button>
+                <button key={v} disabled={!isLoggedIn} className={`rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${!isLoggedIn && "opacity-60 cursor-not-allowed"}`}>{v}</button>
               ))}
             </div>
 
             <div className="text-[12px] text-white/60 mb-2">Pencahayaan</div>
             <div className="grid grid-cols-2 gap-2">
               {lightOptions.map((v) => (
-                <button
-                  key={v}
-                  disabled={!isLoggedIn}
-                  className={`rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${
-                    !isLoggedIn && "opacity-60 cursor-not-allowed"
-                  }`}
-                >
-                  {v}
-                </button>
+                <button key={v} disabled={!isLoggedIn} className={`rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${!isLoggedIn && "opacity-60 cursor-not-allowed"}`}>{v}</button>
               ))}
             </div>
 
             <div className="mt-4">
               {isLoggedIn ? (
-                <button
-                  onClick={(e)=>e.preventDefault()}
-                  className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
-                >
-                  Generate Konsep Iklan
-                </button>
+                <button onClick={(e)=>e.preventDefault()} className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">Generate Konsep Iklan</button>
               ) : (
-                <a
-                  href={loginUrl}
-                  className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
-                >
-                  🔐 Login untuk Generate
-                </a>
+                <a href={loginUrl} className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">🔐 Login untuk Generate</a>
               )}
             </div>
           </div>
         </div>
 
-        {/* KANAN */}
+        {/* kanan */}
         <div className="rounded-xl bg-white/[0.02] border border-white/10 overflow-hidden">
-          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">
-            Hasil Storyboard
-          </div>
+          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">Hasil Storyboard</div>
           <div className="min-h-[420px] grid place-items-center text-center p-6">
             <div>
               <div className="text-4xl text-white/50">🖼️</div>
@@ -460,10 +400,9 @@ function TiktokAffiliateView({ isLoggedIn, loginUrl }) {
   ];
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)]">
-      {/* Kiri */}
+      {/* kiri */}
       <div className="p-4 border-b lg:border-b-0 lg:border-r border-white/10 space-y-4">
         <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3 space-y-4">
-          {/* Unggah Produk */}
           <div>
             <div className="text-[13px] font-semibold mb-2">1. Unggah Produk</div>
             <div className="border border-dashed border-white/15 rounded-lg px-4 py-8 text-center bg-white/[0.02]">
@@ -472,69 +411,122 @@ function TiktokAffiliateView({ isLoggedIn, loginUrl }) {
             </div>
           </div>
 
-          {/* Pilih Model */}
           <div>
             <div className="text-[13px] font-semibold mb-2">2. Pilih Model</div>
             <div className="grid grid-cols-3 gap-2">
               {["Wanita","Pria","Kustom"].map((m)=>(
-                <button
-                  key={m}
-                  disabled={!isLoggedIn}
-                  className={`rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${
-                    !isLoggedIn && "opacity-60 cursor-not-allowed"
-                  }`}
-                >
-                  {m}
-                </button>
+                <button key={m} disabled={!isLoggedIn} className={`rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${!isLoggedIn && "opacity-60 cursor-not-allowed"}`}>{m}</button>
               ))}
             </div>
           </div>
 
-          {/* Pilih Vibe Konten */}
           <div>
             <div className="text-[13px] font-semibold mb-2">3. Pilih Vibe Konten</div>
             <div className="grid grid-cols-2 gap-2 max-h-[260px] overflow-auto pr-1">
               {vibeTags.map(tag=>(
-                <button
-                  key={tag}
-                  disabled={!isLoggedIn}
-                  className={`truncate rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${
-                    !isLoggedIn && "opacity-60 cursor-not-allowed"
-                  }`}
-                >
-                  {tag}
-                </button>
+                <button key={tag} disabled={!isLoggedIn} className={`truncate rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${!isLoggedIn && "opacity-60 cursor-not-allowed"}`}>{tag}</button>
               ))}
             </div>
           </div>
 
-          {/* Button */}
           <div>
             {isLoggedIn ? (
-              <button
-                onClick={(e)=>e.preventDefault()}
-                className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
-              >
-                Generate Gambar
-              </button>
+              <button onClick={(e)=>e.preventDefault()} className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">Generate Gambar</button>
             ) : (
-              <a
-                href={loginUrl}
-                className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
-              >
-                🔐 Silakan login untuk membuat konten
-              </a>
+              <a href={loginUrl} className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">🔐 Silakan login untuk membuat konten</a>
             )}
           </div>
         </div>
       </div>
 
-      {/* Kanan: Hasil */}
+      {/* kanan */}
       <div className="p-4">
         <div className="h-full min-h-[420px] rounded-xl bg-black/40 border border-white/10 overflow-hidden">
-          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">
-            Hasil
+          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">Hasil</div>
+          <div className="h-[calc(100%-40px)] grid place-items-center text-center p-6">
+            <div>
+              <div className="text-4xl text-white/50">🖼️</div>
+              <p className="mt-2 text-xs text-white/50">Hasil konten Anda akan muncul di sini.</p>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ===== Tampilan khusus: Iklan Produk (UI saja) ===== */
+function IklanProdukView({ isLoggedIn, loginUrl }) {
+  // daftar vibe sesuai referensi screenshot
+  const vibes = [
+    "Kontras+","Meja Marmer Mewah",
+    "Latar Batu Slate Gelap","Meja Kayu Rustic",
+    "Studio Minimalis","Garis Pasir Dramatis",
+    "Permukaan Air Tenang","Teras Lumut & Batu",
+    "Beton Industrial","Latar Gradien Halus",
+    "Bentuk Geometris","Kain Sutra & Satin"
+  ];
+
+  return (
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)]">
+      {/* panel kiri */}
+      <div className="p-4 border-b lg:border-b-0 lg:border-r border-white/10">
+        <div className="mb-3">
+          <div className="text-xl font-semibold">Foto Produk</div>
+          <div className="text-[12px] text-white/60">Buat konten UGC untuk produk tanpa model.</div>
+        </div>
+
+        <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3">
+          {/* Unggah */}
+          <div>
+            <div className="text-[13px] font-semibold mb-2">1. Unggah Produk</div>
+            <div className="border border-dashed border-white/15 rounded-lg px-4 py-8 text-center bg-white/[0.02]">
+              <div className="text-white/60 text-xl">⬆️</div>
+              <div className="text-xs text-white/50 mt-1">Klik untuk unggah</div>
+            </div>
+          </div>
+
+          {/* Vibe */}
+          <div className="mt-4">
+            <div className="text-[13px] font-semibold mb-2">2. Pilih Vibe Konten</div>
+            <div className="grid grid-cols-2 gap-2">
+              {vibes.map(v => (
+                <button
+                  key={v}
+                  disabled={!isLoggedIn}
+                  className={`truncate rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 ${!isLoggedIn && "opacity-60 cursor-not-allowed"}`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              {isLoggedIn ? (
+                <button
+                  onClick={(e)=>e.preventDefault()}
+                  className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
+                >
+                  Generate Gambar
+                </button>
+              ) : (
+                <a
+                  href={loginUrl}
+                  className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow"
+                >
+                  🔐 Silakan login untuk membuat konten
+                </a>
+              )}
+              <div className="text-[11px] text-white/50 mt-2">Silakan login untuk membuat konten.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* panel kanan */}
+      <div className="p-4">
+        <div className="h-full min-h-[420px] rounded-xl bg-black/40 border border-white/10 overflow-hidden">
+          <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">Hasil</div>
           <div className="h-[calc(100%-40px)] grid place-items-center text-center p-6">
             <div>
               <div className="text-4xl text-white/50">🖼️</div>
@@ -584,14 +576,9 @@ function NafsPremiumApp() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#2a0f4a] via-[#1a0b2e] to-[#0c0516] text-white">
-      {/* ====== OVERLAY PEMBEKU (aktif hanya saat belum login) ====== */}
+      {/* overlay freeze saat belum login */}
       {!isLoggedIn && (
-        <div
-          className="fixed inset-0 z-40"
-          aria-hidden="true"
-          title="Silakan login untuk mengakses semua fitur"
-          style={{ background: "transparent" }}
-        />
+        <div className="fixed inset-0 z-40" aria-hidden="true" title="Silakan login untuk mengakses semua fitur" style={{ background: "transparent" }} />
       )}
 
       <div className="mx-auto max-w-[1400px] p-3 lg:p-6">
@@ -601,9 +588,7 @@ function NafsPremiumApp() {
             <div className="sticky top-3">
               {/* Logo */}
               <div className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-purple-400 to-fuchsia-600 grid place-items-center shadow-lg">
-                  <span>👑</span>
-                </div>
+                <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-purple-400 to-fuchsia-600 grid place-items-center shadow-lg"><span>👑</span></div>
                 <div>
                   <div className="text-lg font-semibold tracking-wide">Nafs</div>
                   <div className="text-[11px] text-white/60 -mt-0.5">Premium</div>
@@ -612,32 +597,16 @@ function NafsPremiumApp() {
 
               {/* Access box */}
               <div className="rounded-2xl border border-white/10 bg-white/5 p-3 mb-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-purple-300">✨</span>
-                  <span className="font-medium">{isLoggedIn ? "Premium Aktif" : "Akses Premium"}</span>
-                </div>
+                <div className="flex items-center gap-2 text-sm"><span className="text-purple-300">✨</span><span className="font-medium">{isLoggedIn ? "Premium Aktif" : "Akses Premium"}</span></div>
                 <p className="text-[11px] text-white/60 mt-2 leading-relaxed">
-                  {isLoggedIn
-                    ? "Langganan aktif. Nikmati semua fitur premium."
-                    : <>Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.</>}
+                  {isLoggedIn ? "Langganan aktif. Nikmati semua fitur premium." : <>Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.</>}
                 </p>
 
-                {/* Tombol LOGIN / KELUAR (selalu bisa diklik) */}
                 <div className="mt-2 flex gap-2">
                   {!isLoggedIn ? (
-                    <a
-                      href={LOGIN_URL}
-                      className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]"
-                    >
-                      🔐 Login
-                    </a>
+                    <a href={LOGIN_URL} className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]">🔐 Login</a>
                   ) : (
-                    <a
-                      href={LOGOUT_URL}
-                      className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]"
-                    >
-                      🚪 Keluar
-                    </a>
+                    <a href={LOGOUT_URL} className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]">🚪 Keluar</a>
                   )}
                 </div>
               </div>
@@ -678,45 +647,23 @@ function NafsPremiumApp() {
           {/* Main */}
           <main className="flex-1 rounded-3xl border border-white/10 bg-white/5 min-h-[76vh] flex flex-col overflow-hidden">
             <div className="h-12 border-b border-white/10 px-4 flex items-center justify-between">
-              <div className="text-sm text-white/70">
-                {active === "Halaman Utama" ? "Web Utama (tanpa login)" : active}
-              </div>
-              <div className="flex items-center gap-2 text-xs text-white/50">
-                <span>🌐</span>
-                <span>Halaman Khusus Langganan Premium</span>
-              </div>
+              <div className="text-sm text-white/70">{active === "Halaman Utama" ? "Web Utama (tanpa login)" : active}</div>
+              <div className="flex items-center gap-2 text-xs text-white/50"><span>🌐</span><span>Halaman Khusus Langganan Premium</span></div>
             </div>
 
             {/* Tampilkan view sesuai tab */}
             {active === "Generate Image" ? (
-              <GenerateImageView
-                isLoggedIn={isLoggedIn}
-                model={model}
-                setModel={setModel}
-                loginUrl={LOGIN_URL}
-              />
+              <GenerateImageView isLoggedIn={isLoggedIn} model={model} setModel={setModel} loginUrl={LOGIN_URL} />
             ) : active === "Generate Video" ? (
-              <GenerateVideoView
-                isLoggedIn={isLoggedIn}
-                model={model}
-                setModel={setModel}
-                loginUrl={LOGIN_URL}
-              />
+              <GenerateVideoView isLoggedIn={isLoggedIn} model={model} setModel={setModel} loginUrl={LOGIN_URL} />
             ) : active === "Generate Audio" ? (
-              <GenerateAudioView
-                isLoggedIn={isLoggedIn}
-                loginUrl={LOGIN_URL}
-              />
+              <GenerateAudioView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
             ) : active === "Promosi Produk" ? (
-              <PromoProdukView
-                isLoggedIn={isLoggedIn}
-                loginUrl={LOGIN_URL}
-              />
+              <PromoProdukView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
             ) : active === "Tiktok Affiliate" ? (
-              <TiktokAffiliateView
-                isLoggedIn={isLoggedIn}
-                loginUrl={LOGIN_URL}
-              />
+              <TiktokAffiliateView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
+            ) : active === "Iklan Produk" ? (
+              <IklanProdukView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
             ) : (
               <ContentPlaceholder current={active} />
             )}
@@ -728,11 +675,7 @@ function NafsPremiumApp() {
                 </div>
 
                 <div className="flex-1 grid grid-cols-1">
-                  <div
-                    className={`rounded-xl border border-white/10 p-3 text-sm ${
-                      isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
-                    }`}
-                  >
+                  <div className={`rounded-xl border border-white/10 p-3 text-sm ${isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"}`}>
                     {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
                   </div>
                 </div>
@@ -740,20 +683,9 @@ function NafsPremiumApp() {
                 {/* Tombol Login/Mulai Chat di footer */}
                 <div className="w-full lg:w-auto grid place-items-center">
                   {!isLoggedIn ? (
-                    <a
-                      href={LOGIN_URL}
-                      className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
-                    >
-                      🔐 Login untuk Menggunakan Chat
-                    </a>
+                    <a href={LOGIN_URL} className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">🔐 Login untuk Menggunakan Chat</a>
                   ) : (
-                    <a
-                      href="#"
-                      onClick={(e) => e.preventDefault()}
-                      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
-                    >
-                      💬 Mulai Chat
-                    </a>
+                    <a href="#" onClick={(e) => e.preventDefault()} className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">💬 Mulai Chat</a>
                   )}
                 </div>
               </div>
