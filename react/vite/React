@@ -1,0 +1,14 @@
+src/
+  App.jsx
+  config.js
+  components/
+    Common.jsx          // Badge, SideItem, SectionTitle, Field, GhostInput, ModelSelect
+  views/
+    CanvasAIView.jsx
+    GenerateImageView.jsx
+    GenerateVideoView.jsx
+    GenerateAudioView.jsx
+    PromoProdukView.jsx
+    TiktokAffiliateView.jsx
+    IklanProdukView.jsx
+    Placeholder.jsx
