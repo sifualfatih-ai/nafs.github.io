@@ -3,8 +3,8 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import NafsPremiumApp from "./NafsPremiumApp.jsx";
 
-const rootEl = document.getElementById("root");
-createRoot(rootEl).render(
+const el = document.getElementById("root");
+createRoot(el).render(
   <React.StrictMode>
     <NafsPremiumApp />
   </React.StrictMode>
