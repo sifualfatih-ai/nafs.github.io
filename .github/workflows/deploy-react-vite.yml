@@ -7,8 +7,11 @@ on:
       - 'react/vite/**'
       - '.github/workflows/deploy-react-vite.yml'
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,7 +24,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: react/vite/package.json
+          cache-dependency-path: react/vite/package-lock.json
 
       - name: Install deps
         working-directory: react/vite
@@ -33,9 +36,9 @@ jobs:
 
       - name: Copy dist → /react/vite (overwrite)
         run: |
-          rsync -av --delete react/vite/dist/ react/vite/
+          rsync -a --delete react/vite/dist/ react/vite/
 
-      - name: Commit build
+      - name: Commit build output
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
