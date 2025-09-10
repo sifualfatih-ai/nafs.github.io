@@ -457,7 +457,6 @@ function TiktokAffiliateView({ isLoggedIn, loginUrl }) {
 
 /* ===== Tampilan khusus: Iklan Produk (UI saja) ===== */
 function IklanProdukView({ isLoggedIn, loginUrl }) {
-  // daftar vibe sesuai referensi screenshot
   const vibes = [
     "Kontras+","Meja Marmer Mewah",
     "Latar Batu Slate Gelap","Meja Kayu Rustic",
@@ -539,6 +538,54 @@ function IklanProdukView({ isLoggedIn, loginUrl }) {
   );
 }
 
+/* ===== Tampilan khusus: Canvas AI (UI saja) ===== */
+function CanvasAIView() {
+  // Tampilan mengikuti referensi: area kanvas besar di kanan + panel chat mengambang kiri bawah
+  return (
+    <div className="relative flex-1 p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[420px_minmax(0,1fr)] gap-4 h-full">
+        {/* Kolom kiri: hanya untuk ruang kosong & panel chat di bawah */}
+        <div className="relative">
+          {/* Chat mini fixed di kiri bawah (dalam area view) */}
+          <div className="absolute left-0 bottom-0">
+            <div className="flex items-end gap-3">
+              {/* kotak chat */}
+              <div className="rounded-2xl bg-white/90 text-black shadow-2xl w-[320px] h-[120px] overflow-hidden">
+                <div className="w-full h-full"></div>
+              </div>
+              {/* bar samping kecil */}
+              <div className="h-[120px] w-5 rounded-2xl bg-black/40 shadow" />
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-[12px] text-white/70">nafsflow canvas AI</span>
+              <button className="ml-3 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] bg-fuchsia-600 shadow">
+                🌟 Mulai Chat
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Kolom kanan: kanvas utama */}
+        <div className="rounded-3xl border border-white/10 bg-white/5 h-[72vh] lg:h-[76vh] overflow-hidden flex flex-col">
+          {/* header tab (Kode/Pratinjau) */}
+          <div className="p-3">
+            <div className="ml-auto w-fit rounded-full bg-[#30184f] px-1 py-1 flex gap-1">
+              <button className="px-3 py-1 text-[12px] rounded-full bg-[#4a3168] text-white/80">Kode</button>
+              <button className="px-3 py-1 text-[12px] rounded-full bg-white text-black">Pratinjau</button>
+            </div>
+          </div>
+          {/* area pratinjau */}
+          <div className="flex-1 bg-white/90 m-3 rounded-2xl grid place-items-center">
+            <div className="text-[13px] text-black/70">
+              Tampilan kode HTML di kolom ini
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ===================== APP ===================== */
 function NafsPremiumApp() {
   const [active, setActive] = React.useState("Chat");
@@ -576,9 +623,14 @@ function NafsPremiumApp() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#2a0f4a] via-[#1a0b2e] to-[#0c0516] text-white">
-      {/* overlay freeze saat belum login */}
+      {/* ====== OVERLAY PEMBEKU (aktif hanya saat belum login) ====== */}
       {!isLoggedIn && (
-        <div className="fixed inset-0 z-40" aria-hidden="true" title="Silakan login untuk mengakses semua fitur" style={{ background: "transparent" }} />
+        <div
+          className="fixed inset-0 z-40"
+          aria-hidden="true"
+          title="Silakan login untuk mengakses semua fitur"
+          style={{ background: "transparent" }}
+        />
       )}
 
       <div className="mx-auto max-w-[1400px] p-3 lg:p-6">
@@ -588,7 +640,9 @@ function NafsPremiumApp() {
             <div className="sticky top-3">
               {/* Logo */}
               <div className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-purple-400 to-fuchsia-600 grid place-items-center shadow-lg"><span>👑</span></div>
+                <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-purple-400 to-fuchsia-600 grid place-items-center shadow-lg">
+                  <span>👑</span>
+                </div>
                 <div>
                   <div className="text-lg font-semibold tracking-wide">Nafs</div>
                   <div className="text-[11px] text-white/60 -mt-0.5">Premium</div>
@@ -597,16 +651,32 @@ function NafsPremiumApp() {
 
               {/* Access box */}
               <div className="rounded-2xl border border-white/10 bg-white/5 p-3 mb-3">
-                <div className="flex items-center gap-2 text-sm"><span className="text-purple-300">✨</span><span className="font-medium">{isLoggedIn ? "Premium Aktif" : "Akses Premium"}</span></div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-purple-300">✨</span>
+                  <span className="font-medium">{isLoggedIn ? "Premium Aktif" : "Akses Premium"}</span>
+                </div>
                 <p className="text-[11px] text-white/60 mt-2 leading-relaxed">
-                  {isLoggedIn ? "Langganan aktif. Nikmati semua fitur premium." : <>Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.</>}
+                  {isLoggedIn
+                    ? "Langganan aktif. Nikmati semua fitur premium."
+                    : <>Ini adalah laman premium. Silakan <b className="text-white">login & berlangganan</b> untuk mengakses seluruh fitur.</>}
                 </p>
 
+                {/* Tombol LOGIN / KELUAR (selalu bisa diklik) */}
                 <div className="mt-2 flex gap-2">
                   {!isLoggedIn ? (
-                    <a href={LOGIN_URL} className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]">🔐 Login</a>
+                    <a
+                      href={LOGIN_URL}
+                      className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-[12px]"
+                    >
+                      🔐 Login
+                    </a>
                   ) : (
-                    <a href={LOGOUT_URL} className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]">🚪 Keluar</a>
+                    <a
+                      href={LOGOUT_URL}
+                      className="relative z-50 inline-flex items-center gap-1 rounded-lg px-3 py-1.5 bg-white/10 hover:bg-white/20 text-[12px]"
+                    >
+                      🚪 Keluar
+                    </a>
                   )}
                 </div>
               </div>
@@ -647,23 +717,52 @@ function NafsPremiumApp() {
           {/* Main */}
           <main className="flex-1 rounded-3xl border border-white/10 bg-white/5 min-h-[76vh] flex flex-col overflow-hidden">
             <div className="h-12 border-b border-white/10 px-4 flex items-center justify-between">
-              <div className="text-sm text-white/70">{active === "Halaman Utama" ? "Web Utama (tanpa login)" : active}</div>
-              <div className="flex items-center gap-2 text-xs text-white/50"><span>🌐</span><span>Halaman Khusus Langganan Premium</span></div>
+              <div className="text-sm text-white/70">
+                {active === "Halaman Utama" ? "Web Utama (tanpa login)" : active}
+              </div>
+              <div className="flex items-center gap-2 text-xs text-white/50">
+                <span>🌐</span>
+                <span>Halaman Khusus Langganan Premium</span>
+              </div>
             </div>
 
             {/* Tampilkan view sesuai tab */}
-            {active === "Generate Image" ? (
-              <GenerateImageView isLoggedIn={isLoggedIn} model={model} setModel={setModel} loginUrl={LOGIN_URL} />
+            {active === "Canvas AI" ? (
+              <CanvasAIView />
+            ) : active === "Generate Image" ? (
+              <GenerateImageView
+                isLoggedIn={isLoggedIn}
+                model={model}
+                setModel={setModel}
+                loginUrl={LOGIN_URL}
+              />
             ) : active === "Generate Video" ? (
-              <GenerateVideoView isLoggedIn={isLoggedIn} model={model} setModel={setModel} loginUrl={LOGIN_URL} />
+              <GenerateVideoView
+                isLoggedIn={isLoggedIn}
+                model={model}
+                setModel={setModel}
+                loginUrl={LOGIN_URL}
+              />
             ) : active === "Generate Audio" ? (
-              <GenerateAudioView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
+              <GenerateAudioView
+                isLoggedIn={isLoggedIn}
+                loginUrl={LOGIN_URL}
+              />
             ) : active === "Promosi Produk" ? (
-              <PromoProdukView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
+              <PromoProdukView
+                isLoggedIn={isLoggedIn}
+                loginUrl={LOGIN_URL}
+              />
             ) : active === "Tiktok Affiliate" ? (
-              <TiktokAffiliateView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
+              <TiktokAffiliateView
+                isLoggedIn={isLoggedIn}
+                loginUrl={LOGIN_URL}
+              />
             ) : active === "Iklan Produk" ? (
-              <IklanProdukView isLoggedIn={isLoggedIn} loginUrl={LOGIN_URL} />
+              <IklanProdukView
+                isLoggedIn={isLoggedIn}
+                loginUrl={LOGIN_URL}
+              />
             ) : (
               <ContentPlaceholder current={active} />
             )}
@@ -675,7 +774,11 @@ function NafsPremiumApp() {
                 </div>
 
                 <div className="flex-1 grid grid-cols-1">
-                  <div className={`rounded-xl border border-white/10 p-3 text-sm ${isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"}`}>
+                  <div
+                    className={`rounded-xl border border-white/10 p-3 text-sm ${
+                      isLoggedIn ? "bg-white/10 text-white/80" : "bg-white/5 text-white/60"
+                    }`}
+                  >
                     {isLoggedIn ? "Ketik pesan untuk mulai chat…" : "Silakan login untuk memulai chat."}
                   </div>
                 </div>
@@ -683,9 +786,20 @@ function NafsPremiumApp() {
                 {/* Tombol Login/Mulai Chat di footer */}
                 <div className="w-full lg:w-auto grid place-items-center">
                   {!isLoggedIn ? (
-                    <a href={LOGIN_URL} className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">🔐 Login untuk Menggunakan Chat</a>
+                    <a
+                      href={LOGIN_URL}
+                      className="relative z-50 inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                    >
+                      🔐 Login untuk Menggunakan Chat
+                    </a>
                   ) : (
-                    <a href="#" onClick={(e) => e.preventDefault()} className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg">💬 Mulai Chat</a>
+                    <a
+                      href="#"
+                      onClick={(e) => e.preventDefault()}
+                      className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow-lg"
+                    >
+                      💬 Mulai Chat
+                    </a>
                   )}
                 </div>
               </div>
