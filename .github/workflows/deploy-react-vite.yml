@@ -13,26 +13,27 @@ permissions:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install deps
+      - name: Install dependencies
         working-directory: react/vite
-        run: npm install --no-fund --no-audit
+        run: npm ci
 
-      - name: Build
+      - name: Build project
         working-directory: react/vite
         run: npm run build
 
-      - name: Show dist (debug)
+      - name: Show dist contents (debug)
         run: |
           echo "=== DIST LISTING ==="
           ls -la react/vite/dist
@@ -48,7 +49,7 @@ jobs:
           ls -la react/vite
           ls -la react/vite/assets
 
-      - name: Commit build output
+      - name: Commit & push build output
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
