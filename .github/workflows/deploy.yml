@@ -1,0 +1,67 @@
+name: Deploy site (build react/vite to GitHub Pages)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Wajib untuk GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # --- Build Vite app di react/vite ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: react/vite/package-lock.json
+
+      - name: Install dependencies (react/vite)
+        working-directory: react/vite
+        run: npm ci
+
+      - name: Build (react/vite)
+        working-directory: react/vite
+        run: npm run build
+
+      # --- Siapkan artefak untuk Pages ---
+      # Kita kemas seluruh repo sebagai site, lalu timpa react/vite/ dengan hasil build
+      - name: Prepare Pages artifact (_site)
+        run: |
+          mkdir -p _site
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude '.github/workflows/*.yml~' \
+            --exclude 'react/vite/node_modules' \
+            --exclude 'react/vite/dist' \
+            ./ _site/
+
+          # timpa react/vite/ di artefak dengan hasil build
+          rsync -a --delete react/vite/dist/ _site/react/vite/
+
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
