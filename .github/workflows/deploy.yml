@@ -35,7 +35,6 @@ jobs:
           cache: npm
           cache-dependency-path: react/vite/package-lock.json
 
-      # Gunakan "npm install" agar tidak gagal karena lockfile lama
       - name: Install deps (react/vite)
         working-directory: react/vite
         run: npm install --no-audit --no-fund --legacy-peer-deps
