@@ -1,0 +1,11 @@
+{
+  "siteName": "NafsFlow",
+  "links": {
+    "home": "/home.html",
+    "demo": "/demo.html",
+    "pelanggan": "/pelanggan/"
+  },
+  "flags": {
+    "showBetaBanner": false
+  }
+}
