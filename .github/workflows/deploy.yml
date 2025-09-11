@@ -1,9 +1,10 @@
-name: build-react-to-folder
+name: Build React to react-app
 
 on:
   push:
+    branches: [ main, refactor/react-reset ]
     paths:
-      - 'react/vite/**'
+      - 'react/app/**'
   workflow_dispatch:
 
 jobs:
@@ -12,22 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Vite
+      - name: Install & build
         run: |
-          cd react/vite
+          cd react/app
           npm ci
           npm run build
 
-      - name: Publish artifacts into repo (react-app/)
-        run: |
-          rm -rf react-app
-          mkdir -p react-app
-          cp -r react/vite/dist/* react-app/
-
-      - name: Commit artifacts
+      - name: Commit build to react-app/
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add react-app
-          git commit -m "Update React app artifacts" || echo "No changes"
+          git commit -m "chore(build): update react-app artifacts" || echo "No changes"
           git push
