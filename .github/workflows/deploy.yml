@@ -8,7 +8,6 @@ on:
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
-# permission untuk Pages (bukan commit balik)
 permissions:
   contents: read
   pages: write
@@ -47,24 +46,16 @@ jobs:
       - name: Prepare _site (merge repo + dist to /react/vite)
         run: |
           mkdir -p _site
-          # salin SELURUH repo ke artefak
           rsync -a --delete \
             --exclude '.git' \
             --exclude 'node_modules' \
             --exclude 'react/vite/node_modules' \
             --exclude 'react/vite/dist' \
             ./ _site/
-
-          # timpa /react/vite dengan hasil build
           rsync -a --delete react/vite/dist/ _site/react/vite/
-
-          # cegah Jekyll mengubah output
           touch _site/.nojekyll
-
-          echo "== list _site/react/vite =="
-          ls -la _site/react/vite
-          echo "== list _site/react/vite/assets =="
-          ls -la _site/react/vite/assets || true
+          echo "== list _site/react/vite ==" && ls -la _site/react/vite
+          echo "== list _site/react/vite/assets ==" && ls -la _site/react/vite/assets || true
 
       - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
