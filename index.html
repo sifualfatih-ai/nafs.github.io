@@ -263,7 +263,39 @@
     if (params.get('logout') === '1') window.__nafsLogout();
   </script>
 
-<script src="/web-static/js/blocks-loader.js" defer></script>
+<!-- NF: siapkan komponen tanpa menampilkan apa pun -->
+<script>
+(() => {
+  if (customElements.get('nf-hero')) return; // sudah ada? lewati
+  class NfHero extends HTMLElement {
+    constructor(){ super(); this.attachShadow({mode:'open'}); }
+    connectedCallback(){
+      const title    = this.getAttribute('title')    || 'NafsFlow';
+      const subtitle = this.getAttribute('subtitle') || 'Solusi workflow AI untuk bisnis Anda.';
+      const ctaText  = this.getAttribute('cta-text') || 'Mulai';
+      const ctaHref  = this.getAttribute('cta-href') || '/pelanggan/';
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host{display:block;background:#17151f;color:#fff}
+          .wrap{max-width:1040px;margin:0 auto;padding:48px 16px}
+          h1{font-size:40px;line-height:1.1;margin:0 0 12px}
+          p{opacity:.85;max-width:680px;margin:0 0 20px}
+          a.cta{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:12px;background:#7c5cff;color:#fff}
+          a.cta:hover{filter:brightness(1.1)}
+        </style>
+        <section class="wrap">
+          <h1>${title}</h1>
+          <p>${subtitle}</p>
+          <a class="cta" href="${ctaHref}">${ctaText}</a>
+        </section>`;
+    }
+  }
+  customElements.define('nf-hero', NfHero);
+  document.documentElement.setAttribute('data-nf','ready');
+})();
+</script>
+
+
   
 </body>
 </html>
