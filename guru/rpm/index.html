@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generator RPM — NafsFlow Automasi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f0820;
+      --bg-2:#1b1036;
+      --bg-3:#23154a;
+      --card:#ffffff;
+      --text:#0f1324;
+      --muted:#68708d;
+      --primary:#6f4cff;
+      --primary-2:#8a6cff;
+      --badge:#ffd66e;
+      --success:#22c55e;
+      --border:#e6e8ef;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at -10% -10%, #3d1c8a40 0%, transparent 60%),
+        radial-gradient(1000px 800px at 110% 10%, #9a59ff25 0%, transparent 70%),
+        radial-gradient(1200px 800px at 50% 120%, #4717a520 0%, transparent 60%),
+        var(--bg);
+      display:flex;
+      gap:24px;
+    }
+    /* ---------- Sidebar ---------- */
+    aside{
+      width: 260px;
+      min-height:100vh;
+      background: linear-gradient(180deg, #1c0f3a 0%, #130a2a 100%);
+      padding:20px 16px;
+      position:sticky;
+      top:0;
+      color:#e6e0ff;
+      box-shadow: inset 0 0 0 1px #ffffff10;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;margin-bottom:18px;
+      font-weight:700;font-size:18px;
+    }
+    .brand .logo{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg, #7c4dff 0%, #a78bfa 100%);
+      color:white;font-weight:900;
+      box-shadow: 0 8px 24px #00000050, inset 0 0 0 1px #ffffff30;
+    }
+    .card{
+      background: #2b1b57;
+      border: 1px solid #ffffff14;
+      border-radius: 14px;
+      padding:14px;
+      margin-bottom:16px;
+      color:#efeaff;
+    }
+    .card .title{font-weight:600;display:flex;align-items:center;gap:8px}
+    .card small{color:#d7cffb;opacity:.9}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      background:#3b2b77;border:1px solid #ffffff1a;
+      padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600;
+    }
+    .badge .dot{width:8px;height:8px;border-radius:999px;background:var(--success);box-shadow:0 0 0 2px #1a1a1a80}
+    nav h6{
+      color:#cbbcf9;opacity:.85;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      margin:20px 10px 8px;
+    }
+    .menu{display:flex;flex-direction:column;gap:6px;padding:0;margin:0;list-style:none}
+    .menu a{
+      display:flex;align-items:center;gap:12px;
+      color:#efeaff;text-decoration:none;
+      padding:10px 12px;border-radius:10px;
+      transition:.2s ease;
+    }
+    .menu a:hover{background:#3a2675}
+    .menu svg{width:18px;height:18px;opacity:.95;flex:0 0 auto}
+    .new{font-size:10px;background:#a78bfa;color:#291a5e;border-radius:999px;padding:2px 6px;margin-left:auto;font-weight:700}
+    /* ---------- Main ---------- */
+    main{flex:1;max-width:1200px;margin:20px 20px 60px 0}
+    .topbar{
+      height:56px;display:flex;align-items:center;justify-content:flex-end;color:#e9e7ff;
+    }
+    .container{
+      background:#ffffff; border:1px solid var(--border); border-radius: var(--radius);
+      padding:0; box-shadow: 0 12px 50px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    header.app-head{
+      padding:20px 24px; background: linear-gradient(180deg,#f5f3ff, #fff);
+      border-bottom:1px solid var(--border);
+    }
+    header.app-head h1{margin:0;font-size:20px}
+    header.app-head small{color:var(--muted)}
+    .section{
+      padding:18px 24px;
+      border-top:1px solid var(--border);
+    }
+    .section h3{
+      margin:0 0 12px; font-size:14px; font-weight:700; color:#111827;
+    }
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:12px;color:#374151}
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%;border:1px solid #d1d5db;border-radius:10px;background:#fff;
+      padding:10px 12px;font-size:14px;color:#111827; outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea{min-height:110px;resize:vertical}
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--primary); box-shadow:0 0 0 3px #6f4cff25;
+    }
+    .hint{font-size:12px;color:#6b7280}
+    .actions{display:flex;align-items:center;gap:10px; padding:16px 24px; border-top:1px solid var(--border); background:#fafbff}
+    button.primary{
+      background:linear-gradient(180deg,var(--primary),var(--primary-2)); color:white;border:0;
+      padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;
+      box-shadow: 0 6px 20px #6f4cff55;
+    }
+    button.secondary{
+      background:#f2f4ff; color:#423190;border:1px solid #d7d5ff;
+      padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer;
+    }
+    /* Output */
+    .output{padding:18px 24px;border-top:1px solid var(--border);background:#fff}
+    .output pre{
+      margin:0;background:#0f172a;color:#e5e7eb;padding:14px;border-radius:12px;overflow:auto;max-height:320px;
+    }
+    /* Responsive */
+    @media (max-width: 1020px){
+      aside{display:none}
+      body{gap:0}
+      main{margin:10px}
+      .grid-2,.grid-3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside>
+    <div class="brand">
+      <div class="logo">N</div>
+      <div>
+        <div>Nafs</div>
+        <small style="opacity:.8">Guru Generator</small>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title">
+        <!-- Crown icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path d="M5 20h14l-1-8-4 3-3-7-3 7-4-3-1 8z"></path>
+        </svg>
+        Premium Aktif
+      </div>
+      <div style="height:8px"></div>
+      <div class="badge"><span class="dot"></span>Langganan aktif. Nikmati semua fitur premium.</div>
+      <div style="height:12px"></div>
+      <button class="secondary" style="width:100%">Keluar</button>
+    </div>
+
+    <nav>
+      <h6>MENU</h6>
+      <ul class="menu">
+        <li>
+          <a href="#">
+            <!-- Cpu icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+              <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"></path>
+            </svg>
+            Deep Learning
+            <span class="new">Baru</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <!-- Flask icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M10 2v2l-5 9a6 6 0 006 9h2a6 6 0 006-9l-5-9V2"></path>
+            </svg>
+            Percontohan
+          </a>
+        </li>
+      </ul>
+
+      <h6>LAINNYA</h6>
+      <ul class="menu">
+        <li>
+          <a href="#">
+            <!-- Book icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"></path>
+              <path d="M20 22H6.5A2.5 2.5 0 014 19.5V5a2 2 0 012-2h14v19z"></path>
+            </svg>
+            Tutorial
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <!-- Home icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M3 10l9-7 9 7"></path>
+              <path d="M9 21V9h6v12"></path>
+            </svg>
+            Halaman Utama
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <!-- Settings icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V22a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H2a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.02A1.65 1.65 0 0010 2.09V2a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h.02a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.02A1.65 1.65 0 0019.91 10H20a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+            </svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="topbar">
+      <small>Halaman Khusus Guru Digital</small>
+    </div>
+
+    <div class="container" id="app">
+      <header class="app-head">
+        <h1>Generator RPM</h1>
+        <small>dibuat oleh NafsFlow Automasi</small>
+      </header>
+
+      <form class="section" id="rpm-form">
+        <div class="section">
+          <h3>Informasi Umum</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label for="satuanPendidikan">Nama Satuan Pendidikan</label>
+              <input id="satuanPendidikan" name="satuanPendidikan" type="text" placeholder="Contoh: SMA Negeri 1 Jakarta" required />
+            </div>
+            <div class="field">
+              <label for="mapel">Mata Pelajaran</label>
+              <input id="mapel" name="mapel" type="text" placeholder="Contoh: Biologi" required />
+            </div>
+
+            <div class="field">
+              <label for="jenjang">Jenjang Pendidikan</label>
+              <select id="jenjang" name="jenjang" required></select>
+            </div>
+            <div class="field">
+              <label for="kelas">Kelas</label>
+              <select id="kelas" name="kelas" required></select>
+            </div>
+
+            <div class="field">
+              <label for="namaGuru">Nama Guru</label>
+              <input id="namaGuru" name="namaGuru" type="text" placeholder="Nama lengkap guru" />
+            </div>
+            <div class="field">
+              <label for="nipGuru">NIP Guru</label>
+              <input id="nipGuru" name="nipGuru" type="text" placeholder="NIP guru (jika ada)" />
+            </div>
+
+            <div class="field">
+              <label for="namaKepalaSekolah">Nama Kepala Sekolah</label>
+              <input id="namaKepalaSekolah" name="namaKepalaSekolah" type="text" placeholder="Nama lengkap kepala sekolah" />
+            </div>
+            <div class="field">
+              <label for="nipKepalaSekolah">NIP Kepala Sekolah</label>
+              <input id="nipKepalaSekolah" name="nipKepalaSekolah" type="text" placeholder="NIP kepala sekolah (jika ada)" />
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Detail Pembelajaran</h3>
+          <div class="field">
+            <label for="cp">Capaian Pembelajaran (CP)</label>
+            <textarea id="cp" name="cp" placeholder="Salin dan tempel Capaian Pembelajaran dari kurikulum Anda"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="materi">Materi Pelajaran</label>
+            <textarea id="materi" name="materi" placeholder="Jelaskan materi pelajaran yang akan diajarkan, contoh: Ekosistem dan komponennya"></textarea>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="jumlahPertemuan">Jumlah Pertemuan</label>
+              <input id="jumlahPertemuan" name="jumlahPertemuan" type="number" min="1" value="1" />
+            </div>
+            <div class="field">
+              <label for="durasi">Durasi Setiap Pertemuan</label>
+              <select id="durasi" name="durasi"></select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="praktikPedagogis">Praktik Pedagogis (opsional)</label>
+              <input id="praktikPedagogis" name="praktikPedagogis" type="text" placeholder="Pisahkan dengan koma, contoh: inkuiri, proyek" />
+              <div class="hint">Anda bisa mengisi beberapa praktik, pisahkan dengan koma.</div>
+            </div>
+            <div class="field">
+              <label for="dimensiLulusan">Dimensi Profil Pelajar Pancasila</label>
+              <input id="dimensiLulusan" name="dimensiLulusan" type="text" placeholder="Contoh: Bernalar kritis, Kreatif" />
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="btn-generate" type="submit">Buat RPM</button>
+          <button class="secondary" id="btn-reset" type="button">Reset</button>
+          <span class="hint" id="status-hint"></span>
+        </div>
+      </form>
+
+      <div class="output" id="output">
+        <h3 style="margin:0 0 10px">Hasil</h3>
+        <pre id="output-pre">Belum ada hasil. Isi formulir lalu klik "Buat RPM".</pre>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Konfigurasi global — tempat API key Anda nanti
+    window.APP_CONFIG = {
+      API_KEY: "",   // isi di sini ketika sudah siap
+      MODEL: "gemini-1.5-flash"
+    };
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
