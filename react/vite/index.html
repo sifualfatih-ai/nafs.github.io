@@ -6,6 +6,30 @@
     <title>Nafs Premium</title>
     <link rel="icon" type="image/x-icon" href="/react/vite/nafsweb.ico" />
     <!-- ENTRY untuk build: sumber harus menunjuk ke /src/main.jsx -->
+    
+    <!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nafs Premium</title>
+    <link rel="icon" type="image/x-icon" href="/react/vite/nafsweb.ico" />
+
+    <!-- >>> Tambahkan ini (Tailwind via CDN) <<< -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- (opsional) set dark mode default -->
+    <script>
+      tailwind.config = { darkMode: 'class' }
+    </script>
+  </head>
+  <body class="dark">
+    <div id="root"></div>
+    <!-- ENTRY sumber (HARUS /src/main.jsx untuk proses build) -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+    
+    
     <script type="module" src="/src/main.jsx"></script>
   </head>
   <body>
