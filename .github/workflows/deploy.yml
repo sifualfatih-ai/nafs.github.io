@@ -1,4 +1,4 @@
-name: Build & Deploy /react/vite
+name: Deploy site (build react/vite to GitHub Pages)
 
 on:
   push:
@@ -8,52 +8,69 @@ on:
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
+# permission untuk Pages (bukan commit balik)
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: react/vite/package-lock.json
 
-      - name: Install dependencies
+      - name: Install deps (react/vite)
         working-directory: react/vite
         run: npm ci
 
-      - name: Build project
+      - name: Build (react/vite)
         working-directory: react/vite
         run: npm run build
 
-      - name: Show dist contents (debug)
+      - name: Prepare _site (merge repo + dist to /react/vite)
         run: |
-          echo "=== DIST LISTING ==="
-          ls -la react/vite/dist
-          echo "=== DIST ASSETS ==="
-          ls -la react/vite/dist/assets || true
+          mkdir -p _site
+          # salin SELURUH repo ke artefak
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude 'react/vite/node_modules' \
+            --exclude 'react/vite/dist' \
+            ./ _site/
 
-      - name: Copy dist → /react/vite (overwrite)
-        run: |
-          rm -rf react/vite/assets
-          rm -f  react/vite/index.html
-          cp -a react/vite/dist/. react/vite/
-          echo "=== DEST AFTER COPY ==="
-          ls -la react/vite
-          ls -la react/vite/assets
+          # timpa /react/vite dengan hasil build
+          rsync -a --delete react/vite/dist/ _site/react/vite/
 
-      - name: Commit & push build output
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "deploy: update /react/vite build" || echo "no changes"
-          git push
+          # cegah Jekyll mengubah output
+          touch _site/.nojekyll
+
+          echo "== list _site/react/vite =="
+          ls -la _site/react/vite
+          echo "== list _site/react/vite/assets =="
+          ls -la _site/react/vite/assets || true
+
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
