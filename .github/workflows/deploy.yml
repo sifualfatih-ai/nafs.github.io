@@ -13,19 +13,28 @@ permissions:
   pages: write
   id-token: write
 
-concurrency: { group: "pages", cancel-in-progress: false }
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: { name: github-pages, url: ${{ steps.deploy.outputs.page_url }} }
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: npm, cache-dependency-path: react/vite/package-lock.json }
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # lebih toleran terhadap konflik peer deps
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: react/vite/package-lock.json
+
       - name: Install deps (react/vite)
         working-directory: react/vite
         run: npm install --no-audit --no-fund --legacy-peer-deps
@@ -48,8 +57,11 @@ jobs:
           echo "== list _site/react/vite ==" && ls -la _site/react/vite
           echo "== list _site/react/vite/assets ==" && ls -la _site/react/vite/assets || true
 
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: _site }
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
-      - id: deploy
+      - name: Deploy to GitHub Pages
+        id: deploy
         uses: actions/deploy-pages@v4
