@@ -35,15 +35,16 @@ jobs:
           cache: npm
           cache-dependency-path: react/vite/package-lock.json
 
+      # Gunakan "npm install" agar tidak gagal karena lockfile lama
       - name: Install deps (react/vite)
         working-directory: react/vite
-        run: npm ci
+        run: npm install --no-audit --no-fund --legacy-peer-deps
 
       - name: Build (react/vite)
         working-directory: react/vite
         run: npm run build
 
-      - name: Prepare _site (merge repo + dist to /react/vite)
+      - name: Prepare _site (gabungkan repo + dist ke /react/vite)
         run: |
           mkdir -p _site
           rsync -a --delete \
