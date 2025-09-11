@@ -1,11 +1,7 @@
 {
   "siteName": "NafsFlow",
+  "tagline": "Solusi workflow AI untuk bisnis Anda.",
   "links": {
-    "home": "/home.html",
-    "demo": "/demo.html",
     "pelanggan": "/pelanggan/"
-  },
-  "flags": {
-    "showBetaBanner": false
   }
 }
