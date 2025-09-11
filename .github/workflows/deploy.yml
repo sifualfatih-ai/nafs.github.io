@@ -5,7 +5,8 @@ on:
     branches: [ main ]
     paths:
       - 'react/vite/**'
-      - '.github/workflows/deploy-react-vite.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
