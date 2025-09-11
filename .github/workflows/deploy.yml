@@ -1,67 +1,33 @@
-name: Deploy site (build react/vite to GitHub Pages)
+name: build-react-to-folder
 
 on:
   push:
-    branches: [ main ]
     paths:
       - 'react/vite/**'
-      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: react/vite/package-lock.json
-
-      - name: Install deps (react/vite)
-        working-directory: react/vite
-        run: npm install --no-audit --no-fund --legacy-peer-deps
-
-      - name: Build (react/vite)
-        working-directory: react/vite
-        run: npm run build
-
-      - name: Prepare _site (merge repo + dist to /react/vite)
+      - name: Build Vite
         run: |
-          mkdir -p _site
-          rsync -a --delete \
-            --exclude '.git' \
-            --exclude 'node_modules' \
-            --exclude 'react/vite/node_modules' \
-            --exclude 'react/vite/dist' \
-            ./ _site/
-          rsync -a --delete react/vite/dist/ _site/react/vite/
-          touch _site/.nojekyll
-          echo "== list _site/react/vite ==" && ls -la _site/react/vite
-          echo "== list _site/react/vite/assets ==" && ls -la _site/react/vite/assets || true
+          cd react/vite
+          npm ci
+          npm run build
 
-      - name: Upload artifact to Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
+      - name: Publish artifacts into repo (react-app/)
+        run: |
+          rm -rf react-app
+          mkdir -p react-app
+          cp -r react/vite/dist/* react-app/
 
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
+      - name: Commit artifacts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add react-app
+          git commit -m "Update React app artifacts" || echo "No changes"
+          git push
