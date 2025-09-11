@@ -1,79 +1,82 @@
 <!doctype html>
 <html lang="id">
 <head>
-<link rel="icon" href="nafsweb.ico" />
-<link rel="apple-touch-icon" href="nafsweb.ico" />
-<link rel="shortcut icon" href="/nafsweb.ico" type="image/ico" />
-  
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Prompt BotGen.1</title>
-<style>
-  :root{
-    --bg:#11071e; --panel:#1a0f2d; --panel2:#1f1438;
-    --line:#2d2050; --text:#efeaff; --muted:#c7b7f0;
-    --accent:#7c3aed; --accent2:#a78bfa;
-    --btn:#2a1f4a; --btnh:#3a2b69; --radius:16px;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
-    background:
-      radial-gradient(1200px 700px at 50% -10%, rgba(124,58,237,.20), transparent 60%),
-      var(--bg);
-    min-height:100dvh; padding:24px;
-  }
-  .wrap{width:min(1080px,94vw); margin:0 auto}
-  h1{margin:0 0 6px; text-align:center; font-size:36px}
-  .sub{margin:0 0 20px; text-align:center; color:var(--muted)}
-  .card{background:var(--panel2); border:1px solid var(--line); border-radius:22px; padding:18px}
-  .grid{display:grid; gap:12px; grid-template-columns:1fr 1fr}
-  .full{grid-column:1/-1}
-  label{font-size:13px; color:var(--muted)}
-  input,select,textarea{
-    width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--line);
-    background:var(--panel); color:var(--text)
-  }
-  textarea{min-height:120px}
-  /* textarea lebih tinggi agar friendly */
-  #veo_scene{min-height:160px}
-  #cg_topic{min-height:160px}
-  #nb_context{min-height:160px}
-  .actions{display:flex; gap:10px; flex-wrap:wrap}
-  .btn{background:var(--btn); border:1px solid var(--line); color:var(--text); border-radius:12px; padding:10px 14px; cursor:pointer}
-  .btn:hover{background:var(--btnh)}
-  .accent{background:var(--accent); border:none}
-  .accent:hover{filter:brightness(1.05)}
-  .muted{color:var(--muted)}
-  .hint{font-size:12px; color:var(--muted)}
-  .hidden{display:none}
-  .topbar{display:flex; align-items:center; gap:12px; margin-bottom:8px}
-  .topbar a{text-decoration:none}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Prompt BotGen.1</title>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5W7VXFV146"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Favicon -->
+  <link rel="icon" href="nafsweb.ico" />
+  <link rel="apple-touch-icon" href="nafsweb.ico" />
+  <link rel="shortcut icon" href="nafsweb.ico" type="image/ico" />
 
-  gtag('config', 'G-5W7VXFV146');
-</script>
+  <!-- PENTING: pastikan semua path relatif ke folder file ini -->
+  <base href="./">
 
-  
+  <style>
+    :root{
+      --bg:#11071e; --panel:#1a0f2d; --panel2:#1f1438;
+      --line:#2d2050; --text:#efeaff; --muted:#c7b7f0;
+      --accent:#7c3aed; --accent2:#a78bfa;
+      --btn:#2a1f4a; --btnh:#3a2b69; --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
+      background:
+        radial-gradient(1200px 700px at 50% -10%, rgba(124,58,237,.20), transparent 60%),
+        var(--bg);
+      min-height:100dvh; padding:24px;
+    }
+    .wrap{width:min(1080px,94vw); margin:0 auto}
+    h1{margin:0 0 6px; text-align:center; font-size:36px}
+    .sub{margin:0 0 20px; text-align:center; color:var(--muted)}
+    .card{background:var(--panel2); border:1px solid var(--line); border-radius:22px; padding:18px}
+    .grid{display:grid; gap:12px; grid-template-columns:1fr 1fr}
+    .full{grid-column:1/-1}
+    label{font-size:13px; color:var(--muted)}
+    input,select,textarea{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--line);
+      background:var(--panel); color:var(--text)
+    }
+    textarea{min-height:120px}
+    #veo_scene{min-height:160px}
+    #cg_topic{min-height:160px}
+    #nb_context{min-height:160px}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{background:var(--btn); border:1px solid var(--line); color:var(--text); border-radius:12px; padding:10px 14px; cursor:pointer}
+    .btn:hover{background:var(--btnh)}
+    .accent{background:var(--accent); border:none}
+    .accent:hover{filter:brightness(1.05)}
+    .muted{color:var(--muted)}
+    .hint{font-size:12px; color:var(--muted)}
+    .hidden{display:none}
+    .topbar{display:flex; align-items:center; gap:12px; margin-bottom:8px}
+    .topbar a{text-decoration:none}
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W7VXFV146"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5W7VXFV146');
+  </script>
 </head>
+
 <body>
   <main class="wrap">
     <div class="topbar">
       <a class="btn" href="./">← Kembali</a>
     </div>
 
+    <!-- BLOK HERO (akan dirender oleh loader) -->
+    <nf-hero
+      cta-text="Buka Halaman Generator"
+      cta-href="/pelanggan/">
+    </nf-hero>
 
-  <nf-hero cta-text="Buka Halaman Generator"></nf-hero>
-
-
-    
     <h1>Prompt BOT Gen1.0</h1>
     <p class="sub">Membuat prompt terstruktur yang tersusun rapi & siap copy-paste di ChatGPT/Nano Banana/Gemini Veo</p>
 
@@ -101,19 +104,14 @@
       <!-- ====== BLOK FIELD CHATGPT ====== -->
       <div id="blkChatGPT" class="grid" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: ChatGPT (hasil berbahasa Indonesia)</span></div>
-
-        <!-- Tujuan/Topik jadi textarea lebar -->
         <div class="full">
           <label>Tujuan/Topik</label>
           <textarea id="cg_topic" placeholder="contoh: promosi sewa motor harian, diskon 20%&#10;Tambahkan detail penting, benefit, konteks brand, gaya bahasa, dll."></textarea>
         </div>
-
         <div>
           <label>Target audiens</label>
           <input id="cg_audience" placeholder="contoh: mahasiswa & pekerja harian di kota X">
         </div>
-
-        <!-- Gaya/Nada DIHAPUS -->
         <div>
           <label>Batasan/Rule (opsional)</label>
           <input id="cg_rules" placeholder="contoh: maksimal 120 kata, sertakan CTA & no WA">
@@ -123,18 +121,14 @@
       <!-- ====== BLOK FIELD NANO BANANA ====== -->
       <div id="blkNano" class="grid hidden" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: Nano Banana (hasil berbahasa Indonesia)</span></div>
-
         <div>
           <label>Objective</label>
           <input id="nb_objective" placeholder="contoh: buat 5 ide konten edukasi produk A">
         </div>
-
-        <!-- Input/Context jadi textarea lebar -->
         <div class="full">
           <label>Input / Context</label>
           <textarea id="nb_context" placeholder="contoh: deskripsi singkat produk, keunggulan, harga, target, platform, angle konten, dll."></textarea>
         </div>
-
         <div>
           <label>Persona / Style</label>
           <input id="nb_persona" placeholder="contoh: ahli pemasaran UMKM, friendly & solutif">
@@ -152,7 +146,6 @@
       <!-- ====== BLOK FIELD VEO 2/3 ====== -->
       <div id="blkVeo" class="grid hidden" style="margin-top:10px">
         <div class="full"><span class="hint">Mode: Gemini Veo (Default = Indonesia, JSON = English)</span></div>
-
         <div>
           <label>Prompt Type</label>
           <select id="veo_type">
@@ -167,15 +160,11 @@
             <option>English</option>
           </select>
         </div>
-
         <div class="full"><hr style="border:none;border-top:1px solid var(--line)"></div>
-
-        <!-- Scene diperluas menjadi textarea -->
         <div class="full">
           <label>Scene / Deskripsi inti</label>
           <textarea id="veo_scene" placeholder="contoh: pedagang kopi keliling pagi hari di gang kota; detail adegan, suasana, dan pergerakan objek..."></textarea>
         </div>
-
         <div>
           <label>Camera Angle</label>
           <select id="veo_angle">
@@ -198,7 +187,6 @@
             <option value="handheld">Handheld</option>
           </select>
         </div>
-
         <div>
           <label>Lighting</label>
           <select id="veo_light">
@@ -219,7 +207,6 @@
             <option value="documentary">Documentary</option>
           </select>
         </div>
-
         <div>
           <label>FPS</label>
           <select id="veo_fps">
@@ -235,7 +222,6 @@
             <option value="2.39:1">2.39:1</option>
           </select>
         </div>
-
         <div class="full">
           <label>Extra details (opsional)</label>
           <textarea id="veo_extra" placeholder="musik: lo-fi akustik; wardrobe: kasual; mood: hangat & optimis; efek: depth of field;..."></textarea>
@@ -257,37 +243,31 @@
     </section>
   </main>
 
-<script>
-  const $ = id => document.getElementById(id);
+  <script>
+    const $ = id => document.getElementById(id);
 
-  // VISIBILITAS BLOK FORM BERDASAR PLATFORM
-  function applyMode() {
-    const plat = $('platform').value;
-    $('blkChatGPT').classList.toggle('hidden', plat!=='chatgpt');
-    $('blkNano').classList.toggle('hidden', plat!=='nano');
-    $('blkVeo').classList.toggle('hidden', !(plat==='veo2'||plat==='veo3'));
-    // bahasa umum hanya relevan untuk ChatGPT/Nano
-    $('rowLang').classList.toggle('hidden', plat==='veo2'||plat==='veo3');
-  }
-  $('platform').addEventListener('change', applyMode);
-  applyMode();
+    function applyMode() {
+      const plat = $('platform').value;
+      $('blkChatGPT').classList.toggle('hidden', plat!=='chatgpt');
+      $('blkNano').classList.toggle('hidden', plat!=='nano');
+      $('blkVeo').classList.toggle('hidden', !(plat==='veo2'||plat==='veo3'));
+      $('rowLang').classList.toggle('hidden', plat==='veo2'||plat==='veo3');
+    }
+    $('platform').addEventListener('change', applyMode);
+    applyMode();
 
-  // UTIL
-  const lines = (...xs)=> xs.filter(Boolean).join('\n');
-  const orDash = v => (v && v.trim()) ? v.trim() : '-';
-  const getLang = () => ($('lang')?.value || 'Indonesia');
+    const lines = (...xs)=> xs.filter(Boolean).join('\n');
+    const orDash = v => (v && v.trim()) ? v.trim() : '-';
+    const getLang = () => ($('lang')?.value || 'Indonesia');
 
-  // ==== PROMPT BUILDERS ====
+    function buildChatGPT(){
+      const topic = $('cg_topic').value.trim();
+      const aud   = $('cg_audience').value.trim();
+      const rules = $('cg_rules').value.trim();
+      const lang  = getLang();
 
-  // ChatGPT: prompt bersih, siap tempel (disesuaikan bahasa)
-  function buildChatGPT(){
-    const topic = $('cg_topic').value.trim();
-    const aud   = $('cg_audience').value.trim();
-    const rules = $('cg_rules').value.trim();
-    const lang  = getLang();
-
-    if (lang === 'English'){
-      return lines(
+      if (lang === 'English'){
+        return lines(
 `You are a content-writing assistant for small businesses.
 
 Instructions:
@@ -304,11 +284,10 @@ Write a structured copy in this exact format, with no extra labels:
 Headline:
 Copy:
 CTA:`
-      );
-    }
+        );
+      }
 
-    // Indonesian (default)
-    return lines(
+      return lines(
 `Anda adalah asisten penulis konten UMKM.
 
 Instruksi:
@@ -325,40 +304,36 @@ Tulis copy yang terstruktur dengan format berikut tanpa label tambahan:
 Headline:
 Copy:
 CTA:`
-    );
-  }
+      );
+    }
 
-  // NANO BANANA — generator benar-benar menyusun prompt instruktif + skema keluaran
-  // Dirancang agar menganalisis input & template, lalu hanya mengeluarkan hasil akhir (bukan menyalin instruksi).
-  function buildNano(){
-    const obj  = $('nb_objective').value.trim();
-    const ctx  = $('nb_context').value.trim();
-    const lang = getLang();
+    function buildNano(){
+      const obj  = $('nb_objective').value.trim();
+      const ctx  = $('nb_context').value.trim();
+      const lang = getLang();
 
-    const per  = ($('nb_persona').value.trim()) ||
-      (lang==='English'
-        ? 'an SME marketing expert who is friendly, clear, and solutions-oriented'
-        : 'ahli pemasaran UMKM yang ramah, jelas, dan solutif');
+      const per  = ($('nb_persona').value.trim()) ||
+        (lang==='English'
+          ? 'an SME marketing expert who is friendly, clear, and solutions-oriented'
+          : 'ahli pemasaran UMKM yang ramah, jelas, dan solutif');
 
-    const fmt  = $('nb_format').value.trim();
-    const len  = ($('nb_length').value.trim()) || (lang==='English' ? '≤ 60 words per item' : '≤ 60 kata per item');
+      const fmt  = $('nb_format').value.trim();
+      const len  = ($('nb_length').value.trim()) || (lang==='English' ? '≤ 60 words per item' : '≤ 60 kata per item');
 
-    // Skema keluaran default bila user tidak mengisi "Output Format"
-    const schema = fmt || (
-      lang==='English'
-      ? `Numbered list. For each item use:
+      const schema = fmt || (
+        lang==='English'
+        ? `Numbered list. For each item use:
 Title: <max 6 words>
 Summary: <${len}>
 CTA: <short call-to-action>`
-      : `Daftar bernomor. Untuk setiap item gunakan pola:
+        : `Daftar bernomor. Untuk setiap item gunakan pola:
 Judul: <maks 6 kata>
 Ringkasan: <${len}>
 CTA: <ajakan singkat>`
-    );
+      );
 
-    // Prompt instruktif kuat agar Nano Banana melakukan ANALISIS INTERNAL lalu keluaran final sesuai skema.
-    if (lang === 'English'){
-      return lines(
+      if (lang === 'English'){
+        return lines(
 `ROLE
 You are "Nano Banana", a structured prompt-following content assistant.
 
@@ -391,11 +366,10 @@ RESPONSE RULES
 - Do not expose your analysis or thinking steps.
 
 GENERATE NOW.`
-      );
-    }
+        );
+      }
 
-    // Indonesian (default)
-    return lines(
+      return lines(
 `ROLE
 Kamu adalah "Nano Banana", asisten konten yang patuh template dan terstruktur.
 
@@ -428,131 +402,123 @@ RESPONSE RULES
 - Jangan menampilkan proses analisis atau langkah berpikir.
 
 GENERATE NOW.`
-    );
-  }
-
-  // Kumpulkan nilai Veo
-  function collectVeo(){
-    return {
-      scene: $('veo_scene').value.trim(),
-      angle: $('veo_angle').value,
-      motion: $('veo_motion').value,
-      lighting: $('veo_light').value,
-      mode: $('veo_mode').value,
-      fps: $('veo_fps').value,
-      ar: $('veo_ar').value,
-      extra: $('veo_extra').value.trim(),
-      lang: $('veo_lang').value || 'Indonesia'
-    };
-  }
-
-  // VEO DEFAULT (narasi ID/EN) — prompt sutradara terstruktur, menghasilkan 1 prompt yang mengalir
-  function buildVeoDefault(){
-    const d = collectVeo();
-    const idn = (d.lang !== 'English');
-
-    return lines(
-`${idn ? 'Anda adalah sutradara video. Tulis prompt ' + d.lang + ' yang spesifik dan siap pakai untuk Gemini Veo.' :
-'You are a film director. Write a specific, production-ready prompt in ' + d.lang + ' for Gemini Veo.'}
-
-SCENE BRIEF
-${orDash(d.scene)}
-
-VISUAL SPECS
-- Camera: ${d.angle} ${idn ? 'dengan gerak' : 'with'} ${d.motion}
-- Lighting: ${d.lighting}
-- Mode: ${d.mode}
-- FPS: ${d.fps}
-- Aspect Ratio: ${d.ar}
-- ${idn ? 'Detail tambahan' : 'Additional details'}: ${orDash(d.extra)}
-
-OUTPUT RULES
-- ${idn ? 'Narasi hanya menggambarkan apa yang terlihat di frame (bukan instruksi teknis ke alat).' : 'Describe only what the viewer sees on screen (not tool commands).'}
-- ${idn ? 'Gunakan kata kerja visual (mis. "kamera bergerak perlahan", "cahaya hangat menerpa").' : 'Use visual action verbs (e.g., “the camera glides,” “warm light washes over”).'}
-- ${idn ? 'Jaga kontinuitas dan transisi antarscene halus.' : 'Ensure continuity and smooth transitions between shots.'}
-
-SHOT PLAN (3 shot; 2s–3s–3s)
-1) ${idn ? 'Establishing: buka konteks/lingkungan utama.' : 'Establishing: set the main environment and mood.'}
-2) ${idn ? 'Main action: aksi inti subjek; jelaskan gerak kamera & elemen pendukung.' : 'Main action: subject performs the key action; specify camera movement & supporting elements.'}
-3) ${idn ? 'Closing/hero: close-up/komposisi dramatis yang menegaskan mood akhir.' : 'Closing/hero: a close-up or dramatic composition reinforcing the final mood.'}
-
-${idn ? 'Keluarkan SATU paragraf prompt yang mengalir, mengacu pada rencana di atas (tanpa judul bagian).' :
-'Output ONE flowing paragraph referencing the plan above (no section headers).'}`
-    );
-  }
-
-  // VEO JSON (EN) — payload JSON konsisten (specs + prompt + shots)
-  // Disusun agar mengikuti struktur yang konsisten untuk Veo 2/3.
-  function buildVeoJSON(modelVer){
-    const d = collectVeo();
-
-    // Natural-language prompt string (EN) for engines that accept a prompt field.
-    const promptStr = [
-      `Scene: ${d.scene || 'Describe the environment and subject clearly.'}`,
-      `Camera: ${d.angle} with ${d.motion} motion;`,
-      `Lighting: ${d.lighting}; Mode: ${d.mode}; FPS ${d.fps}; AR ${d.ar}.`,
-      d.extra ? `Extra: ${d.extra}.` : '',
-      'Describe only what appears on screen; ensure continuity and smooth transitions.'
-    ].filter(Boolean).join(' ');
-
-    const payload = {
-      model: `gemini-veo-${modelVer}`,
-      task: "video_generation",
-      language: "en",
-      prompt: promptStr,
-      specs: {
-        fps: Number(d.fps || 24),
-        aspect_ratio: d.ar || "16:9",
-        mode: d.mode || "live-action",
-        lighting: d.lighting || "natural morning",
-        camera: { angle: d.angle || "eye-level", motion: d.motion || "static" }
-      },
-      shots: [
-        { id: 1, label: "establishing", seconds: 2, description: "Wide shot to set environment and mood." },
-        { id: 2, label: "action",       seconds: 3, description: "Subject performs the key action; include camera movement specifics." },
-        { id: 3, label: "closing",      seconds: 3, description: "Hero/close-up shot reinforcing the final mood." }
-      ],
-      rules: [
-        "Describe visible content only; avoid tool commands.",
-        "Use clear, concrete visuals; avoid ambiguity.",
-        "Maintain continuity and smooth transitions."
-      ]
-    };
-    return JSON.stringify(payload, null, 2);
-  }
-
-  // ACTIONS
-  $('btnBuild').onclick = ()=>{
-    const plat = $('platform').value;
-    let out = '';
-    if (plat==='chatgpt') out = buildChatGPT();
-    else if (plat==='nano') out = buildNano();
-    else if (plat==='veo2' || plat==='veo3') {
-      const type = $('veo_type').value;
-      if (type==='default') out = buildVeoDefault();
-      else {
-        const ver = (plat==='veo3') ? '3' : '2';
-        out = buildVeoJSON(ver);
-      }
+      );
     }
-    $('out').value = out || 'Lengkapi field terlebih dulu 🙂';
-  };
 
-  $('btnCopy').onclick = async ()=>{
-    try{
-      await navigator.clipboard.writeText($('out').value);
-      alert('Prompt disalin ✅');
-    }catch{ alert('Gagal menyalin'); }
-  };
+    function collectVeo(){
+      return {
+        scene: $('veo_scene').value.trim(),
+        angle: $('veo_angle').value,
+        motion: $('veo_motion').value,
+        lighting: $('veo_light').value,
+        mode: $('veo_mode').value,
+        fps: $('veo_fps').value,
+        ar: $('veo_ar').value,
+        extra: $('veo_extra').value.trim(),
+        lang: $('veo_lang').value || 'Indonesia'
+      };
+    }
 
-  $('btnClear').onclick = ()=>{
-    document.querySelectorAll('input, textarea').forEach(el=>{ if(el.id!=='out') el.value=''; });
-    $('out').value = '';
-  };
-</script>
+    function buildVeoDefault(){
+      const d = collectVeo();
+      const idn = (d.lang !== 'English');
 
-<script src="https://rawcdn.githack.com/sifualfatih-ai/nafs.github.io/refactor/blocks-setup/web-static/js/blocks-loader.js" defer></script>
+      return [
+`${idn ? 'Anda adalah sutradara video. Tulis prompt ' + d.lang + ' yang spesifik dan siap pakai untuk Gemini Veo.' :
+'You are a film director. Write a specific, production-ready prompt in ' + d.lang + ' for Gemini Veo.'}`,
+'',
+'SCENE BRIEF',
+d.scene || '-',
+'',
+'VISUAL SPECS',
+`- Camera: ${d.angle} ${idn ? 'dengan gerak' : 'with'} ${d.motion}`,
+`- Lighting: ${d.lighting}`,
+`- Mode: ${d.mode}`,
+`- FPS: ${d.fps}`,
+`- Aspect Ratio: ${d.ar}`,
+`- ${idn ? 'Detail tambahan' : 'Additional details'}: ${d.extra || '-'}`,
+'',
+'OUTPUT RULES',
+`- ${idn ? 'Narasi hanya menggambarkan apa yang terlihat di frame (bukan instruksi teknis ke alat).' : 'Describe only what the viewer sees on screen (not tool commands).'}`,
+`- ${idn ? 'Gunakan kata kerja visual (mis. "kamera bergerak perlahan", "cahaya hangat menerpa").' : 'Use visual action verbs (e.g., “the camera glides,” “warm light washes over”).'}`,
+`- ${idn ? 'Jaga kontinuitas dan transisi antarscene halus.' : 'Ensure continuity and smooth transitions between shots.'}`,
+'',
+'SHOT PLAN (3 shot; 2s–3s–3s)',
+`${idn ? '1) Establishing: buka konteks/lingkungan utama.' : '1) Establishing: set the main environment and mood.'}`,
+`${idn ? '2) Main action: aksi inti subjek; jelaskan gerak kamera & elemen pendukung.' : '2) Main action: subject performs the key action; specify camera movement & supporting elements.'}`,
+`${idn ? '3) Closing/hero: close-up/komposisi dramatis yang menegaskan mood akhir.' : '3) Closing/hero: a close-up or dramatic composition reinforcing the final mood.'}`,
+'',
+`${idn ? 'Keluarkan SATU paragraf prompt yang mengalir, mengacu pada rencana di atas (tanpa judul bagian).' :
+'Output ONE flowing paragraph referencing the plan above (no section headers).'}`
+      ].join('\n');
+    }
 
-  
+    function buildVeoJSON(modelVer){
+      const d = collectVeo();
+      const promptStr = [
+        `Scene: ${d.scene || 'Describe the environment and subject clearly.'}`,
+        `Camera: ${d.angle} with ${d.motion} motion;`,
+        `Lighting: ${d.lighting}; Mode: ${d.mode}; FPS ${d.fps}; AR ${d.ar}.`,
+        d.extra ? `Extra: ${d.extra}.` : '',
+        'Describe only what appears on screen; ensure continuity and smooth transitions.'
+      ].filter(Boolean).join(' ');
+
+      const payload = {
+        model: `gemini-veo-${modelVer}`,
+        task: "video_generation",
+        language: "en",
+        prompt: promptStr,
+        specs: {
+          fps: Number(d.fps || 24),
+          aspect_ratio: d.ar || "16:9",
+          mode: d.mode || "live-action",
+          lighting: d.lighting || "natural morning",
+          camera: { angle: d.angle || "eye-level", motion: d.motion || "static" }
+        },
+        shots: [
+          { id: 1, label: "establishing", seconds: 2, description: "Wide shot to set environment and mood." },
+          { id: 2, label: "action",       seconds: 3, description: "Subject performs the key action; include camera movement specifics." },
+          { id: 3, label: "closing",      seconds: 3, description: "Hero/close-up shot reinforcing the final mood." }
+        ],
+        rules: [
+          "Describe visible content only; avoid tool commands.",
+          "Use clear, concrete visuals; avoid ambiguity.",
+          "Maintain continuity and smooth transitions."
+        ]
+      };
+      return JSON.stringify(payload, null, 2);
+    }
+
+    $('btnBuild').onclick = ()=>{
+      const plat = $('platform').value;
+      let out = '';
+      if (plat==='chatgpt') out = buildChatGPT();
+      else if (plat==='nano') out = buildNano();
+      else if (plat==='veo2' || plat==='veo3') {
+        const type = $('veo_type').value;
+        if (type==='default') out = buildVeoDefault();
+        else {
+          const ver = (plat==='veo3') ? '3' : '2';
+          out = buildVeoJSON(ver);
+        }
+      }
+      $('out').value = out || 'Lengkapi field terlebih dulu 🙂';
+    };
+
+    $('btnCopy').onclick = async ()=>{
+      try{
+        await navigator.clipboard.writeText($('out').value);
+        alert('Prompt disalin ✅');
+      }catch{ alert('Gagal menyalin'); }
+    };
+
+    $('btnClear').onclick = ()=>{
+      document.querySelectorAll('input, textarea').forEach(el=>{ if(el.id!=='out') el.value=''; });
+      $('out').value = '';
+    };
+  </script>
+
+  <!-- Loader blok (relatif, aman untuk githack & GitHub Pages) -->
+  <script src="web-static/js/blocks-loader.js" defer></script>
 </body>
 </html>
