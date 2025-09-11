@@ -519,6 +519,56 @@ d.scene || '-',
   </script>
 
   <!-- Loader blok (relatif, aman untuk githack & GitHub Pages) -->
-  <script src="web-static/js/blocks-loader.js" defer></script>
+ <script type="module">
+/* Mini-loader khusus halaman ini: muat config + definisikan <nf-hero> */
+(async () => {
+  // 1) Muat konfigurasi publik (relatif terhadap lokasi file ini)
+  let cfg = { siteName: 'NafsFlow', links: { pelanggan: '/pelanggan/' } };
+  try {
+    const r = await fetch('web-static/config/app-config.json', { cache: 'no-store' });
+    if (r.ok) cfg = await r.json();
+  } catch (e) {
+    console.warn('[config] gagal memuat, pakai default', e);
+  }
+  window.__APP_CONFIG = Object.freeze(cfg);
+
+  // 2) Definisikan blok hero (sama seperti hero.v1.js)
+  class NfHero extends HTMLElement {
+    constructor(){ super(); this.attachShadow({ mode:'open' }); }
+    connectedCallback(){
+      const c = window.__APP_CONFIG || {};
+      const title   = this.getAttribute('title')    || c.siteName || 'NafsFlow';
+      const subtitle= this.getAttribute('subtitle') || 'Kumpulan contoh & galeri penggunaan NafsFlow.';
+      const ctaText = this.getAttribute('cta-text') || 'Buka Halaman Pelanggan';
+      const ctaHref = this.getAttribute('cta-href') || (c.links && c.links.pelanggan) || '#';
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host { display:block; background:#17151f; color:#fff; }
+          .wrap { max-width:1040px; margin:0 auto; padding:48px 16px; }
+          h1 { font-size:40px; line-height:1.1; margin:0 0 12px; }
+          p  { opacity:.85; max-width:680px; margin:0 0 20px; }
+          a.cta { display:inline-block; text-decoration:none; padding:10px 16px;
+                  border-radius:12px; background:#7c5cff; color:#fff; }
+          a.cta:focus, a.cta:hover { filter:brightness(1.1); }
+        </style>
+        <section class="wrap">
+          <h1>${title}</h1>
+          <p>${subtitle}</p>
+          <a class="cta" href="${ctaHref}">${ctaText}</a>
+        </section>
+      `;
+    }
+  }
+  if (!customElements.get('nf-hero')) customElements.define('nf-hero', NfHero);
+
+  // 3) Tanda siap untuk pengecekan di Console
+  document.documentElement.setAttribute('data-nf', 'ready');
+})();
+</script>
+
+
+
+
+  
 </body>
 </html>
