@@ -14,9 +14,14 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
   const [prodFile, setProdFile] = React.useState(null);
   const [prodPreview, setProdPreview] = React.useState(null);
 
-  const [loading, setLoading] = React.useState(false);
-  const [resultUrl, setResultUrl] = React.useState(null);
+  // ===== result: 6 kartu
+  // { posterUrl, videoUrl, loading }
+  const [cards, setCards] = React.useState(
+    Array.from({ length: 6 }, () => ({ posterUrl: null, videoUrl: null, loading: false }))
+  );
+  const [generatingGrid, setGeneratingGrid] = React.useState(false);
 
+  // upload
   const fileInputRef = React.useRef(null);
   function onPickFile(){ if(!isLoggedIn) return; fileInputRef.current?.click(); }
   function onFileChange(e){
@@ -33,60 +38,73 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
     });
   }
 
-  async function generate() {
+  // ===== generate grid poster (setup 6 frame)
+  async function generateGrid() {
     if(!isLoggedIn) return;
-    setLoading(true); setResultUrl(null);
+    setGeneratingGrid(true);
+    const vibeStr = Array.from(selectedVibes).join(", ");
+    // buat 6 poster mock dulu (server video bisa dipanggil per-kartu)
+    const posters = await Promise.all(
+      Array.from({ length: 6 }).map((_, i) => makeMockPoster(`Gambar ${i+1}`, modelType, vibeStr, ratio))
+    );
+    setCards(posters.map(p => ({ posterUrl: p, videoUrl: null, loading: false })));
+    setGeneratingGrid(false);
+  }
+
+  // ===== panggil video endpoint per kartu
+  async function handleGenerateVideo(idx){
+    if(!isLoggedIn) return;
+    setCards(prev => prev.map((c,i) => i===idx ? ({...c, loading:true}) : c));
+
     try {
       const fd = new FormData();
       if (prodFile) fd.append("reference", prodFile);
       const vibeStr = Array.from(selectedVibes).join(", ");
-      fd.append("prompt", `Konten UGC TikTok Affiliate, model: ${modelType}, vibe: ${vibeStr}`);
-      fd.append("negative", "blurry, low quality, watermark, text");
-      fd.append("model", "image-default");
+      fd.append("prompt", `Konten UGC TikTok Affiliate, model: ${modelType}, vibe: ${vibeStr}, frame ${idx+1}`);
+      fd.append("model", "VEO 2.0");
       fd.append("ratio", ratio);
+      fd.append("duration", "8");
+      // kategori opsional (buat routing preset di backend)
       fd.append("category", "tiktok-affiliate");
 
-      const res = await fetch("/api/generate-image.php", { method: "POST", body: fd });
+      const res = await fetch("/api/generate-video.php", { method: "POST", body: fd });
       if (res.ok) {
         const data = await res.json();
-        if (data?.ok && data?.imageUrl) {
-          setResultUrl(data.imageUrl);
-          setLoading(false);
+        // jika provider async → mungkin hanya posterUrl; tetap tampilkan poster
+        if (data?.ok && (data?.videoUrl || data?.posterUrl)) {
+          setCards(prev => prev.map((c,i) =>
+            i===idx ? ({ posterUrl: data.posterUrl || c.posterUrl, videoUrl: data.videoUrl || null, loading:false }) : c
+          ));
           return;
         }
       }
-      setResultUrl(await makeMockImage(modelType, vibeStr, ratio));
+      // fallback: tetap pakai poster mock (sudah ada)
+      setCards(prev => prev.map((c,i) => i===idx ? ({...c, loading:false}) : c));
     } catch {
-      setResultUrl(await makeMockImage(modelType, Array.from(selectedVibes).join(", "), ratio));
-    } finally {
-      setLoading(false);
+      setCards(prev => prev.map((c,i) => i===idx ? ({...c, loading:false}) : c));
     }
   }
 
-  // === mock canvas jika API belum siap ===
-  function makeMockImage(model, vibe, ratioStr){
-    const [w,h] = ratioStr==="16:9"?[1280,720] : ratioStr==="1:1"?[900,900] : [900,1600]; // 9:16 default
+  // ===== mock poster (rasio 9:16)
+  function makeMockPoster(title, model, vibe, ratioStr){
+    const [w,h] = [900,1600]; // 9:16
     const c=document.createElement("canvas"); c.width=w; c.height=h;
     const ctx=c.getContext("2d");
-    const g=ctx.createLinearGradient(0,0,w,h); g.addColorStop(0,"#0ea5e9"); g.addColorStop(1,"#a21caf");
+    // tema ungu gelap
+    const g=ctx.createLinearGradient(0,0,w,h);
+    g.addColorStop(0,"#2a0f4a"); g.addColorStop(1,"#1a0b2e");
     ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
-    ctx.fillStyle="rgba(255,255,255,0.95)"; ctx.font=`${Math.max(28, Math.floor(w/24))}px sans-serif`;
-    ctx.fillText("TikTok Affiliate (Mock)", 40, 80);
-    ctx.font=`${Math.max(18, Math.floor(w/36))}px sans-serif`;
-    ctx.fillText(`Model: ${model}`, 40, 130);
-    wrap(ctx, `Vibe: ${vibe||"-"}`, 40, 180, w-80, Math.max(22, Math.floor(w/40)));
-    ctx.font=`${Math.max(16, Math.floor(w/46))}px monospace`;
-    ctx.fillText(`ratio ${ratioStr}`, 40, h-40);
+    // frame area
+    ctx.fillStyle="#37415188"; ctx.fillRect(32,32,w-64,h-164);
+
+    ctx.fillStyle="rgba(255,255,255,0.85)";
+    ctx.font="24px Sans-Serif"; ctx.textAlign="center";
+    ctx.fillText(title, w/2, h-120);
+    ctx.fillStyle="rgba(255,255,255,0.6)";
+    ctx.font="16px Sans-Serif";
+    ctx.fillText(`Model: ${model}`, w/2, h-90);
+    ctx.fillText(`Rasio ${ratioStr}`, w/2, h-66);
     return Promise.resolve(c.toDataURL("image/png"));
-  }
-  function wrap(ctx, text, x, y, maxWidth, lineHeight){
-    const words=text.split(" "); let line="", yy=y;
-    for(let n=0;n<words.length;n++){
-      const test=line+words[n]+" "; const w=ctx.measureText(test).width;
-      if (w>maxWidth && n>0){ ctx.fillText(line, x, yy); line=words[n]+" "; yy+=lineHeight; }
-      else { line=test; }
-    }
-    ctx.fillText(line, x, yy);
   }
 
   return (
@@ -94,6 +112,7 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
       {/* panel kiri */}
       <div className="p-4 border-b lg:border-b-0 lg:border-r border-white/10 space-y-4">
         <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3 space-y-4">
+          {/* 1. unggah */}
           <div>
             <div className="text-[13px] font-semibold mb-2">1. Unggah Produk</div>
             <div onClick={onPickFile}
@@ -110,6 +129,7 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
             <input ref={fileInputRef} type="file" accept="image/*" onChange={onFileChange} className="hidden"/>
           </div>
 
+          {/* 2. pilih model */}
           <div>
             <div className="text-[13px] font-semibold mb-2">2. Pilih Model</div>
             <div className="grid grid-cols-3 gap-2">
@@ -125,13 +145,13 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
             </div>
           </div>
 
+          {/* 3. vibes */}
           <div>
             <div className="text-[13px] font-semibold mb-2">3. Pilih Vibe Konten</div>
             <div className="grid grid-cols-2 gap-2 max-h-[260px] overflow-auto pr-1">
               {vibeTags.map(tag=>(
                 <button key={tag}
-                  onClick={()=>toggleVibe(tag)}
-                  disabled={!isLoggedIn}
+                  onClick={()=>toggleVibe(tag)} disabled={!isLoggedIn}
                   className={`truncate rounded-lg px-3 py-2 text-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-white/80
                     ${!isLoggedIn?"opacity-60 cursor-not-allowed":""} ${selectedVibes.has(tag)?"ring-1 ring-fuchsia-400":""}`}>
                   {tag}
@@ -140,6 +160,7 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
             </div>
           </div>
 
+          {/* 4. ratio */}
           <div>
             <div className="text-[13px] font-semibold mb-2">4. Aspect Ratio</div>
             <select value={ratio} onChange={e=>setRatio(e.target.value)} disabled={!isLoggedIn}
@@ -148,12 +169,13 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
             </select>
           </div>
 
+          {/* 5. generate grid */}
           <div>
             {isLoggedIn ? (
-              <button onClick={(e)=>{e.preventDefault(); generate();}}
-                      disabled={loading}
+              <button onClick={(e)=>{e.preventDefault(); generateGrid();}}
+                      disabled={generatingGrid}
                       className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">
-                {loading ? "Generating..." : "Generate Gambar"}
+                {generatingGrid ? "Menyiapkan Frame..." : "Generate 6 Frame"}
               </button>
             ) : (
               <a href={loginUrl} className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm font-medium shadow">
@@ -164,20 +186,50 @@ function TiktokAffiliatePage({ isLoggedIn, loginUrl }) {
         </div>
       </div>
 
-      {/* panel kanan */}
+      {/* panel kanan: GRID 6 FRAME */}
       <div className="p-4">
-        <div className="h-full min-h-[420px] rounded-xl bg-black/40 border border-white/10 overflow-hidden">
+        <div className="h-full min-h-[420px] rounded-xl bg-white/[0.02] border border-white/10">
           <div className="h-10 px-4 border-b border-white/10 flex items-center text-sm font-medium text-white/90">Hasil</div>
-          <div className="h-[calc(100%-40px)] grid place-items-center text-center p-6">
-            {!resultUrl ? (
-              <div>
-                <div className="text-4xl text-white/50">{loading?"⏳":"🖼️"}</div>
-                <p className="mt-2 text-xs text-white/50">{loading?"Sedang membuat gambar...":"Hasil konten Anda akan muncul di sini."}</p>
+
+          <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {cards.map((card, idx)=>(
+              <div key={idx} className="rounded-2xl bg-[#2a0f4a]/40 border border-white/10 overflow-hidden flex flex-col">
+                {/* frame 9:16 */}
+                <div style={{ aspectRatio: "9 / 16" }}
+                     className="bg-[#374151] grid place-items-center relative">
+                  {card.videoUrl ? (
+                    <video src={card.videoUrl} poster={card.posterUrl || undefined} controls className="absolute inset-0 w-full h-full object-cover"/>
+                  ) : card.posterUrl ? (
+                    <img src={card.posterUrl} alt={`poster ${idx+1}`} className="absolute inset-0 w-full h-full object-cover"/>
+                  ) : (
+                    <span className="text-white/50 text-sm">Frame {idx+1} (Rasio 9:16)</span>
+                  )}
+                </div>
+
+                {/* tombol */}
+                <div className="p-2 border-t border-white/10">
+                  {isLoggedIn ? (
+                    <button
+                      onClick={()=>handleGenerateVideo(idx)}
+                      disabled={card.loading}
+                      className="w-full rounded-lg px-3 py-2 text-sm bg-gradient-to-r from-purple-500 to-fuchsia-600 shadow">
+                      {card.loading ? "Rendering..." : "Generate Video"}
+                    </button>
+                  ) : (
+                    <a href={loginUrl} className="w-full inline-flex items-center justify-center px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm shadow">
+                      🔐 Login untuk Generate
+                    </a>
+                  )}
+                </div>
               </div>
-            ) : (
-              <img src={resultUrl} alt="hasil" className="max-h-[60vh] rounded-xl object-contain"/>
-            )}
+            ))}
           </div>
+
+          {!cards.some(c=>c.posterUrl||c.videoUrl) && !generatingGrid && (
+            <div className="grid place-items-center text-center min-h-[240px] text-white/50 text-xs">
+              Hasil konten Anda akan muncul di sini.
+            </div>
+          )}
         </div>
       </div>
     </div>
