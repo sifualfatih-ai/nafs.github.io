@@ -70,8 +70,8 @@ function GenerateAudioPage({ isLoggedIn, loginUrl, Field, GhostInput }) {
           <div className="text-[13px] font-medium mb-2">2. Pilih Aktor Suara</div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
-              "Wanita Default","Wanita Semangat","Wanita Ceria)",
-              "Pria Default)","Pria Dramatis","Pria Semangat"
+              "Wanita Default","Wanita Semangat","Wanita Ceria",
+              "Pria Default","Pria Dramatis","Pria Semangat"
             ].map((v)=>(
               <button key={v} disabled={!isLoggedIn}
                 onClick={()=>setVoice(v)}
