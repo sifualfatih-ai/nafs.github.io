@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <title>Nafs Premium – Host</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React + ReactDOM + Babel (untuk JSX tanpa bundler) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      html,body{background:linear-gradient(135deg,#2a0f4a,#1a0b2e 45%,#0c0516)}
+    </style>
+  </head>
+  <body class="text-white">
+    <!-- ====== HEADER AKSES / MENU UTAMA ====== -->
+    <header class="max-w-6xl mx-auto p-4">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-400 to-fuchsia-600 grid place-items-center shadow-lg">👑</div>
+          <div>
+            <div class="text-xl font-semibold tracking-wide">Nafs Premium</div>
+            <div class="text-xs text-white/70">Host & Router untuk 5 Halaman JSX</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="homeBtn" class="rounded-lg px-3 py-2 bg-white/10 hover:bg-white/20 text-sm" href="#">🏠 Halaman Utama</a>
+          <a id="loginBtn" class="rounded-lg px-3 py-2 bg-purple-600/80 hover:bg-purple-600 text-sm">🔐 Login</a>
+          <a id="logoutBtn" class="hidden rounded-lg px-3 py-2 bg-white/10 hover:bg-white/20 text-sm">🚪 Keluar</a>
+        </div>
+      </div>
+
+      <!-- bar status + pintasan -->
+      <div class="mt-3 grid gap-2 sm:grid-cols-3">
+        <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+          <div class="text-sm font-medium flex items-center gap-2">
+            <span>✨ Akses</span><span id="accessBadge" class="text-[11px] px-2 py-0.5 rounded-full border bg-purple-500/10 text-purple-300 border-purple-400/30">Belum Login</span>
+          </div>
+          <p class="text-[11px] text-white/70 mt-1">Login untuk mengaktifkan semua tombol “Generate”.</p>
+        </div>
+        <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+          <div class="text-sm font-medium">🎓 Tutorial</div>
+          <p class="text-[11px] text-white/70 mt-1">Langkah cepat: pilih halaman → isi form → klik Generate (butuh login).</p>
+        </div>
+        <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+          <div class="text-sm font-medium">⚙️ Settings</div>
+          <p class="text-[11px] text-white/70 mt-1">Setelan umum disimpan lokal (localStorage) untuk demo ini.</p>
+        </div>
+      </div>
+
+      <!-- NAV ke 5 halaman -->
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button data-page="GenerateImage" class="px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm shadow">🖼️ Generate Image</button>
+        <button data-page="GenerateVideo" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">🎬 Generate Video</button>
+        <button data-page="GenerateAudio" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">🌊 Generate Audio</button>
+        <button data-page="FotoProduk" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">📷 Foto Produk</button>
+        <button data-page="TiktokAffiliate" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">🔗 Tiktok Affiliate</button>
+      </div>
+    </header>
+
+    <!-- ====== ROOT RENDER ====== -->
+    <main class="max-w-6xl mx-auto p-4">
+      <div id="root" class="min-h-[70vh] rounded-3xl border border-white/10 bg-white/5 overflow-hidden"></div>
+    </main>
+
+    <!-- ==== KONFIG URL ABSOLUT GITHUB PAGES (atau domain kamu) ==== -->
+    <script type="text/javascript">
+      /* ---- KONFIG URL ABSOLUT GITHUB PAGES ---- */
+      const BASE = "https://nafsflow.com/";
+      const HERE = "https://nafsflow.com/react/vite/"; // ubah sesuai lokasi index.html ini
+      const HOMEPAGE_URL = BASE;
+      const LOGIN_URL  = BASE + `?login=1&r=${encodeURIComponent(HERE)}`;
+      const LOGOUT_URL = BASE + `?logout=1&r=${encodeURIComponent(HERE)}`;
+    </script>
+
+    <!-- ==== HELPERS + ROUTER (global) ==== -->
+    <script type="text/babel">
+      const e = React.createElement;
+
+      // ====== STATE LOGIN (demo) ======
+      function isLoggedIn() { return localStorage.getItem("nafs_isLoggedIn") === "1"; }
+
+      // ====== UI HELPERS (global, dipakai semua halaman) ======
+      function Field({ label, children, hint }) {
+        return (
+          <div className="space-y-1">
+            <label className="text-xs text-white/60">{label}</label>
+            {children}
+            {hint && <p className="text-[11px] text-white/40">{hint}</p>}
+          </div>
+        );
+      }
+
+      function GhostInput({ as = "input", ...rest }) {
+        const C = as;
+        return (
+          <C {...rest}
+             className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400/30" />
+        );
+      }
+
+      function ModelSelect({ value, onChange, disabled }) {
+        const models = ["Gemini 2.5 Flash", "GPT-5 Thinking", "Llama 3.1", "Claude 3.5 Sonnet"];
+        return (
+          <div className="w-full">
+            <label className="text-xs text-white/60">Model</label>
+            <div className="relative mt-1">
+              <select disabled={disabled} value={value} onChange={(e) => onChange(e.target.value)}
+                className={`w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}>
+                {models.map((m) => (
+                  <option key={m} className="bg-[#1a0b2e]" value={m}>{m}</option>
+                ))}
+              </select>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60">▾</span>
+            </div>
+          </div>
+        );
+      }
+
+      // ====== SIMPLE ROUTER ======
+      window.NafsPages = {}; // setiap .jsx akan mendaftarkan {name: Component}
+      const mountEl = document.getElementById("root");
+
+      function renderPage(pageName){
+        const Comp = window.NafsPages[pageName];
+        if(!Comp){
+          ReactDOM.createRoot(mountEl).render(
+            <div className="grid place-items-center min-h-[50vh] text-white/70 text-sm">Halaman <b className="mx-1">{pageName}</b> belum dimuat.</div>
+          );
+          return;
+        }
+        ReactDOM.createRoot(mountEl).render(<Comp
+          isLoggedIn={isLoggedIn()}
+          loginUrl={LOGIN_URL}
+          Field={Field}
+          GhostInput={GhostInput}
+          ModelSelect={ModelSelect}
+        />);
+      }
+
+      // ====== HEADER BUTTON WIRES ======
+      const homeBtn   = document.getElementById("homeBtn");
+      const loginBtn  = document.getElementById("loginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const accessBadge = document.getElementById("accessBadge");
+
+      function syncAccessUI() {
+        if(isLoggedIn()){
+          accessBadge.textContent = "Premium Aktif";
+          loginBtn.classList.add("hidden");
+          logoutBtn.classList.remove("hidden");
+        } else {
+          accessBadge.textContent = "Belum Login";
+          loginBtn.classList.remove("hidden");
+          logoutBtn.classList.add("hidden");
+        }
+      }
+      syncAccessUI();
+
+      homeBtn.addEventListener("click", (e)=>{ e.preventDefault(); window.location.href = HOMEPAGE_URL; });
+      loginBtn.addEventListener("click", ()=>{ window.location.href = LOGIN_URL; });
+      logoutBtn.addEventListener("click", ()=>{ window.location.href = LOGOUT_URL; });
+
+      // nav ke 5 halaman
+      document.querySelectorAll("[data-page]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          renderPage(btn.dataset.page);
+        });
+      });
+
+      // render pertama (optional): tampilkan banner kosong
+      ReactDOM.createRoot(mountEl).render(
+        <div className="p-6 text-sm text-white/70">
+          Pilih salah satu halaman di bar tombol di atas untuk memulai.
+        </div>
+      );
+    </script>
+
+    <!-- ====== MUAT 5 FILE JSX (Babel) ====== -->
+    <script type="text/babel" src="./generateimage.jsx"></script>
+    <script type="text/babel" src="./generatevideo.jsx"></script>
+    <script type="text/babel" src="./generateaudio.jsx"></script>
+    <script type="text/babel" src="./fotoproduk.jsx"></script>
+    <script type="text/babel" src="./tiktokaffiliate.jsx"></script>
+  </body>
+</html>
