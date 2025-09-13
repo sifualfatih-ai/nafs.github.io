@@ -1,49 +1,11 @@
-const DEFAULT_GEMINI_API_KEY = (window.__ENV && window.__ENV.GEMINI_API_KEY) || window.__ENV_GEMINI_KEY || "";
+const DEFAULT_GEMINI_API_KEY =
+  (window.__ENV && window.__ENV.GEMINI_API_KEY) ||
+  window.__ENV_GEMINI_KEY ||
+  "";
 
 /* =========================
-   Helper: ambil data form
+   Helper umum
 ========================= */
-function getFormData(form) {
-  const fd = new FormData(form);
-
-  // Ambil semua nilai dari beberapa elemen bernama mirip (pedagogik_1, pedagogik_2, ...)
-  const valsByPrefix = (prefix) =>
-    Array.from(form.querySelectorAll(`[name^="${prefix}"]`))
-      .map((el) => (el.value || "").trim())
-      .filter((v) => v !== "");
-
-  // Ambil semua checkbox yang dicentang
-  const checked = (name) =>
-    Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map((el) => el.value);
-
-  return {
-    schoolName: fd.get("schoolName")?.toString() || "",
-    teacherName: fd.get("teacherName")?.toString() || "",
-    teacherNip: fd.get("teacherNip")?.toString() || "",
-    headmasterName: fd.get("headmasterName")?.toString() || "",
-    headmasterNip: fd.get("headmasterNip")?.toString() || "",
-    educationLevel: fd.get("educationLevel")?.toString() || "KOBER",
-
-    // className kini dikendalikan oleh <select> tetapi disinkronkan ke input[name="className"] tersembunyi
-    className: fd.get("className")?.toString() || "",
-
-    learningTheme: fd.get("learningTheme")?.toString() || "",
-    learningOutcomes: fd.get("learningOutcomes")?.toString() || "",
-    subjectMatter: fd.get("subjectMatter")?.toString() || "",
-    numMeetings: Number(fd.get("numMeetings") || 1),
-    meetingDuration: fd.get("meetingDuration")?.toString() || "2 x 35 menit",
-
-    // praktik pedagogik sekarang berbentuk beberapa <select>, satu per pertemuan
-    pedagogicalPractices: valsByPrefix("pedagogicalPractices_"),
-
-    // dimensi PPP sekarang checkbox
-    graduateDimensions: checked("graduateDimensions"),
-  };
-}
-
-/* =======================================================
-   Utility kecil untuk DOM upgrade sesuai instruksi
-======================================================= */
 function createEl(tag, attrs = {}, children = []) {
   const el = document.createElement(tag);
   Object.entries(attrs).forEach(([k, v]) => {
@@ -57,36 +19,78 @@ function createEl(tag, attrs = {}, children = []) {
   });
   return el;
 }
-
 function extractOptionsFromSelect(sel) {
   if (!sel) return [];
-  return Array.from(sel.querySelectorAll("option")).map((o) => o.value || o.textContent);
+  return Array.from(sel.querySelectorAll("option")).map(
+    (o) => o.value || o.textContent
+  );
+}
+function loadScriptOnce(src, globalCheck) {
+  return new Promise((resolve, reject) => {
+    if (globalCheck && globalCheck()) return resolve();
+    const s = document.createElement("script");
+    s.src = src;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error(`Gagal memuat ${src}`));
+    document.head.appendChild(s);
+  });
 }
 
-/* =======================================================
-   UPGRADE FORM FIELD sesuai kebutuhan
-======================================================= */
+/* =========================
+   Ambil data form
+========================= */
+function getFormData(form) {
+  const fd = new FormData(form);
+
+  const valsByPrefix = (prefix) =>
+    Array.from(form.querySelectorAll(`[name^="${prefix}"]`))
+      .map((el) => (el.value || "").trim())
+      .filter((v) => v !== "");
+
+  const checked = (name) =>
+    Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map(
+      (el) => el.value
+    );
+
+  return {
+    schoolName: fd.get("schoolName")?.toString() || "",
+    teacherName: fd.get("teacherName")?.toString() || "",
+    teacherNip: fd.get("teacherNip")?.toString() || "",
+    headmasterName: fd.get("headmasterName")?.toString() || "",
+    headmasterNip: fd.get("headmasterNip")?.toString() || "",
+    educationLevel: fd.get("educationLevel")?.toString() || "KOBER",
+    className: fd.get("className")?.toString() || "",
+    learningTheme: fd.get("learningTheme")?.toString() || "",
+    learningOutcomes: fd.get("learningOutcomes")?.toString() || "",
+    subjectMatter: fd.get("subjectMatter")?.toString() || "",
+    numMeetings: Number(fd.get("numMeetings") || 1),
+    meetingDuration: fd.get("meetingDuration")?.toString() || "2 x 35 menit",
+    pedagogicalPractices: valsByPrefix("pedagogicalPractices_"),
+    graduateDimensions: checked("graduateDimensions"),
+  };
+}
+
+/* =========================
+   Upgrade field sesuai instruksi sebelumnya
+========================= */
 function upgradeFields() {
   const form = document.getElementById("rpmForm");
   if (!form) return;
 
-  /* ---------- 1) Nama Kelas menjadi dropdown + CRUD (localStorage) ---------- */
+  // 1) Nama Kelas → dropdown + kelola (localStorage)
   (function upgradeClassName() {
-    // Cari input/elemen lama
     const old = form.querySelector('[name="className"]');
     if (!old) return;
+    const hidden =
+      old.tagName === "INPUT"
+        ? old
+        : createEl("input", { type: "hidden", name: "className" });
+    if (old !== hidden) old.replaceWith(hidden);
 
-    // Buat hidden untuk sinkronisasi nilai (agar FormData tetap bekerja)
-    const hidden = old.tagName === "INPUT" ? old : createEl("input", { type: "hidden", name: "className" });
-    if (old !== hidden) {
-      old.replaceWith(hidden);
-    }
-
-    // Tempatkan UI baru setelah hidden
     const wrapper = createEl("div", { class: "flex gap-2 items-center" });
     hidden.parentNode.insertBefore(wrapper, hidden.nextSibling);
 
-    // Ambil opsi tersimpan atau gunakan default
     const LS_KEY = "rpm_class_name_options";
     const defaultOpts = ["Kelas A", "Kelas B", "Kelas Besar", "Kelas Kecil"];
     const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
@@ -96,20 +100,17 @@ function upgradeFields() {
       id: "classNameSelect",
       class: "border rounded px-2 py-1 w-full",
     });
-
-    function refreshClassSelect(valueToKeep) {
+    function refresh(valueToKeep) {
       sel.innerHTML = "";
-      options.forEach((opt) => sel.appendChild(createEl("option", { value: opt }, opt)));
+      options.forEach((opt) =>
+        sel.appendChild(createEl("option", { value: opt }, opt))
+      );
       const val = valueToKeep || hidden.value || options[0] || "";
       sel.value = val;
       hidden.value = val;
     }
-
-    refreshClassSelect();
-
-    sel.addEventListener("change", () => {
-      hidden.value = sel.value;
-    });
+    refresh();
+    sel.addEventListener("change", () => (hidden.value = sel.value));
 
     const btnManage = createEl(
       "button",
@@ -126,35 +127,27 @@ function upgradeFields() {
       const cleaned = next
         .split("\n")
         .map((s) => s.trim())
-        .filter((s) => s);
+        .filter(Boolean);
       if (!cleaned.length) return;
-      options = Array.from(new Set(cleaned)); // unik
+      options = Array.from(new Set(cleaned));
       localStorage.setItem(LS_KEY, JSON.stringify(options));
-      refreshClassSelect();
+      refresh();
     });
 
     wrapper.appendChild(sel);
     wrapper.appendChild(btnManage);
   })();
 
-  /* ---------- Ambil opsi lama dari select untuk dipakai ulang ---------- */
+  // 2) Praktik Pedagogik → dropdown dinamis mengikuti jumlah pertemuan
   const oldPedagSel = form.querySelector('[name="pedagogicalPractices"]');
-  const oldGradSel = form.querySelector('[name="graduateDimensions"]');
   const pedagogicOptions = extractOptionsFromSelect(oldPedagSel);
-  const gradOptions = extractOptionsFromSelect(oldGradSel);
-
-  /* ---------- 2) Praktik Pedagogik menjadi dropdown & mengikuti jumlah pertemuan ---------- */
   (function upgradePedagogic() {
-    // Buat container pengganti
-    const container = createEl("div", { id: "pedagogicalContainer", class: "space-y-2" });
-
-    if (oldPedagSel) {
-      oldPedagSel.replaceWith(container);
-    } else {
-      // fallback: cari tempat berdasarkan label
-      const anchor = form.querySelector("#pedagogical-anchor") || form.querySelector('[data-field="pedagogicalPractices"]') || form;
-      anchor.appendChild(container);
-    }
+    const container = createEl("div", {
+      id: "pedagogicalContainer",
+      class: "space-y-2",
+    });
+    if (oldPedagSel) oldPedagSel.replaceWith(container);
+    else form.appendChild(container);
 
     function render(count) {
       container.innerHTML = "";
@@ -163,31 +156,36 @@ function upgradeFields() {
           name: `pedagogicalPractices_${i}`,
           class: "border rounded px-2 py-1 w-full",
         });
-        // opsi tetap sama seperti sebelumnya
-        (pedagogicOptions.length ? pedagogicOptions : ["Diskusi", "Demonstrasi", "Bermain Peran", "Eksperimen"]).forEach((opt) =>
+        (pedagogicOptions.length
+          ? pedagogicOptions
+          : ["Diskusi", "Demonstrasi", "Bermain Peran", "Eksperimen"]
+        ).forEach((opt) =>
           sel.appendChild(createEl("option", { value: opt }, opt))
         );
-        const row = createEl("div", {}, [
-          createEl("span", { class: "mr-2" }, `Pertemuan ${i}`),
-          sel,
-        ]);
-        container.appendChild(row);
+        container.appendChild(
+          createEl("div", {}, [
+            createEl("span", { class: "mr-2" }, `Pertemuan ${i}`),
+            sel,
+          ])
+        );
       }
     }
-
-    // sinkron dengan jumlah pertemuan
     const numMeetingsEl = form.querySelector('[name="numMeetings"]');
-    const getCount = () => Math.max(1, parseInt(numMeetingsEl?.value || "1", 10) || 1);
-
+    const getCount = () =>
+      Math.max(1, parseInt(numMeetingsEl?.value || "1", 10) || 1);
     render(getCount());
-
     numMeetingsEl?.addEventListener("input", () => render(getCount()));
     numMeetingsEl?.addEventListener("change", () => render(getCount()));
   })();
 
-  /* ---------- 3) Dimensi Profil Pelajar Pancasila → checkbox (bullet kotak) ---------- */
+  // 3) Dimensi Profil Pelajar Pancasila → checkbox (bullet kotak)
+  const oldGradSel = form.querySelector('[name="graduateDimensions"]');
+  const gradOptions = extractOptionsFromSelect(oldGradSel);
   (function upgradeGraduateDimensions() {
-    const container = createEl("div", { id: "graduateDimensionsContainer", class: "grid gap-2" });
+    const container = createEl("div", {
+      id: "graduateDimensionsContainer",
+      class: "grid gap-2",
+    });
     if (oldGradSel) oldGradSel.replaceWith(container);
     else form.appendChild(container);
 
@@ -209,10 +207,15 @@ function upgradeFields() {
         {
           for: id,
           class: "flex items-center gap-2",
-          style: { listStyleType: "square" }, // bullet kotak (visual bantu)
+          style: { listStyleType: "square" },
         },
         [
-          createEl("input", { type: "checkbox", id, name: "graduateDimensions", value: label }),
+          createEl("input", {
+            type: "checkbox",
+            id,
+            name: "graduateDimensions",
+            value: label,
+          }),
           createEl("span", {}, label),
         ]
       );
@@ -232,20 +235,33 @@ function renderRPM(rpm) {
   }
 
   const esc = (s) =>
-    (s || "").toString().replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    (s || "").toString().replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[m]));
 
   const bullets = (arr) =>
-    Array.isArray(arr) && arr.length ? `<ul style="list-style:square;padding-left:20px">${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>-</p>";
+    Array.isArray(arr) && arr.length
+      ? `<ul style="list-style:square;padding-left:20px">${arr
+          .map((x) => `<li>${esc(x)}</li>`)
+          .join("")}</ul>`
+      : "<p>-</p>";
 
   const numbers = (arr) =>
-    Array.isArray(arr) && arr.length ? `<ol>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>` : "<p>-</p>";
+    Array.isArray(arr) && arr.length
+      ? `<ol>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`
+      : "<p>-</p>";
 
   const pertemuanBlocks =
     (rpm.pengalamanBelajar?.pertemuan || [])
       .map(
         (p, i) => `
       <div style="background:#f8fafc;border:1px solid #e5e7eb;border-left:4px solid #16a34a;border-radius:10px;padding:12px 14px;margin:12px 0;">
-        <h3 style="font:bold 18px 'Times New Roman',Georgia,serif;margin:0 0 6px;">III.${i + 1} Pertemuan ${i + 1}</h3>
+        <h3 style="font:bold 18px 'Times New Roman',Georgia,serif;margin:0 0 6px;">III.${i +
+          1} Pertemuan ${i + 1}</h3>
         <p><b>Awal:</b> ${esc(p.awal)}</p>
         <p><b>Inti:</b> ${esc(p.inti)}</p>
         <p><b>Refleksi:</b> ${esc(p.refleksi)}</p>
@@ -297,37 +313,29 @@ function renderRPM(rpm) {
   `;
 }
 
-/* ==========================================================
-   Tambahan: klik tombol Generate panggil proxy generate.php
-   (Fallback API key ditangani di server; browser tidak simpan key)
-========================================================== */
-(function () {
-  const formEl = document.getElementById("rpmForm");
-  const outEl = document.getElementById("output");
-  const btnPrint = document.getElementById("btnPrint");
-  const btnExport = document.getElementById("btnExport");
+/* =======================================================
+   Prompt builder (analisa teliti & kesimpulan presisi)
+======================================================= */
+function buildPromptFromForm(formEl) {
+  const v = (name) =>
+    (formEl.querySelector(`[name="${name}"]`)?.value || "").trim();
 
-  // Upgrade field sesuai instruksi (buat dropdown, checkbox, dsb.)
-  document.addEventListener("DOMContentLoaded", upgradeFields);
-  // Jika skrip dimuat setelah DOM siap:
-  if (document.readyState === "interactive" || document.readyState === "complete") upgradeFields();
+  const pedagogik = Array.from(
+    formEl.querySelectorAll('[name^="pedagogicalPractices_"]')
+  )
+    .map((el) => el.value)
+    .filter(Boolean)
+    .join(", ");
 
-  function buildPromptFromForm() {
-    const v = (name) => (formEl.querySelector(`[name="${name}"]`)?.value || "").trim();
+  const gradDims = Array.from(
+    formEl.querySelectorAll('input[name="graduateDimensions"]:checked')
+  )
+    .map((el) => el.value)
+    .join(", ");
 
-    // Ambil semua praktik pedagogik (per pertemuan)
-    const pedagogik = Array.from(formEl.querySelectorAll('[name^="pedagogicalPractices_"]'))
-      .map((el) => el.value)
-      .filter(Boolean)
-      .join(", ");
-
-    // Ambil semua dimensi PPP yang dicentang
-    const gradDims = Array.from(formEl.querySelectorAll('input[name="graduateDimensions"]:checked'))
-      .map((el) => el.value)
-      .join(", ");
-
-    return `
-Anda adalah perancang kurikulum Indonesia. Kembalikan **JSON VALID SAJA** sesuai skema di bawah, tanpa teks lain.
+  return `
+Anda adalah **perancang kurikulum Indonesia**. Gunakan kemampuan analisis tingkat tinggi untuk memahami maksud teks input, menyimpulkan kebutuhan belajar, dan memberi rekomendasi **sangat presisi**. 
+Lakukan penalaran internal Anda, namun **kembalikan hanya JSON VALID** sesuai skema—tanpa teks lain.
 
 Data:
 - Nama Satuan Pendidikan: ${v("schoolName")}
@@ -338,8 +346,8 @@ Data:
 - Materi Pelajaran: ${v("subjectMatter")}
 - Jumlah Pertemuan: ${v("numMeetings")}
 - Durasi pertemuan: ${v("meetingDuration")}
-- Praktik Pedagogik: ${pedagogik}
-- Dimensi Profil Pelajar Pancasila: ${gradDims}
+- Praktik Pedagogik (urut sesuai pertemuan): ${pedagogik}
+- Dimensi Profil Pelajar Pancasila (multi pilih): ${gradDims}
 
 Skema JSON:
 {
@@ -366,16 +374,235 @@ Skema JSON:
   }
 }
 `.trim();
+}
+
+/* =======================================================
+   Ekspor PDF & DOCX (fallback bawaan)
+======================================================= */
+async function exportPDF() {
+  const target = document.getElementById("output");
+  if (!target || !target.firstElementChild)
+    return window.NafsUI?.toast?.("Belum ada hasil", "error");
+
+  // html2canvas + jsPDF on demand
+  await loadScriptOnce(
+    "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
+    () => window.html2canvas
+  );
+  await loadScriptOnce(
+    "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js",
+    () => window.jspdf && window.jspdf.jsPDF
+  );
+
+  const canvas = await window.html2canvas(target.firstElementChild, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p", "pt", "a4");
+  const pdfW = pdf.internal.pageSize.getWidth();
+  const pdfH = pdf.internal.pageSize.getHeight();
+
+  const imgW = pdfW;
+  const imgH = (canvas.height * imgW) / canvas.width;
+
+  let position = 0;
+  pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+  let heightLeft = imgH - pdfH;
+
+  while (heightLeft > 0) {
+    position = -heightLeft;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+    heightLeft -= pdfH;
+  }
+
+  pdf.save("RPM.pdf");
+}
+
+async function ensureDocxLib() {
+  await loadScriptOnce(
+    "https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js",
+    () => window.docx
+  );
+}
+async function exportDocx(rpm, formObj = {}) {
+  await ensureDocxLib();
+  const d = window.docx;
+  const doc = new d.Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new d.Paragraph({
+            text: "RENCANA PEMBELAJARAN MENDALAM (RPM)",
+            heading: d.HeadingLevel.TITLE,
+            spacing: { after: 200 },
+          }),
+          new d.Paragraph({
+            text: `Satuan Pendidikan: ${formObj.schoolName || ""}`,
+          }),
+          new d.Paragraph({
+            text: `Jenjang: ${formObj.educationLevel || ""}  |  Kelas: ${
+              formObj.className || ""
+            }`,
+            spacing: { after: 200 },
+          }),
+
+          new d.Paragraph({
+            text: "I. Identifikasi",
+            heading: d.HeadingLevel.HEADING_2,
+          }),
+          new d.Paragraph({ text: `Siswa: ${rpm?.identifikasi?.siswa || "-"}` }),
+          new d.Paragraph({
+            text: `Materi Pelajaran: ${
+              rpm?.identifikasi?.materiPelajaran || "-"
+            }`,
+          }),
+          new d.Paragraph({
+            text:
+              "Dimensi Profil Pelajar Pancasila: " +
+              (rpm?.identifikasi?.dimensiProfilPelajarPancasila || []).join(
+                "; "
+              ),
+            spacing: { after: 200 },
+          }),
+
+          new d.Paragraph({
+            text: "II. Desain Pembelajaran",
+            heading: d.HeadingLevel.HEADING_2,
+          }),
+          new d.Paragraph({
+            text:
+              "Capaian Pembelajaran: " +
+              (rpm?.desainPembelajaran?.capaianPembelajaran || "-"),
+          }),
+          new d.Paragraph({
+            text:
+              "Lintas Disiplin Ilmu: " +
+              (rpm?.desainPembelajaran?.lintasDisiplinIlmu || []).join("; "),
+          }),
+          new d.Paragraph({
+            text:
+              "Tujuan Pembelajaran: " +
+              (rpm?.desainPembelajaran?.tujuanPembelajaran || []).join("; "),
+          }),
+          new d.Paragraph({
+            text:
+              "Materi Ajar: " + (rpm?.desainPembelajaran?.materiAjar || "-"),
+            spacing: { after: 200 },
+          }),
+
+          new d.Paragraph({
+            text: "III. Pengalaman Belajar",
+            heading: d.HeadingLevel.HEADING_2,
+          }),
+          ...(rpm?.pengalamanBelajar?.pertemuan || []).flatMap((p, i) => [
+            new d.Paragraph({
+              text: `Pertemuan ${i + 1}`,
+              heading: d.HeadingLevel.HEADING_3,
+            }),
+            new d.Paragraph({ text: `Awal: ${p.awal || "-"}` }),
+            new d.Paragraph({ text: `Inti: ${p.inti || "-"}` }),
+            new d.Paragraph({ text: `Refleksi: ${p.refleksi || "-"}` }),
+            new d.Paragraph({
+              text: `Penutup: ${p.penutup || "-"}`,
+              spacing: { after: 150 },
+            }),
+          ]),
+
+          new d.Paragraph({
+            text: "IV. Asesmen Pembelajaran",
+            heading: d.HeadingLevel.HEADING_2,
+          }),
+          new d.Paragraph({
+            text: `Asesmen Awal: ${rpm?.asesmenPembelajaran?.asesmenAwal || "-"}`,
+          }),
+          new d.Paragraph({
+            text:
+              "Asesmen Proses: " +
+              (rpm?.asesmenPembelajaran?.asesmenProses || "-"),
+          }),
+          new d.Paragraph({
+            text:
+              "Asesmen Akhir: " +
+              (rpm?.asesmenPembelajaran?.asesmenAkhir || "-"),
+          }),
+        ],
+      },
+    ],
+  });
+
+  const blob = await d.Packer.toBlob(doc);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "RPM.docx";
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(url);
+  a.remove();
+}
+
+/* =======================================================
+   Wiring tombol (Generate, Print, PDF, Export, Clear)
+======================================================= */
+(function () {
+  const formEl = document.getElementById("rpmForm");
+  const outEl = document.getElementById("output");
+  const btnPrint = document.getElementById("btnPrint");
+  let btnPdf = document.getElementById("btnPdf");
+  const btnExport = document.getElementById("btnExport");
+  let btnClear = document.getElementById("btnClear");
+
+  // Pastikan field sudah di-upgrade
+  document.addEventListener("DOMContentLoaded", upgradeFields);
+  if (document.readyState === "interactive" || document.readyState === "complete")
+    upgradeFields();
+
+  // Jika tombol PDF/Clear belum ada, buat otomatis di sebelah tombol Print jika memungkinkan
+  const toolbar =
+    btnPrint?.parentElement ||
+    btnExport?.parentElement ||
+    formEl?.querySelector(".toolbar");
+  if (!btnPdf && toolbar) {
+    btnPdf = createEl(
+      "button",
+      { type: "button", id: "btnPdf", class: "px-3 py-2 border rounded ml-2" },
+      "PDF"
+    );
+    toolbar.appendChild(btnPdf);
+  }
+  if (!btnClear && toolbar) {
+    btnClear = createEl(
+      "button",
+      { type: "button", id: "btnClear", class: "px-3 py-2 border rounded ml-2" },
+      "Clear"
+    );
+    toolbar.appendChild(btnClear);
+  }
+
+  function setLoading(isLoading) {
+    const submitBtn =
+      formEl.querySelector('[type="submit"]') ||
+      formEl.querySelector("#btnGenerate");
+    if (!submitBtn) return;
+    submitBtn.disabled = !!isLoading;
+    submitBtn.dataset._origText = submitBtn.dataset._origText || submitBtn.textContent;
+    submitBtn.textContent = isLoading ? "Mengolah (analisa presisi)..." : submitBtn.dataset._origText;
   }
 
   formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const prompt = buildPromptFromForm();
+
+    // Build prompt yang menekankan analisis teliti & kesimpulan presisi
+    const prompt = buildPromptFromForm(formEl);
 
     try {
+      setLoading(true);
       const rpm = await window.generateViaProxy(prompt, {
-        loadingText: "Menyusun RPM…",
-        onDone: () => window.NafsUI.toast("Berhasil generate", "success"),
+        loadingText: "Menganalisis input & menyusun RPM…",
+        onDone: () => window.NafsUI?.toast?.("Berhasil generate", "success"),
+        // Catatan: seluruh proses pemahaman & rekomendasi dikerjakan oleh API key via proxy
       });
 
       window.__LAST_RPM__ = rpm;
@@ -388,20 +615,52 @@ Skema JSON:
       }
     } catch (err) {
       outEl.innerHTML = `<div class="text-red-600">Gagal generate: ${err.message}</div>`;
+    } finally {
+      setLoading(false);
     }
   });
 
+  // Print (tetap ada)
   btnPrint?.addEventListener("click", () => {
-    if (!window.__LAST_RPM__) return window.NafsUI.toast("Belum ada hasil", "error");
+    if (!window.__LAST_RPM__) return window.NafsUI?.toast?.("Belum ada hasil", "error");
     window.print();
   });
 
-  btnExport?.addEventListener("click", () => {
-    if (!window.__LAST_RPM__) return window.NafsUI.toast("Belum ada hasil", "error");
-    if (typeof exportDocx === "function") {
-      exportDocx(window.__LAST_RPM__, window.__LAST_FORM__ || {});
-    } else {
-      window.NafsUI.toast("Fungsi exportDocx tidak ditemukan", "error");
+  // PDF baru
+  btnPdf?.addEventListener("click", async () => {
+    if (!window.__LAST_RPM__) return window.NafsUI?.toast?.("Belum ada hasil", "error");
+    try {
+      await exportPDF();
+      window.NafsUI?.toast?.("PDF siap diunduh", "success");
+    } catch (e) {
+      window.NafsUI?.toast?.(`Gagal membuat PDF: ${e.message}`, "error");
     }
+  });
+
+  // Export Word – perbaikan: sediakan fallback exportDocx jika belum ada
+  btnExport?.addEventListener("click", async () => {
+    if (!window.__LAST_RPM__) return window.NafsUI?.toast?.("Belum ada hasil", "error");
+    try {
+      if (typeof window.exportDocx === "function") {
+        window.exportDocx(window.__LAST_RPM__, window.__LAST_FORM__ || {});
+      } else {
+        await exportDocx(window.__LAST_RPM__, window.__LAST_FORM__ || {});
+      }
+    } catch (e) {
+      window.NafsUI?.toast?.(`Gagal ekspor DOCX: ${e.message}`, "error");
+    }
+  });
+
+  // Clear – reset form & hasil
+  btnClear?.addEventListener("click", () => {
+    formEl.reset();
+    // set default jumlah pertemuan ke 1 & render ulang field dinamis
+    const numMeet = formEl.querySelector('[name="numMeetings"]');
+    if (numMeet) numMeet.value = "1";
+    upgradeFields();
+    outEl.innerHTML = "";
+    delete window.__LAST_RPM__;
+    delete window.__LAST_FORM__;
+    window.NafsUI?.toast?.("Form & hasil dibersihkan", "success");
   });
 })();
