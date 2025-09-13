@@ -1,11 +1,15 @@
-/* NafsFlow LLM Client (vanilla JS) */
+/* NafsFlow LLM Client (fix 405) */
 (function (global) {
-  // Base URL otomatis: kalau bukan di Hostinger, arahkan ke domain Hostinger
-  const API_BASE =
-    (location.hostname.endsWith('hostingersite.com') || location.hostname.endsWith('nafsflow.com'))
-      ? ''
-      : 'https://linen-chamois-717264.hostingersite.com'; // ganti jika domain Hostinger kamu berbeda
+  // ——————————————————————————————————————————————————
+  // PAKAI URL ABSOLUT KE HOSTINGER (ganti jika domainmu beda)
+  // ——————————————————————————————————————————————————
+  const HOST = 'https://linen-chamois-717264.hostingersite.com';
+  const CANDIDATE_ENDPOINTS = [
+    `${HOST}/api/generate.php`,
+    `${HOST}/api/generator.php`,
+  ];
 
+  // UI mini (loading + toast)
   const NafsUI = {
     _overlay:null,_toastWrap:null,
     ensureOverlay(){ if(this._overlay) return;
@@ -31,30 +35,70 @@
   };
   global.NafsUI = NafsUI;
 
+  async function tryPostJSON(url, body, timeoutMs) {
+    const ctrl = new AbortController();
+    const id = setTimeout(()=>ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: ctrl.signal
+      });
+      return res;
+    } finally {
+      clearTimeout(id);
+    }
+  }
+
   async function generateViaProxy(prompt, options = {}) {
     const { loadingText='Memproses…', onDone, onError, timeoutMs=60000 } = options;
     if (!prompt || typeof prompt!=='string'){ const e=new Error('Prompt kosong'); onError?.(e); throw e; }
 
-    const ctrl=new AbortController(); const id=setTimeout(()=>ctrl.abort(), timeoutMs);
-    try{
-      NafsUI.showLoading(loadingText);
-      const res = await fetch(`${API_BASE}/api/generate.php`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({ prompt }), signal:ctrl.signal
-      });
-      if (!res.ok) throw new Error('Proxy error ' + res.status);
+    NafsUI.showLoading(loadingText);
+    let lastErr = null;
 
-      const json = await res.json();
-      if (!json.ok) throw new Error(json.error || 'Terjadi kesalahan');
+    try {
+      for (const url of CANDIDATE_ENDPOINTS) {
+        try {
+          const res = await tryPostJSON(url, { prompt }, timeoutMs);
 
-      let result = json.data;
-      if (!result) { try { result = JSON.parse(json.text); } catch { result = json.text; } }
-      onDone?.(result); return result;
-    } catch (e){
+          // Handle preflight/blocked cases: 405/404/500 dsb → coba endpoint berikutnya
+          if (!res.ok) {
+            lastErr = new Error(`Proxy error ${res.status} @ ${url}`);
+            continue;
+          }
+
+          const json = await res.json();
+          if (!json.ok) {
+            lastErr = new Error(json.error || `Gagal @ ${url}`);
+            continue;
+          }
+
+          // sukses
+          let result = json.data || null;
+          if (!result) {
+            try { result = JSON.parse(json.text); } catch { result = json.text; }
+          }
+          onDone?.(result);
+          return result;
+        } catch (e) {
+          // network/timeout
+          lastErr = e;
+          continue;
+        }
+      }
+
+      // kalau sampai sini, semua candidate gagal
+      throw lastErr || new Error('Semua endpoint gagal');
+    } catch (e) {
       NafsUI.toast(e.message || 'Gagal memproses','error',4000);
-      onError?.(e); throw e;
+      onError?.(e);
+      throw e;
     } finally {
-      clearTimeout(id); NafsUI.hideLoading();
+      NafsUI.hideLoading();
     }
   }
 
