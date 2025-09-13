@@ -5,8 +5,17 @@ const DEFAULT_GEMINI_API_KEY = (window.__ENV && window.__ENV.GEMINI_API_KEY) || 
 ========================= */
 function getFormData(form) {
   const fd = new FormData(form);
-  const multi = (name) =>
-    Array.from(form.querySelector(`[name="${name}"]`).selectedOptions || []).map((o) => o.value);
+
+  // Ambil semua nilai dari beberapa elemen bernama mirip (pedagogik_1, pedagogik_2, ...)
+  const valsByPrefix = (prefix) =>
+    Array.from(form.querySelectorAll(`[name^="${prefix}"]`))
+      .map((el) => (el.value || "").trim())
+      .filter((v) => v !== "");
+
+  // Ambil semua checkbox yang dicentang
+  const checked = (name) =>
+    Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map((el) => el.value);
+
   return {
     schoolName: fd.get("schoolName")?.toString() || "",
     teacherName: fd.get("teacherName")?.toString() || "",
@@ -14,15 +23,202 @@ function getFormData(form) {
     headmasterName: fd.get("headmasterName")?.toString() || "",
     headmasterNip: fd.get("headmasterNip")?.toString() || "",
     educationLevel: fd.get("educationLevel")?.toString() || "KOBER",
+
+    // className kini dikendalikan oleh <select> tetapi disinkronkan ke input[name="className"] tersembunyi
     className: fd.get("className")?.toString() || "",
+
     learningTheme: fd.get("learningTheme")?.toString() || "",
     learningOutcomes: fd.get("learningOutcomes")?.toString() || "",
     subjectMatter: fd.get("subjectMatter")?.toString() || "",
     numMeetings: Number(fd.get("numMeetings") || 1),
     meetingDuration: fd.get("meetingDuration")?.toString() || "2 x 35 menit",
-    pedagogicalPractices: multi("pedagogicalPractices"),
-    graduateDimensions: multi("graduateDimensions"),
+
+    // praktik pedagogik sekarang berbentuk beberapa <select>, satu per pertemuan
+    pedagogicalPractices: valsByPrefix("pedagogicalPractices_"),
+
+    // dimensi PPP sekarang checkbox
+    graduateDimensions: checked("graduateDimensions"),
   };
+}
+
+/* =======================================================
+   Utility kecil untuk DOM upgrade sesuai instruksi
+======================================================= */
+function createEl(tag, attrs = {}, children = []) {
+  const el = document.createElement(tag);
+  Object.entries(attrs).forEach(([k, v]) => {
+    if (k === "class") el.className = v;
+    else if (k === "style" && typeof v === "object") Object.assign(el.style, v);
+    else el.setAttribute(k, v);
+  });
+  (Array.isArray(children) ? children : [children]).forEach((c) => {
+    if (c == null) return;
+    el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  });
+  return el;
+}
+
+function extractOptionsFromSelect(sel) {
+  if (!sel) return [];
+  return Array.from(sel.querySelectorAll("option")).map((o) => o.value || o.textContent);
+}
+
+/* =======================================================
+   UPGRADE FORM FIELD sesuai kebutuhan
+======================================================= */
+function upgradeFields() {
+  const form = document.getElementById("rpmForm");
+  if (!form) return;
+
+  /* ---------- 1) Nama Kelas menjadi dropdown + CRUD (localStorage) ---------- */
+  (function upgradeClassName() {
+    // Cari input/elemen lama
+    const old = form.querySelector('[name="className"]');
+    if (!old) return;
+
+    // Buat hidden untuk sinkronisasi nilai (agar FormData tetap bekerja)
+    const hidden = old.tagName === "INPUT" ? old : createEl("input", { type: "hidden", name: "className" });
+    if (old !== hidden) {
+      old.replaceWith(hidden);
+    }
+
+    // Tempatkan UI baru setelah hidden
+    const wrapper = createEl("div", { class: "flex gap-2 items-center" });
+    hidden.parentNode.insertBefore(wrapper, hidden.nextSibling);
+
+    // Ambil opsi tersimpan atau gunakan default
+    const LS_KEY = "rpm_class_name_options";
+    const defaultOpts = ["Kelas A", "Kelas B", "Kelas Besar", "Kelas Kecil"];
+    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    let options = Array.isArray(saved) && saved.length ? saved : defaultOpts;
+
+    const sel = createEl("select", {
+      id: "classNameSelect",
+      class: "border rounded px-2 py-1 w-full",
+    });
+
+    function refreshClassSelect(valueToKeep) {
+      sel.innerHTML = "";
+      options.forEach((opt) => sel.appendChild(createEl("option", { value: opt }, opt)));
+      const val = valueToKeep || hidden.value || options[0] || "";
+      sel.value = val;
+      hidden.value = val;
+    }
+
+    refreshClassSelect();
+
+    sel.addEventListener("change", () => {
+      hidden.value = sel.value;
+    });
+
+    const btnManage = createEl(
+      "button",
+      { type: "button", class: "px-2 py-1 border rounded" },
+      "Kelola"
+    );
+    btnManage.addEventListener("click", () => {
+      const current = options.join("\n");
+      const next = window.prompt(
+        "Kelola Nama Kelas (satu baris satu nama):",
+        current
+      );
+      if (next == null) return;
+      const cleaned = next
+        .split("\n")
+        .map((s) => s.trim())
+        .filter((s) => s);
+      if (!cleaned.length) return;
+      options = Array.from(new Set(cleaned)); // unik
+      localStorage.setItem(LS_KEY, JSON.stringify(options));
+      refreshClassSelect();
+    });
+
+    wrapper.appendChild(sel);
+    wrapper.appendChild(btnManage);
+  })();
+
+  /* ---------- Ambil opsi lama dari select untuk dipakai ulang ---------- */
+  const oldPedagSel = form.querySelector('[name="pedagogicalPractices"]');
+  const oldGradSel = form.querySelector('[name="graduateDimensions"]');
+  const pedagogicOptions = extractOptionsFromSelect(oldPedagSel);
+  const gradOptions = extractOptionsFromSelect(oldGradSel);
+
+  /* ---------- 2) Praktik Pedagogik menjadi dropdown & mengikuti jumlah pertemuan ---------- */
+  (function upgradePedagogic() {
+    // Buat container pengganti
+    const container = createEl("div", { id: "pedagogicalContainer", class: "space-y-2" });
+
+    if (oldPedagSel) {
+      oldPedagSel.replaceWith(container);
+    } else {
+      // fallback: cari tempat berdasarkan label
+      const anchor = form.querySelector("#pedagogical-anchor") || form.querySelector('[data-field="pedagogicalPractices"]') || form;
+      anchor.appendChild(container);
+    }
+
+    function render(count) {
+      container.innerHTML = "";
+      for (let i = 1; i <= count; i++) {
+        const sel = createEl("select", {
+          name: `pedagogicalPractices_${i}`,
+          class: "border rounded px-2 py-1 w-full",
+        });
+        // opsi tetap sama seperti sebelumnya
+        (pedagogicOptions.length ? pedagogicOptions : ["Diskusi", "Demonstrasi", "Bermain Peran", "Eksperimen"]).forEach((opt) =>
+          sel.appendChild(createEl("option", { value: opt }, opt))
+        );
+        const row = createEl("div", {}, [
+          createEl("span", { class: "mr-2" }, `Pertemuan ${i}`),
+          sel,
+        ]);
+        container.appendChild(row);
+      }
+    }
+
+    // sinkron dengan jumlah pertemuan
+    const numMeetingsEl = form.querySelector('[name="numMeetings"]');
+    const getCount = () => Math.max(1, parseInt(numMeetingsEl?.value || "1", 10) || 1);
+
+    render(getCount());
+
+    numMeetingsEl?.addEventListener("input", () => render(getCount()));
+    numMeetingsEl?.addEventListener("change", () => render(getCount()));
+  })();
+
+  /* ---------- 3) Dimensi Profil Pelajar Pancasila → checkbox (bullet kotak) ---------- */
+  (function upgradeGraduateDimensions() {
+    const container = createEl("div", { id: "graduateDimensionsContainer", class: "grid gap-2" });
+    if (oldGradSel) oldGradSel.replaceWith(container);
+    else form.appendChild(container);
+
+    const list = gradOptions.length
+      ? gradOptions
+      : [
+          "Beriman, bertakwa kepada Tuhan YME, dan berakhlak mulia",
+          "Berkebinekaan global",
+          "Bergotong-royong",
+          "Mandiri",
+          "Bernalar kritis",
+          "Kreatif",
+        ];
+
+    list.forEach((label, idx) => {
+      const id = `grad_${idx}`;
+      const item = createEl(
+        "label",
+        {
+          for: id,
+          class: "flex items-center gap-2",
+          style: { listStyleType: "square" }, // bullet kotak (visual bantu)
+        },
+        [
+          createEl("input", { type: "checkbox", id, name: "graduateDimensions", value: label }),
+          createEl("span", {}, label),
+        ]
+      );
+      container.appendChild(item);
+    });
+  })();
 }
 
 /* =======================================================
@@ -39,7 +235,7 @@ function renderRPM(rpm) {
     (s || "").toString().replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 
   const bullets = (arr) =>
-    Array.isArray(arr) && arr.length ? `<ul>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>-</p>";
+    Array.isArray(arr) && arr.length ? `<ul style="list-style:square;padding-left:20px">${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>-</p>";
 
   const numbers = (arr) =>
     Array.isArray(arr) && arr.length ? `<ol>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>` : "<p>-</p>";
@@ -111,12 +307,24 @@ function renderRPM(rpm) {
   const btnPrint = document.getElementById("btnPrint");
   const btnExport = document.getElementById("btnExport");
 
+  // Upgrade field sesuai instruksi (buat dropdown, checkbox, dsb.)
+  document.addEventListener("DOMContentLoaded", upgradeFields);
+  // Jika skrip dimuat setelah DOM siap:
+  if (document.readyState === "interactive" || document.readyState === "complete") upgradeFields();
+
   function buildPromptFromForm() {
     const v = (name) => (formEl.querySelector(`[name="${name}"]`)?.value || "").trim();
-    const multi = (name) =>
-      Array.from(formEl.querySelector(`[name="${name}"]`)?.selectedOptions || [])
-        .map((o) => o.value)
-        .join(", ");
+
+    // Ambil semua praktik pedagogik (per pertemuan)
+    const pedagogik = Array.from(formEl.querySelectorAll('[name^="pedagogicalPractices_"]'))
+      .map((el) => el.value)
+      .filter(Boolean)
+      .join(", ");
+
+    // Ambil semua dimensi PPP yang dicentang
+    const gradDims = Array.from(formEl.querySelectorAll('input[name="graduateDimensions"]:checked'))
+      .map((el) => el.value)
+      .join(", ");
 
     return `
 Anda adalah perancang kurikulum Indonesia. Kembalikan **JSON VALID SAJA** sesuai skema di bawah, tanpa teks lain.
@@ -130,8 +338,8 @@ Data:
 - Materi Pelajaran: ${v("subjectMatter")}
 - Jumlah Pertemuan: ${v("numMeetings")}
 - Durasi pertemuan: ${v("meetingDuration")}
-- Praktik Pedagogik: ${multi("pedagogicalPractices")}
-- Dimensi Profil Pelajar Pancasila: ${multi("graduateDimensions")}
+- Praktik Pedagogik: ${pedagogik}
+- Dimensi Profil Pelajar Pancasila: ${gradDims}
 
 Skema JSON:
 {
