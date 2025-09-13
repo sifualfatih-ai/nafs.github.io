@@ -60,3 +60,97 @@ function renderRPM(rpm) {
       <p><strong>Asesmen Awal:</strong> ${esc(rpm.asesmenPembelajaran?.asesmenAwal)}</p>
       <p><strong>Asesmen Proses:</strong> ${esc(rpm.asesmenPembelajaran?.asesmenProses)}</p>
       <p><strong>Asesmen Akhir:</strong> ${esc(r
+
+
+                                               // === Tambahan: klik tombol Generate panggil proxy generate.php ===
+(function () {
+  const formEl   = document.getElementById('rpmForm');
+  const outEl    = document.getElementById('output');
+  const btnPrint = document.getElementById('btnPrint');
+  const btnExport= document.getElementById('btnExport');
+
+  function buildPromptFromForm() {
+    const v = (name) => (formEl.querySelector(`[name="${name}"]`)?.value || '').trim();
+    const multi = (name) =>
+      Array.from(formEl.querySelector(`[name="${name}"]`)?.selectedOptions || [])
+        .map(o => o.value).join(', ');
+
+    return `
+Anda adalah perancang kurikulum Indonesia. Kembalikan **JSON VALID SAJA** sesuai skema di bawah, tanpa teks lain.
+
+Data:
+- Nama Satuan Pendidikan: ${v('schoolName')}
+- Jenjang Pendidikan: ${v('educationLevel')}
+- Nama Kelas: ${v('className')}
+- Tema Pembelajaran: ${v('learningTheme')}
+- Capaian Pembelajaran: ${v('learningOutcomes')}
+- Materi Pelajaran: ${v('subjectMatter')}
+- Jumlah Pertemuan: ${v('numMeetings')}
+- Durasi pertemuan: ${v('meetingDuration')}
+- Praktik Pedagogik: ${multi('pedagogicalPractices')}
+- Dimensi Profil Pelajar Pancasila: ${multi('graduateDimensions')}
+
+Skema JSON:
+{
+  "identifikasi": {
+    "siswa": string,
+    "materiPelajaran": string,
+    "dimensiProfilPelajarPancasila": string[]
+  },
+  "desainPembelajaran": {
+    "capaianPembelajaran": string,
+    "lintasDisiplinIlmu": string[],
+    "tujuanPembelajaran": string[],
+    "materiAjar": string
+  },
+  "pengalamanBelajar": {
+    "pertemuan": [
+      { "awal": string, "inti": string, "refleksi": string, "penutup": string }
+    ]
+  },
+  "asesmenPembelajaran": {
+    "asesmenAwal": string,
+    "asesmenProses": string,
+    "asesmenAkhir": string
+  }
+}
+`.trim();
+  }
+
+  formEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const prompt = buildPromptFromForm();
+
+    try {
+      const rpm = await window.generateViaProxy(prompt, {
+        loadingText: 'Menyusun RPM…',
+        onDone: () => window.NafsUI.toast('Berhasil generate', 'success')
+      });
+
+      window.__LAST_RPM__  = rpm;
+      window.__LAST_FORM__ = Object.fromEntries(new FormData(formEl).entries());
+
+      if (typeof renderRPM === 'function') {
+        renderRPM(rpm);
+      } else {
+        outEl.textContent = JSON.stringify(rpm, null, 2);
+      }
+    } catch (err) {
+      outEl.innerHTML = `<div class="text-red-600">Gagal generate: ${err.message}</div>`;
+    }
+  });
+
+  btnPrint?.addEventListener('click', () => {
+    if (!window.__LAST_RPM__) return window.NafsUI.toast('Belum ada hasil', 'error');
+    window.print();
+  });
+
+  btnExport?.addEventListener('click', () => {
+    if (!window.__LAST_RPM__) return window.NafsUI.toast('Belum ada hasil', 'error');
+    if (typeof exportDocx === 'function') {
+      exportDocx(window.__LAST_RPM__, window.__LAST_FORM__ || {});
+    } else {
+      window.NafsUI.toast('Fungsi exportDocx tidak ditemukan', 'error');
+    }
+  });
+})();
