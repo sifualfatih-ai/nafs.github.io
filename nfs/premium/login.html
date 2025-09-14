@@ -1,55 +1,31 @@
 <!doctype html>
-<html lang="id">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Login</title>
-  <script>window.__NFS_PAGE__=true;window.__NFS_LOGIN__=true;</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen grid place-items-center">
+<meta charset="utf-8">
+<title>Login</title>
+<form id="f" style="display:grid;gap:8px;max-width:320px;margin:20vh auto">
+  <input id="em" type="email" placeholder="email" required>
+  <input id="pw" type="password" placeholder="password" required>
+  <button>Login</button>
+  <div id="msg" style="color:#c33;min-height:1.2em"></div>
+</form>
 
-  <div class="bg-white p-6 rounded-xl shadow w-[min(420px,92%)]">
-    <h1 class="text-xl font-bold mb-3">Login</h1>
-    <form id="f" class="grid gap-3">
-      <input id="e" type="email" placeholder="email@gmail.com" class="border rounded px-3 py-2" required>
-      <input id="p" type="password" placeholder="password" class="border rounded px-3 py-2" required>
-      <button class="bg-indigo-600 text-white rounded py-2">Login</button>
-      <p id="m" class="text-red-600 text-sm min-h-[1.25rem]"></p>
-    </form>
-  </div>
+<script type="module">
+  import { auth } from "/firebase.js?v=2";
+  import { signInWithEmailAndPassword, onAuthStateChanged } 
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <script type="module">
-    // ---- blokir redirect ke react/vite dari script global lama (jaga-jaga) ----
-    (function(){const rx=/(\/react\/vite|\/react(\/|$)|\/vite(\/|$))/i;
-      const A=location.assign.bind(location),R=location.replace.bind(location);
-      location.assign=u=>rx.test(String(u))?console.log("[NFS] block",u):A(u);
-      location.replace=u=>rx.test(String(u))?console.log("[NFS] block",u):R(u);
-    })();
+  const form = document.getElementById('f');
+  const em   = document.getElementById('em');
+  const pw   = document.getElementById('pw');
+  const msg  = document.getElementById('msg');
+  const back = sessionStorage.getItem('prev_page') || "/nfs/premium/";
 
-    import { auth } from "/firebase.js";
-    import { onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  onAuthStateChanged(auth, (u) => { if (u) location.href = back; });
 
-    const form=document.getElementById('f'), emailEl=e, passEl=p, msg=m;
-    // default halaman kembali
-    if(!sessionStorage.getItem('prev_page')) sessionStorage.setItem('prev_page', '/nfs/premium');
-
-    form.addEventListener('submit', async (ev)=>{
-      ev.preventDefault(); msg.textContent='';
-      try{
-        await signInWithEmailAndPassword(auth, emailEl.value.trim().toLowerCase(), passEl.value);
-        // sukses → tunggu onAuthStateChanged yang akan redirect
-      }catch(err){ msg.textContent = err?.message || 'Login gagal'; }
-    });
-
-    onAuthStateChanged(auth, (user)=>{
-      if(user){
-        const prev = sessionStorage.getItem('prev_page') || '/nfs/premium';
-        // pastikan TIDAK ke react/vite:
-        if (/\/react\/vite/i.test(prev)) return location.replace('/nfs/premium');
-        location.replace(prev);
-      }
-    });
-  </script>
-</body>
-</html>
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); msg.textContent = '';
+    try {
+      await signInWithEmailAndPassword(auth, em.value.trim().toLowerCase(), pw.value);
+      // diarahkan oleh onAuthStateChanged
+    } catch (err) { msg.textContent = err?.message || 'Login gagal'; }
+  });
+</script>
