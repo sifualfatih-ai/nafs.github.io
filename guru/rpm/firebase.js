@@ -1,11 +1,6 @@
-<!-- simpan sebagai: /guru/rpm/firebase.js -->
-<script type="module">
-  // Modul ES tidak boleh ada tag script saat disimpan sebagai file .js
-</script>
-
 // ===== firebase.js =====
+// Simpan di: /guru/rpm/firebase.js
 // File ini berisi inisialisasi Firebase + ekspor auth & db
-// Tempatkan di /guru/rpm/firebase.js (sefolder dengan index.html)
 
 // 1) CONFIG Firebase (PUBLIC – aman ditaruh di client)
 export const firebaseConfig = {
