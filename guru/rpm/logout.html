@@ -7,11 +7,13 @@
 </head>
 <body>
 <script type="module">
-  import { auth } from "../firebase.js";
+  import { auth } from "/firebase.js";
   import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  await signOut(auth);
-  window.location.href = "/"; // arahkan ke halaman utama
+ await signOut(auth);
+  // kalau mau balik ke halaman sebelumnya:
+  const prev = sessionStorage.getItem('prev_page') || "/";
+  window.location.href = prev;
 </script>
 </body>
 </html>
