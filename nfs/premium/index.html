@@ -74,9 +74,9 @@
       const HOMEPAGE_URL = "#";
 
       // Login/Logout berada di folder yang sama (sudah kamu pindah ke /nfs/premium)
-      const LOGIN_URL  = "/nfs/premium/";
-      const LOGOUT_URL = "/nfs/premium/";
-
+      const LOGIN_URL  = "/nfs/premium/login.html";
+      const LOGOUT_URL = "/nfs/premium/logout.html";
+      
       // simpan asal halaman → supaya selesai login/logout balik ke sini
       function goLogin(){ sessionStorage.setItem("prev_page", HERE); location.href = LOGIN_URL; }
       function goLogout(){ sessionStorage.setItem("prev_page", HERE); location.href = LOGOUT_URL; }
