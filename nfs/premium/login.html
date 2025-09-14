@@ -32,7 +32,7 @@
 
     const form=document.getElementById('f'), emailEl=e, passEl=p, msg=m;
     // default halaman kembali
-    if(!sessionStorage.getItem('prev_page')) sessionStorage.setItem('prev_page', '/nfs/');
+    if(!sessionStorage.getItem('prev_page')) sessionStorage.setItem('prev_page', '/nfs/premium');
 
     form.addEventListener('submit', async (ev)=>{
       ev.preventDefault(); msg.textContent='';
@@ -44,9 +44,9 @@
 
     onAuthStateChanged(auth, (user)=>{
       if(user){
-        const prev = sessionStorage.getItem('prev_page') || '/nfs/';
+        const prev = sessionStorage.getItem('prev_page') || '/nfs/premium';
         // pastikan TIDAK ke react/vite:
-        if (/\/react\/vite/i.test(prev)) return location.replace('/nfs/');
+        if (/\/react\/vite/i.test(prev)) return location.replace('/nfs/premium');
         location.replace(prev);
       }
     });
