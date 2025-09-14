@@ -1,17 +1,16 @@
 <!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Logout</title>
-</head>
-<body>
+<meta charset="utf-8">
+<title>Logout…</title>
+<p style="text-align:center;margin-top:20vh">Keluar…</p>
+
 <script type="module">
-  import { auth } from "/firebase.js";
+  import { auth } from "/firebase.js?v=2";
   import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  await signOut(auth);
-  window.location.href = "/"; // arahkan ke halaman utama
+  try { await signOut(auth); } catch(e) {}
+  // bersihkan flag lama jika pernah dipakai
+  localStorage.removeItem('nafs_isLoggedIn');
+
+  const back = sessionStorage.getItem('prev_page') || "/nfs/premium/";
+  location.href = back;
 </script>
-</body>
-</html>
