@@ -226,6 +226,7 @@ function upgradeFields() {
 
 /* =======================================================
    RENDER DOKUMEN RPM (bukan JSON) – tampil rapi seperti Word
+   + blok tanda tangan kiri (Kepala Sekolah) & kanan (Wali Kelas)
 ======================================================= */
 function renderRPM(rpm) {
   const out = document.getElementById("output");
@@ -275,40 +276,74 @@ function renderRPM(rpm) {
   const desain = rpm.desainPembelajaran || {};
   const ases = rpm.asesmenPembelajaran || {};
 
+  // Ambil nama dari form terakhir
+  const form = window.__LAST_FORM__ || {};
+  const headmasterName = form.headmasterName || "";
+  const teacherName = form.teacherName || "";
+
   out.innerHTML = `
     <div class="doc" style="
       background:#fff;color:#111827;font-family:'Times New Roman', Georgia, serif;line-height:1.6;
-      padding:28px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.08);max-width:900px;margin:8px auto 0;">
-      <h1 style="font:bold 26px 'Times New Roman',Georgia,serif;text-align:center;text-transform:uppercase;letter-spacing:.5px;margin:0 0 10px;">
-        RENCANA PEMBELAJARAN MENDALAM (RPM)
-      </h1>
+      padding:28px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.08);max-width:900px;margin:8px auto 0; min-height:1100px; display:flex; flex-direction:column;">
+      <div style="flex:1 0 auto;">
+        <h1 style="font:bold 26px 'Times New Roman',Georgia,serif;text-align:center;text-transform:uppercase;letter-spacing:.5px;margin:0 0 10px;">
+          RENCANA PEMBELAJARAN MENDALAM (RPM)
+        </h1>
 
-      <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">I. Identifikasi</h2>
-      <p><b>Siswa</b>: ${esc(ident.siswa)}</p>
-      <p><b>Materi Pelajaran</b>: ${esc(ident.materiPelajaran)}</p>
-      <p><b>Dimensi Profil Pelajar Pancasila</b>:</p>
-      ${bullets(ident.dimensiProfilPelajarPancasila)}
+        <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">I. Identifikasi</h2>
+        <p><b>Siswa</b>: ${esc(ident.siswa)}</p>
+        <p><b>Materi Pelajaran</b>: ${esc(ident.materiPelajaran)}</p>
+        <p><b>Dimensi Profil Pelajar Pancasila</b>:</p>
+        ${bullets(ident.dimensiProfilPelajarPancasila)}
 
-      <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">II. Desain Pembelajaran</h2>
-      <p><b>Capaian Pembelajaran</b>:</p>
-      <p>${esc(desain.capaianPembelajaran)}</p>
-      <p><b>Lintas Disiplin Ilmu</b>:</p>
-      ${bullets(desain.lintasDisiplinIlmu)}
-      <p><b>Tujuan Pembelajaran</b>:</p>
-      ${numbers(desain.tujuanPembelajaran)}
-      <p><b>Materi Ajar</b>:</p>
-      <p>${esc(desain.materiAjar)}</p>
+        <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">II. Desain Pembelajaran</h2>
+        <p><b>Capaian Pembelajaran</b>:</p>
+        <p>${esc(desain.capaianPembelajaran)}</p>
+        <p><b>Lintas Disiplin Ilmu</b>:</p>
+        ${bullets(desain.lintasDisiplinIlmu)}
+        <p><b>Tujuan Pembelajaran</b>:</p>
+        ${numbers(desain.tujuanPembelajaran)}
+        <p><b>Materi Ajar</b>:</p>
+        <p>${esc(desain.materiAjar)}</p>
 
-      <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">III. Pengalaman Belajar</h2>
-      ${pertemuanBlocks}
+        <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">III. Pengalaman Belajar</h2>
+        ${pertemuanBlocks}
 
-      <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">IV. Asesmen Pembelajaran</h2>
-      <p><b>Asesmen Awal</b>:</p>
-      <p>${esc(ases.asesmenAwal)}</p>
-      <p><b>Asesmen Proses</b>:</p>
-      <p>${esc(ases.asesmenProses)}</p>
-      <p><b>Asesmen Akhir</b>:</p>
-      <p>${esc(ases.asesmenAkhir)}</p>
+        <h2 style="font:bold 20px 'Times New Roman',Georgia,serif;border-bottom:1px solid #d1d5db;padding-bottom:6px;margin:18px 0 8px;">IV. Asesmen Pembelajaran</h2>
+        <p><b>Asesmen Awal</b>:</p>
+        <p>${esc(ases.asesmenAwal)}</p>
+        <p><b>Asesmen Proses</b>:</p>
+        <p>${esc(ases.asesmenProses)}</p>
+        <p><b>Asesmen Akhir</b>:</p>
+        <p>${esc(ases.asesmenAkhir)}</p>
+      </div>
+
+      <!-- Blok tanda tangan di bawah -->
+      <div style="flex-shrink:0; margin-top:36px;">
+        <div style="display:flex; justify-content:space-between; gap:24px;">
+          <!-- Kiri bawah: Kepala Sekolah -->
+          <div style="width:48%; text-align:left;">
+            <div style="font-weight:bold; margin-bottom:4px;">Mengetahui,</div>
+            <div style="font-weight:bold;">Kepala Sekolah</div>
+            <div style="height:64px;"></div>
+            <div style="border-top:1.5px solid #111; display:inline-block; min-width:260px; padding-top:4px;">
+              <div style="font-weight:bold;">${esc(headmasterName)}</div>
+              <div style="font-size:12px;">Tanda tangan & nama jelas</div>
+            </div>
+          </div>
+
+          <!-- Kanan bawah: Wali Kelas/Guru -->
+          <div style="width:48%; text-align:right;">
+            <div style="font-weight:bold; margin-bottom:4px;">Disusun oleh,</div>
+            <div style="font-weight:bold;">Wali Kelas / Guru</div>
+            <div style="height:64px;"></div>
+            <div style="border-top:1.5px solid #111; display:inline-block; min-width:260px; padding-top:4px;">
+              <div style="font-weight:bold;">${esc(teacherName)}</div>
+              <div style="font-size:12px;">Tanda tangan & nama jelas</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -384,7 +419,6 @@ async function exportPDF() {
   if (!target || !target.firstElementChild)
     return window.NafsUI?.toast?.("Belum ada hasil", "error");
 
-  // html2canvas + jsPDF on demand
   await loadScriptOnce(
     "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
     () => window.html2canvas
@@ -428,6 +462,46 @@ async function ensureDocxLib() {
 async function exportDocx(rpm, formObj = {}) {
   await ensureDocxLib();
   const d = window.docx;
+
+  const sigTable = new d.Table({
+    rows: [
+      new d.TableRow({
+        children: [
+          new d.TableCell({
+            children: [
+              new d.Paragraph({ text: "Mengetahui,", spacing: { after: 80 } }),
+              new d.Paragraph({ text: "Kepala Sekolah", bold: true }),
+              new d.Paragraph({ text: " ", spacing: { after: 600 } }), // ruang ttd
+              new d.Paragraph({
+                children: [
+                  new d.TextRun({ text: (formObj.headmasterName || "").toUpperCase(), bold: true }),
+                ],
+              }),
+              new d.Paragraph({ text: "Tanda tangan & nama jelas", size: 20 }),
+            ],
+            borders: d.Borders.NONE,
+          }),
+          new d.TableCell({
+            children: [
+              new d.Paragraph({ text: "Disusun oleh,", alignment: d.AlignmentType.RIGHT, spacing: { after: 80 } }),
+              new d.Paragraph({ text: "Wali Kelas / Guru", bold: true, alignment: d.AlignmentType.RIGHT }),
+              new d.Paragraph({ text: " ", spacing: { after: 600 } }),
+              new d.Paragraph({
+                alignment: d.AlignmentType.RIGHT,
+                children: [
+                  new d.TextRun({ text: (formObj.teacherName || "").toUpperCase(), bold: true }),
+                ],
+              }),
+              new d.Paragraph({ text: "Tanda tangan & nama jelas", alignment: d.AlignmentType.RIGHT, size: 20 }),
+            ],
+            borders: d.Borders.NONE,
+          }),
+        ],
+      }),
+    ],
+    width: { size: 100, type: d.WidthType.PERCENTAGE },
+  });
+
   const doc = new d.Document({
     sections: [
       {
@@ -526,7 +600,11 @@ async function exportDocx(rpm, formObj = {}) {
             text:
               "Asesmen Akhir: " +
               (rpm?.asesmenPembelajaran?.asesmenAkhir || "-"),
+            spacing: { after: 200 },
           }),
+
+          // Tabel tanda tangan
+          sigTable,
         ],
       },
     ],
@@ -559,7 +637,7 @@ async function exportDocx(rpm, formObj = {}) {
   if (document.readyState === "interactive" || document.readyState === "complete")
     upgradeFields();
 
-  // Jika tombol PDF/Clear belum ada, buat otomatis di sebelah tombol Print jika memungkinkan
+  // Tambahkan tombol PDF / Clear jika belum ada
   const toolbar =
     btnPrint?.parentElement ||
     btnExport?.parentElement ||
@@ -594,7 +672,6 @@ async function exportDocx(rpm, formObj = {}) {
   formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Build prompt yang menekankan analisis teliti & kesimpulan presisi
     const prompt = buildPromptFromForm(formEl);
 
     try {
@@ -602,7 +679,6 @@ async function exportDocx(rpm, formObj = {}) {
       const rpm = await window.generateViaProxy(prompt, {
         loadingText: "Menganalisis input & menyusun RPM…",
         onDone: () => window.NafsUI?.toast?.("Berhasil generate", "success"),
-        // Catatan: seluruh proses pemahaman & rekomendasi dikerjakan oleh API key via proxy
       });
 
       window.__LAST_RPM__ = rpm;
@@ -620,13 +696,13 @@ async function exportDocx(rpm, formObj = {}) {
     }
   });
 
-  // Print (tetap ada)
+  // Print
   btnPrint?.addEventListener("click", () => {
     if (!window.__LAST_RPM__) return window.NafsUI?.toast?.("Belum ada hasil", "error");
     window.print();
   });
 
-  // PDF baru
+  // PDF
   btnPdf?.addEventListener("click", async () => {
     if (!window.__LAST_RPM__) return window.NafsUI?.toast?.("Belum ada hasil", "error");
     try {
@@ -637,7 +713,7 @@ async function exportDocx(rpm, formObj = {}) {
     }
   });
 
-  // Export Word – perbaikan: sediakan fallback exportDocx jika belum ada
+  // Export Word (pakai fallback jika fungsi global tidak ada)
   btnExport?.addEventListener("click", async () => {
     if (!window.__LAST_RPM__) return window.NafsUI?.toast?.("Belum ada hasil", "error");
     try {
@@ -651,10 +727,9 @@ async function exportDocx(rpm, formObj = {}) {
     }
   });
 
-  // Clear – reset form & hasil
+  // Clear
   btnClear?.addEventListener("click", () => {
     formEl.reset();
-    // set default jumlah pertemuan ke 1 & render ulang field dinamis
     const numMeet = formEl.querySelector('[name="numMeetings"]');
     if (numMeet) numMeet.value = "1";
     upgradeFields();
