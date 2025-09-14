@@ -243,10 +243,8 @@
 
   <!-- ===== Auth Guard + Whitelist (pakai firebase.js) ===== -->
   <script type="module">
-    import { auth, db } from "./firebase.js";
-    import {
-      onAuthStateChanged, signInWithEmailAndPassword, signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { auth, db } from "/firebase.js";
+    import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Elemen UI
