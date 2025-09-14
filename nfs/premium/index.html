@@ -65,36 +65,31 @@
       <div id="root" class="min-h-[70vh] rounded-3xl border border-white/10 bg-white/5 overflow-hidden"></div>
     </main>
 
-    <!-- ==== KONFIG URL ABSOLUT GITHUB PAGES (atau domain kamu) ==== -->
-    
-    <script type="text/javascript">
-  /* ==== KONFIG URL ABSOLUT (Premium di /nfs/premium/) ==== */
-  const BASE = "https://nafsflow.com/";
-  const HERE = "https://nafsflow.com/nfs/premium/";   // lokasi halaman ini
+    <!-- ==== KONFIG URL ABSOLUT (Premium) ==== -->
+    <script>
+      // halaman ini
+      const HERE = new URL("/nfs/premium/", location.origin).toString();
 
-  // login/logout kita pakai halaman statis di /nfs/
-  const LOGIN_URL  = "/nfs/login.html";
-  const LOGOUT_URL = "/nfs/logout.html";
+      // Halaman utama (kalau mau ke dashboard /nfs/)
+      const HOMEPAGE_URL = "/nfs/";
 
-  // helper agar balik lagi ke halaman sekarang setelah login/logout
-  function goLogin() {
-    sessionStorage.setItem("prev_page", HERE);
-    location.href = LOGIN_URL;
-  }
-  function goLogout() {
-    sessionStorage.setItem("prev_page", HERE);
-    location.href = LOGOUT_URL;
-  }
-</script>
+      // Login/Logout berada di folder yang sama (sudah kamu pindah ke /nfs/premium)
+      const LOGIN_URL  = "/nfs/premium/login.html";
+      const LOGOUT_URL = "/nfs/premium/logout.html";
 
-    <!-- ==== HELPERS + ROUTER (global) ==== -->
+      // simpan asal halaman → supaya selesai login/logout balik ke sini
+      function goLogin(){ sessionStorage.setItem("prev_page", HERE); location.href = LOGIN_URL; }
+      function goLogout(){ sessionStorage.setItem("prev_page", HERE); location.href = LOGOUT_URL; }
+    </script>
+
+    <!-- ==== HELPERS + ROUTER ==== -->
     <script type="text/babel">
       const e = React.createElement;
 
-      // ====== STATE LOGIN (demo) ======
+      // ====== STATE LOGIN (opsi lokal; sesuaikan bila login.html mengeset ini) ======
       function isLoggedIn() { return localStorage.getItem("nafs_isLoggedIn") === "1"; }
 
-      // ====== UI HELPERS (global, dipakai semua halaman) ======
+      // ====== UI HELPERS (global) ======
       function Field({ label, children, hint }) {
         return (
           <div className="space-y-1">
@@ -153,9 +148,9 @@
       }
 
       // ====== HEADER BUTTON WIRES ======
-      const homeBtn   = document.getElementById("homeBtn");
-      const loginBtn  = document.getElementById("loginBtn");
-      const logoutBtn = document.getElementById("logoutBtn");
+      const homeBtn     = document.getElementById("homeBtn");
+      const loginBtn    = document.getElementById("loginBtn");
+      const logoutBtn   = document.getElementById("logoutBtn");
       const accessBadge = document.getElementById("accessBadge");
 
       function syncAccessUI() {
@@ -171,9 +166,10 @@
       }
       syncAccessUI();
 
-      homeBtn.addEventListener("click", (e)=>{ e.preventDefault(); window.location.href = HOMEPAGE_URL; });
-      loginBtn.addEventListener("click", ()=>{ window.location.href = LOGIN_URL; });
-      logoutBtn.addEventListener("click", ()=>{ window.location.href = LOGOUT_URL; });
+      homeBtn.addEventListener("click", (e)=>{ e.preventDefault(); location.href = HOMEPAGE_URL; });
+      // gunakan helper agar menyimpan prev_page
+      loginBtn.addEventListener("click", ()=>{ goLogin(); });
+      logoutBtn.addEventListener("click", ()=>{ goLogout(); });
 
       // nav ke 5 halaman
       document.querySelectorAll("[data-page]").forEach(btn=>{
@@ -182,7 +178,7 @@
         });
       });
 
-      // render pertama (optional): tampilkan banner kosong
+      // render pertama (banner kosong)
       ReactDOM.createRoot(mountEl).render(
         <div className="p-6 text-sm text-white/70">
           Pilih salah satu halaman di bar tombol di atas untuk memulai.
