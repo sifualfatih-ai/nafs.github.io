@@ -1,15 +1,12 @@
 <!doctype html>
 <html lang="id">
-
-  <script>
-  // Flag global agar script lain tahu ini halaman RPM
-  window.__RPM_PAGE__ = true;
-</script>
-  
-  <head>
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Generator RPM v.1.1</title>
+
+  <!-- Flag agar script lain tahu ini halaman RPM -->
+  <script>window.__RPM_PAGE__ = true;</script>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -92,7 +89,7 @@
             </ul>
           </nav>
 
-          <!-- Panel Akses (otomatis diisi oleh Firebase) -->
+          <!-- Panel Akses -->
           <div class="brand-card rounded-lg shadow p-4">
             <h3 class="text-sm font-semibold text-gray-600 mb-3">Akses</h3>
             <div id="loginView">
@@ -233,94 +230,57 @@
   <script src="/guru/rpm/llmClient.js"></script>
   <script src="/guru/rpm/generator.js"></script>
 
-  <!-- ===== Bekukan konten saat awal ===== -->
-  <script>
-    (function () {
-      const app = document.getElementById('rpm-app');
-      app.classList.add('rpm-frozen'); // kunci dulu sampai verifikasi lolos
-    })();
-  </script>
-
-  <!-- ===== Auth Guard + Whitelist (pakai firebase.js) ===== -->
+  <!-- ===== Auth Guard + Whitelist (single script, tanpa duplikasi variabel) ===== -->
   <script type="module">
     import { auth, db } from "/firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const appWrap = document.getElementById('rpm-app');
-  const overlay = document.getElementById('rpm-freeze-overlay');
-  const freeze   = () => { appWrap.classList.add('rpm-frozen'); overlay.style.display='grid'; };
-  const unfreeze = () => { appWrap.classList.remove('rpm-frozen'); overlay.style.display='none'; };
+    // Element refs (DEKLARASIKAN SEKALI SAJA)
+    const appWrap   = document.getElementById('rpm-app');
+    const overlayEl = document.getElementById('rpm-freeze-overlay');
+    const formEl    = document.getElementById('rpm-login-form');
+    const emailEl   = document.getElementById('rpm-email');
+    const passEl    = document.getElementById('rpm-pass');
+    const msgEl     = document.getElementById('rpm-msg');
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      // simpan halaman sekarang → dipakai login.html untuk kembali
-      sessionStorage.setItem('prev_page', location.pathname + location.search);
-      location.href = "/guru/rpm/login.html";
-      return;
-    }
-    // whitelist
-    const email = (user.email || '').toLowerCase();
-    try {
-      const snap = await getDoc(doc(db, 'allowedUsers', email));
-      if (snap.exists() && snap.data()?.allowed === true) {
-        unfreeze();
-      } else {
-        await signOut(auth);
-        sessionStorage.setItem('prev_page', location.pathname + location.search);
-        location.href = "/guru/rpm/login.html";
-      }
-    } catch {
-      // jika Firestore gagal, minimal arahkan ke login
-      sessionStorage.setItem('prev_page', location.pathname + location.search);
-      location.href = "/guru/rpm/login.html";
-    }
-  });
-    
-  
-    // Elemen UI
-    const overlay  = document.getElementById('rpm-freeze-overlay');
-    const form     = document.getElementById('rpm-login-form');
-    const emailInp = document.getElementById('rpm-email');
-    const passInp  = document.getElementById('rpm-pass');
-    const msgBox   = document.getElementById('rpm-msg');
+    const loginView    = document.getElementById('loginView');
+    const profileView  = document.getElementById('profileView');
+    const profileEmail = document.getElementById('profileEmail');
+    const btnOpenLogin = document.getElementById('btnOpenLogin');
+    const btnDoLogout  = document.getElementById('btnDoLogout');
 
-    const loginView     = document.getElementById('loginView');
-    const profileView   = document.getElementById('profileView');
-    const profileEmail  = document.getElementById('profileEmail');
-    const btnOpenLogin  = document.getElementById('btnOpenLogin');
-    const btnDoLogout   = document.getElementById('btnDoLogout');
-
-    const appWrap = document.getElementById('rpm-app');
-    const freeze   = () => { appWrap.classList.add('rpm-frozen'); overlay.style.display='grid'; };
-    const unfreeze = () => { appWrap.classList.remove('rpm-frozen'); overlay.style.display='none'; };
-
-    function showProfile(email){
+    // Helpers
+    const freeze   = () => { appWrap.classList.add('rpm-frozen'); overlayEl.style.display='grid'; };
+    const unfreeze = () => { appWrap.classList.remove('rpm-frozen'); overlayEl.style.display='none'; };
+    const showProfile = (email) => {
       if (!loginView || !profileView) return;
       loginView.classList.add('hidden');
       profileView.classList.remove('hidden');
       if (profileEmail) profileEmail.textContent = email || '';
-    }
-    function showLoginPanel(){
+    };
+    const showLoginPanel = () => {
       if (!loginView || !profileView) return;
       loginView.classList.remove('hidden');
       profileView.classList.add('hidden');
-    }
+    };
+
+    // Bekukan saat awal
+    freeze();
 
     // Klik tombol Login di sidebar → buka overlay
-    if (btnOpenLogin) btnOpenLogin.addEventListener('click', ()=>{ freeze(); emailInp.focus(); });
+    if (btnOpenLogin) btnOpenLogin.addEventListener('click', ()=>{ freeze(); emailEl.focus(); });
 
     // Form login (overlay)
-    form.addEventListener('submit', async (e)=>{
+    formEl.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      msgBox.textContent = '';
+      msgEl.textContent = '';
       try {
-        const email = emailInp.value.trim().toLowerCase();
-        const pass  = passInp.value;
-        await signInWithEmailAndPassword(auth, email, pass);
-        // whitelist dicek di onAuthStateChanged
+        const email = emailEl.value.trim().toLowerCase();
+        const pass  = passEl.value;
+        await signInWithEmailAndPassword(auth, email, pass); // whitelist dicek di onAuthStateChanged
       } catch (err) {
-        msgBox.textContent = err?.message || 'Login gagal.';
+        msgEl.textContent = err?.message || 'Login gagal.';
         freeze();
       }
     });
@@ -341,14 +301,14 @@
         const email = (user.email || '').toLowerCase();
         const allowSnap = await getDoc(doc(db, 'allowedUsers', email));
         if (allowSnap.exists() && allowSnap.data()?.allowed === true) {
-          msgBox.textContent = ''; showProfile(email); unfreeze();
+          msgEl.textContent = ''; showProfile(email); unfreeze();
         } else {
           await signOut(auth);
-          msgBox.textContent = 'Akses ditolak. Email belum diizinkan admin.';
+          msgEl.textContent = 'Akses ditolak. Email belum diizinkan admin.';
           showLoginPanel(); freeze();
         }
       } catch {
-        msgBox.textContent = 'Gagal memverifikasi akses.'; showLoginPanel(); freeze();
+        msgEl.textContent = 'Gagal memverifikasi akses.'; showLoginPanel(); freeze();
       }
     });
   </script>
