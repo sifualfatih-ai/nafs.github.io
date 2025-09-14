@@ -189,6 +189,29 @@
        import { getAuth, getIdToken, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         
+         onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      sessionStorage.setItem('prev_page', location.pathname + location.search);
+      location.href = "/nfs/login.html";     // atau "/guru/rpm/login.html" tergantung halamannya
+      return;
+    }
+
+    const email = (user.email || '').toLowerCase();
+    try {
+      const snap = await getDoc(doc(db, 'allowedUsers', email));
+      if (!(snap.exists() && snap.data()?.allowed === true)) {
+        await signOut(auth);
+        sessionStorage.setItem('prev_page', location.pathname + location.search);
+        location.href = "/nfs/login.html";
+      }
+    } catch {
+      await signOut(auth);
+      sessionStorage.setItem('prev_page', location.pathname + location.search);
+      location.href = "/nfs/login.html";
+    }
+  });
+        
+        
         // Variabel global untuk Firebase
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
