@@ -1,21 +1,51 @@
 <!doctype html>
 <html>
-  <head>
-  <link rel="icon" sizes="any" href="nafsweb.ico">
-  <link rel="icon" type="image/x-icon" href="nafsweb.ico">
-  <link rel="shortcut icon" href="nafsweb.ico">
-  <link rel="apple-touch-icon" href="nafsweb.ico">  
-    
-    
-    <meta charset="utf-8"><title>Login Nafs</title></head>
-  <body style="font-family:system-ui;padding:24px">
-    <script>
-      // Simulasikan login & simpan sesi
-      localStorage.setItem('nafs_isLoggedIn','1');
-      // Redirect ke tujuan (r) atau ke dashboard default
-      const back = new URLSearchParams(location.search).get('r') || '/nfs/premium/';
-      location.replace(back);
-    </script>
-    <p>Melakukan login…</p>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded shadow max-w-sm w-full">
+    <h1 class="text-xl font-bold mb-4">Login</h1>
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Email</label>
+        <input type="email" id="email" class="w-full border rounded px-3 py-2" required>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Password</label>
+        <input type="password" id="password" class="w-full border rounded px-3 py-2" required>
+      </div>
+      <button class="w-full bg-blue-600 text-white px-4 py-2 rounded" type="submit">Login</button>
+      <p id="msg" class="text-red-500 text-sm mt-2"></p>
+    </form>
+  </div>
+
+  <script type="module">
+    import { auth } from "../firebase.js"; // sesuaikan path relatif
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const form = document.getElementById('loginForm');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      msg.textContent = '';
+      try {
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const pass  = document.getElementById('password').value;
+        await signInWithEmailAndPassword(auth, email, pass);
+
+        // Redirect balik ke halaman sebelumnya
+        const prev = sessionStorage.getItem('prev_page') || '/';
+        window.location.href = prev;
+      } catch (err) {
+        msg.textContent = err?.message || 'Login gagal';
+      }
+    });
+  </script>
+</body>
 </html>
