@@ -10,7 +10,7 @@
   import { auth } from "/firebase.js";
   import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
- await signOut(auth);
+  await signOut(auth);
   // kalau mau balik ke halaman sebelumnya:
   const prev = sessionStorage.getItem('prev_page') || "/";
   window.location.href = prev;
