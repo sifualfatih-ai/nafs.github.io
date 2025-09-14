@@ -267,5 +267,104 @@
 
   <script src="/guru/rpm/llmClient.js"></script>
   <script src="generator.js"></script>
+
+<!-- ====== FREEZE OVERLAY (tempel sebelum </body>) ====== -->
+<div id="rpm-freeze-overlay" style="position:fixed;inset:0;display:grid;place-items:center;background:rgba(20,20,28,.65);backdrop-filter:blur(3px);z-index:9999;color:#fff;">
+  <div style="background:#1e1d2b;padding:22px 24px;border-radius:14px;width:min(420px,92%);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25)">
+    <h3 style="margin:0 0 8px">Login diperlukan</h3>
+    <p style="opacity:.9;margin:0 0 12px">Silakan login untuk mengakses Generator RPM</p>
+    <form id="rpm-login-form" style="display:grid;gap:10px;margin-top:6px">
+      <input type="email" id="rpm-email" placeholder="email@gmail.com" required style="padding:10px 12px;border-radius:10px;border:1px solid #444;background:#14131d;color:#fff">
+      <input type="password" id="rpm-pass" placeholder="password" required style="padding:10px 12px;border-radius:10px;border:1px solid #444;background:#14131d;color:#fff">
+      <button type="submit" style="padding:10px 12px;border-radius:10px;border:none;background:#6c5ce7;color:#fff;cursor:pointer">Login</button>
+    </form>
+    <div id="rpm-msg" style="margin-top:8px;min-height:1.2em;color:#ffd1d1"></div>
+  </div>
+</div>
+
+<script>
+  // Membekukan area halaman (pointer mati, terlihat abu-abu)
+  (function() {
+    var root = document.documentElement; // bekukan seluruh halaman
+    root.classList.add('rpm-frozen');
+    var style = document.createElement('style');
+    style.textContent = `
+      .rpm-frozen { filter: grayscale(1); opacity:.55; pointer-events:none; }
+      #rpm-freeze-overlay { display:grid; } /* tampilkan overlay saat awal */
+    `;
+    document.head.appendChild(style);
+  })();
+</script>
+
+<script type="module">
+  // === GANTI dengan config project Firebase Anda (public client config) ===
+  // (Kalau Anda sudah punya file config global yang dipakai folder lain,
+  //  Anda boleh import itu; tapi cara paling cepat: tempel di sini.)
+  const firebaseConfig = {
+    apiKey: "PASTE_API_KEY",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+  };
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const overlay  = document.getElementById('rpm-freeze-overlay');
+  const form     = document.getElementById('rpm-login-form');
+  const emailInp = document.getElementById('rpm-email');
+  const passInp  = document.getElementById('rpm-pass');
+  const msgBox   = document.getElementById('rpm-msg');
+
+  function unfreeze() {
+    document.documentElement.classList.remove('rpm-frozen');
+    overlay.style.display = 'none';
+  }
+  function freeze() {
+    document.documentElement.classList.add('rpm-frozen');
+    overlay.style.display = 'grid';
+  }
+
+  // Login form
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msgBox.textContent = '';
+    try {
+      const email = emailInp.value.trim().toLowerCase();
+      const pass  = passInp.value;
+      await signInWithEmailAndPassword(auth, email, pass);
+      // cek whitelist dilakukan di onAuthStateChanged
+    } catch (err) {
+      msgBox.textContent = err?.message || 'Login gagal.';
+      freeze();
+    }
+  });
+
+  // Guard akses + whitelist Firestore
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { freeze(); return; }
+    try {
+      const email = (user.email || '').toLowerCase();
+      const allowSnap = await getDoc(doc(db, 'allowedUsers', email));
+      if (allowSnap.exists() && allowSnap.data()?.allowed === true) {
+        msgBox.textContent = '';
+        unfreeze();
+      } else {
+        await signOut(auth);
+        msgBox.textContent = 'Akses ditolak. Email belum diizinkan admin.';
+        freeze();
+      }
+    } catch {
+      msgBox.textContent = 'Gagal memverifikasi akses.';
+      freeze();
+    }
+  });
+</script>
+
+
 </body>
 </html>
