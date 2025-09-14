@@ -67,20 +67,22 @@
 
     <!-- ==== KONFIG URL ABSOLUT (Premium) ==== -->
     <script>
-      // halaman ini
-      const HERE = new URL("/nfs/premium/", location.origin).toString();
+    const HERE = new URL("/nfs/premium/", location.origin).toString();
+  const LOGIN_URL  = "/nfs/premium/login.html";
+  const LOGOUT_URL = "/nfs/premium/logout.html";
 
-      // Halaman utama (kalau mau ke dashboard /nfs/)
-      const HOMEPAGE_URL = "#";
+  const loginBtn  = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-      // Login/Logout berada di folder yang sama (sudah kamu pindah ke /nfs/premium)
-      const LOGIN_URL  = "/nfs/premium/login.html";
-      const LOGOUT_URL = "/nfs/premium/logout.html";
-      
-      // simpan asal halaman → supaya selesai login/logout balik ke sini
-      function goLogin(){ sessionStorage.setItem("prev_page", HERE); location.href = LOGIN_URL; }
-      function goLogout(){ sessionStorage.setItem("prev_page", HERE); location.href = LOGOUT_URL; }
-    </script>
+  loginBtn.onclick  = () => {
+    sessionStorage.setItem("prev_page", HERE);
+    location.href = LOGIN_URL;
+  };
+  logoutBtn.onclick = () => {
+    sessionStorage.setItem("prev_page", HERE);
+    location.href = LOGOUT_URL;
+  };
+</script>
 
     <!-- ==== HELPERS + ROUTER ==== -->
     <script type="text/babel">
