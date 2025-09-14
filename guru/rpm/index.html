@@ -244,9 +244,40 @@
   <!-- ===== Auth Guard + Whitelist (pakai firebase.js) ===== -->
   <script type="module">
     import { auth, db } from "/firebase.js";
-    import {onAuthStateChanged, signInWithEmailAndPassword, signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  const appWrap = document.getElementById('rpm-app');
+  const overlay = document.getElementById('rpm-freeze-overlay');
+  const freeze   = () => { appWrap.classList.add('rpm-frozen'); overlay.style.display='grid'; };
+  const unfreeze = () => { appWrap.classList.remove('rpm-frozen'); overlay.style.display='none'; };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      // simpan halaman sekarang → dipakai login.html untuk kembali
+      sessionStorage.setItem('prev_page', location.pathname + location.search);
+      location.href = "/guru/rpm/login.html";
+      return;
+    }
+    // whitelist
+    const email = (user.email || '').toLowerCase();
+    try {
+      const snap = await getDoc(doc(db, 'allowedUsers', email));
+      if (snap.exists() && snap.data()?.allowed === true) {
+        unfreeze();
+      } else {
+        await signOut(auth);
+        sessionStorage.setItem('prev_page', location.pathname + location.search);
+        location.href = "/guru/rpm/login.html";
+      }
+    } catch {
+      // jika Firestore gagal, minimal arahkan ke login
+      sessionStorage.setItem('prev_page', location.pathname + location.search);
+      location.href = "/guru/rpm/login.html";
+    }
+  });
+    
+  
     // Elemen UI
     const overlay  = document.getElementById('rpm-freeze-overlay');
     const form     = document.getElementById('rpm-login-form');
