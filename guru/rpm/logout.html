@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Logout</title>
+</head>
+<body>
+<script type="module">
+  import { auth } from "../firebase.js";
+  import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  await signOut(auth);
+  window.location.href = "/"; // arahkan ke halaman utama
+</script>
+</body>
+</html>
