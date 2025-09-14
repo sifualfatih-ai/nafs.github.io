@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tools Generator Khusus Pengajar</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    .app{min-height:100vh;background:#f7f7f8}
+    /* ====== UI Tools Anda (contoh placeholder) ====== */
+    header{padding:16px 20px;background:#fff;border-bottom:1px solid #eee}
+    main{padding:20px}
+    .card{background:#fff;border:1px solid #eee;border-radius:14px;padding:16px}
+    /* ====== Freeze mode ====== */
+    .app.frozen { filter: grayscale(1); opacity: .55; pointer-events: none; }
+    #freeze-overlay {
+      position: fixed; inset: 0; display: grid; place-items: center;
+      background: rgba(245,245,247,.75); backdrop-filter: blur(3px);
+      z-index: 9999;
+    }
+    .freeze-card {
+      background:#fff;border-radius:14px;padding:20px 24px;width:min(420px,92vw);
+      box-shadow:0 10px 30px rgba(0,0,0,.12)
+    }
+    .freeze-card h3{margin:0 0 6px}
+    .freeze-card form{display:grid;gap:10px;margin-top:10px}
+    .freeze-card input,.freeze-card button{
+      padding:10px 12px;border-radius:10px;border:1px solid #ddd
+    }
+    .freeze-card button{border:none;background:#2f855a;color:#fff;cursor:pointer}
+    .msg{margin-top:8px;color:#c53030;min-height:1.2em}
+    .topbar{display:flex;gap:8px;align-items:center}
+    .spacer{flex:1}
+    .btn{border:1px solid #ddd;border-radius:10px;background:#fff;cursor:pointer;padding:8px 12px}
+  </style>
+</head>
+<body>
+  <!-- ====== KONTEN TOOLS ANDA ====== -->
+  <div id="app-root" class="app">
+    <header>
+      <div class="topbar">
+        <strong>Tools Generator Khusus Pengajar</strong>
+        <span class="spacer"></span>
+        <button id="logout-btn" class="btn" title="Keluar">Logout</button>
+      </div>
+    </header>
+    <main>
+      <!-- Contoh area form/tools Anda -->
+      <div class="card">
+        <h3>RPM Generator</h3>
+        <p>Area ini hanyalah contoh. Ganti dengan UI Anda (seperti di screenshot).</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ====== OVERLAY LOGIN (membekukan halaman) ====== -->
+  <div id="freeze-overlay" aria-hidden="true">
+    <div class="freeze-card">
+      <h3>Akses Terbatas</h3>
+      <p>Silakan login untuk menggunakan Tools Generator.</p>
+      <form id="login-form">
+        <input type="email" id="email" placeholder="email@gmail.com" required />
+        <input type="password" id="password" placeholder="password" required />
+        <button type="submit" id="login-btn">Login</button>
+      </form>
+      <p id="login-msg" class="msg"></p>
+    </div>
+  </div>
+
+  <!-- ====== Firebase SDK (CDN) ====== -->
+  <script type="module">
+    // 1) GANTI dengan project Firebase Anda
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
+
+    // 2) Init Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 3) Elemen UI
+    const appRoot  = document.getElementById('app-root');
+    const overlay  = document.getElementById('freeze-overlay');
+    const loginMsg = document.getElementById('login-msg');
+    const loginForm= document.getElementById('login-form');
+    const logoutBtn= document.getElementById('logout-btn');
+
+    const freezeUI   = ()=>{ appRoot.classList.add('frozen'); overlay.style.display='grid'; };
+    const unfreezeUI = ()=>{ appRoot.classList.remove('frozen'); overlay.style.display='none'; };
+
+    freezeUI(); // default: beku sampai terbukti login+whitelist
+
+    // 4) Login handler
+    loginForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      loginMsg.textContent = '';
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // whitelist akan dicek di onAuthStateChanged
+      } catch(err){
+        loginMsg.textContent = err?.message || 'Login gagal.';
+        freezeUI();
+      }
+    });
+
+    // 5) Logout handler
+    logoutBtn.addEventListener('click', async ()=>{
+      await signOut(auth);
+      freezeUI();
+    });
+
+    // 6) Guard akses: cek login + whitelist
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user){ freezeUI(); return; }
+      try {
+        const email = (user.email||'').toLowerCase();
+        const allowRef = doc(db, 'allowedUsers', email);
+        const allowSnap= await getDoc(allowRef);
+        if(allowSnap.exists() && allowSnap.data()?.allowed === true){
+          loginMsg.textContent = '';
+          unfreezeUI();
+        } else {
+          await signOut(auth);
+          freezeUI();
+          loginMsg.textContent = 'Akses ditolak. Email belum diizinkan admin.';
+        }
+      } catch {
+        freezeUI();
+        loginMsg.textContent = 'Gagal memverifikasi akses.';
+      }
+    });
+  </script>
+</body>
+</html>
