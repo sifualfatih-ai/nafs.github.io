@@ -1,11 +1,12 @@
 // /firebase.js
 export const firebaseConfig = {
-  apiKey: "AI...xyz",
-  authDomain: "nafs-gen.firebaseapp.com",
-  projectId: "nafs-gen",
-  storageBucket: "nafs-gen.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
+  apiKey : "AIzaSyDRroJEkBTlADbB7C504ltyy3pG6kpMK04" , 
+  authDomain : "nafs-gen.firebaseapp.com" , 
+  projectId : "nafs-gen" , 
+  storageBucket : "nafs-gen.firebasestorage.app" , 
+  messageSenderId : "514651223524" , 
+  appId : "1:514651223524:web:367229fb2c5ece794583f1" , 
+  ID pengukuran : "G-0948R8WGQG" 
 };
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
