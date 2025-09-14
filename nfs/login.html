@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+  <link rel="icon" sizes="any" href="nafsweb.ico">
+  <link rel="icon" type="image/x-icon" href="nafsweb.ico">
+  <link rel="shortcut icon" href="nafsweb.ico">
+  <link rel="apple-touch-icon" href="nafsweb.ico">  
+    
+    
+    <meta charset="utf-8"><title>Login Nafs</title></head>
+  <body style="font-family:system-ui;padding:24px">
+    <script>
+      // Simulasikan login & simpan sesi
+      localStorage.setItem('nafs_isLoggedIn','1');
+      // Redirect ke tujuan (r) atau ke dashboard default
+      const back = new URLSearchParams(location.search).get('r') || '/nfs/premium/';
+      location.replace(back);
+    </script>
+    <p>Melakukan login…</p>
+  </body>
+</html>
