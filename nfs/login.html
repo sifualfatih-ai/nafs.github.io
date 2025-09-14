@@ -1,49 +1,53 @@
 <!doctype html>
-<html>
+<html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Login</title>
+  <script>window.__NFS_PAGE__=true;window.__NFS_LOGIN__=true;</script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 min-h-screen grid place-items-center">
 
-  <div class="bg-white p-8 rounded shadow max-w-sm w-full">
-    <h1 class="text-xl font-bold mb-4">Login</h1>
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm mb-1">Email</label>
-        <input type="email" id="email" class="w-full border rounded px-3 py-2" required>
-      </div>
-      <div>
-        <label class="block text-sm mb-1">Password</label>
-        <input type="password" id="password" class="w-full border rounded px-3 py-2" required>
-      </div>
-      <button class="w-full bg-blue-600 text-white px-4 py-2 rounded" type="submit">Login</button>
-      <p id="msg" class="text-red-500 text-sm mt-2"></p>
+  <div class="bg-white p-6 rounded-xl shadow w-[min(420px,92%)]">
+    <h1 class="text-xl font-bold mb-3">Login</h1>
+    <form id="f" class="grid gap-3">
+      <input id="e" type="email" placeholder="email@gmail.com" class="border rounded px-3 py-2" required>
+      <input id="p" type="password" placeholder="password" class="border rounded px-3 py-2" required>
+      <button class="bg-indigo-600 text-white rounded py-2">Login</button>
+      <p id="m" class="text-red-600 text-sm min-h-[1.25rem]"></p>
     </form>
   </div>
 
   <script type="module">
-    import { auth } from "../firebase.js"; // sesuaikan path relatif
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    // ---- blokir redirect ke react/vite dari script global lama (jaga-jaga) ----
+    (function(){const rx=/(\/react\/vite|\/react(\/|$)|\/vite(\/|$))/i;
+      const A=location.assign.bind(location),R=location.replace.bind(location);
+      location.assign=u=>rx.test(String(u))?console.log("[NFS] block",u):A(u);
+      location.replace=u=>rx.test(String(u))?console.log("[NFS] block",u):R(u);
+    })();
 
-    const form = document.getElementById('loginForm');
-    const msg = document.getElementById('msg');
+    import { auth } from "/firebase.js";
+    import { onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      msg.textContent = '';
-      try {
-        const email = document.getElementById('email').value.trim().toLowerCase();
-        const pass  = document.getElementById('password').value;
-        await signInWithEmailAndPassword(auth, email, pass);
+    const form=document.getElementById('f'), emailEl=e, passEl=p, msg=m;
+    // default halaman kembali
+    if(!sessionStorage.getItem('prev_page')) sessionStorage.setItem('prev_page', '/nfs/');
 
-        // Redirect balik ke halaman sebelumnya
-        const prev = sessionStorage.getItem('prev_page') || '/';
-        window.location.href = prev;
-      } catch (err) {
-        msg.textContent = err?.message || 'Login gagal';
+    form.addEventListener('submit', async (ev)=>{
+      ev.preventDefault(); msg.textContent='';
+      try{
+        await signInWithEmailAndPassword(auth, emailEl.value.trim().toLowerCase(), passEl.value);
+        // sukses → tunggu onAuthStateChanged yang akan redirect
+      }catch(err){ msg.textContent = err?.message || 'Login gagal'; }
+    });
+
+    onAuthStateChanged(auth, (user)=>{
+      if(user){
+        const prev = sessionStorage.getItem('prev_page') || '/nfs/';
+        // pastikan TIDAK ke react/vite:
+        if (/\/react\/vite/i.test(prev)) return location.replace('/nfs/');
+        location.replace(prev);
       }
     });
   </script>
