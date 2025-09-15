@@ -1,8 +1,4 @@
 // /firebase.js (unified, pilih project berdasar path)
-//
-// - /guru/rpm/*  -> NafsAppStudio
-// - lainnya       -> nafs-gen
-
 const CFG_NAFS_GEN = {
   apiKey: "AIzaSyDRroJEkBTlADbB7C504ltyy3pG6kpMK04",
   authDomain: "nafs-gen.firebaseapp.com",
@@ -12,8 +8,6 @@ const CFG_NAFS_GEN = {
   appId: "1:514651223524:web:367229fb2c5ece794583f1",
   measurementId: "G-0948R8WGQG",
 };
-
-// ⬇️ NafsAppStudio (dari kamu)
 const CFG_NAFS_APP = {
   apiKey: "AIzaSyAcAW_IktSOIXb0m7t849grkO2rMVeZVBc",
   authDomain: "nafsappstudio.firebaseapp.com",
@@ -35,7 +29,7 @@ const app  = (getApps().length ? getApps()[0] : initializeApp(firebaseConfig));
 export const auth = getAuth(app);
 export const db   = getFirestore(app);
 
-// Helper supaya hotfix bisa ambil token
+// Helper supaya bisa ambil ID token dari mana pun
 export async function getIdToken() {
   const u = auth.currentUser;
   return u ? await u.getIdToken() : null;
