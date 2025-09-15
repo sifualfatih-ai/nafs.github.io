@@ -4,37 +4,30 @@
     <meta charset="utf-8" />
     <title>Nafs Premium – Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/nfsweb.ico" />
 
-    <!-- Tailwind (CDN) -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- React + ReactDOM + Babel (untuk JSX tanpa bundler) -->
+    <!-- React + ReactDOM + Babel (JSX runtime di browser) -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
       html,body{background:linear-gradient(135deg,#2a0f4a,#1a0b2e 45%,#0c0516)}
-      /* Freeze (membekukan area app) */
       #app.nfs-frozen { filter: grayscale(.85); opacity:.55; pointer-events:none; }
-      /* Overlay tetap bisa diklik */
-      #freeze-overlay {
-        position: fixed; inset: 0; display: none; place-items: center;
-        background: rgba(10, 8, 18, .55); backdrop-filter: blur(2px);
-        z-index: 50; color: #fff;
-      }
-      #freeze-overlay .card {
-        background:#1b1530; border:1px solid rgba(255,255,255,.08);
+      #freeze-overlay { position:fixed; inset:0; display:none; place-items:center;
+        background:rgba(10,8,18,.55); backdrop-filter:blur(2px); z-index:50; color:#fff; }
+      #freeze-overlay .card { background:#1b1530; border:1px solid rgba(255,255,255,.08);
         border-radius:14px; padding:18px 20px; width:min(420px,92%); text-align:center;
-        box-shadow:0 10px 28px rgba(0,0,0,.35)
-      }
+        box-shadow:0 10px 28px rgba(0,0,0,.35) }
     </style>
   </head>
 
   <body class="text-white">
-    <!-- WRAPPER: semua konten yang dibekukan -->
     <div id="app">
-      <!-- ====== HEADER AKSES / MENU UTAMA ====== -->
+      <!-- HEADER -->
       <header class="max-w-6xl mx-auto p-4">
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
@@ -51,7 +44,6 @@
           </div>
         </div>
 
-        <!-- bar status + pintasan -->
         <div class="mt-3 grid gap-2 sm:grid-cols-3">
           <div class="rounded-xl border border-white/10 bg-white/5 p-3">
             <div class="text-sm font-medium flex items-center gap-2">
@@ -62,15 +54,14 @@
           </div>
           <div class="rounded-xl border border-white/10 bg-white/5 p-3">
             <div class="text-sm font-medium">🎓 Tutorial</div>
-            <p class="text-[11px] text-white/70 mt-1">Langkah cepat: pilih halaman → isi form → klik Generate (butuh login).</p>
+            <p class="text-[11px] text-white/70 mt-1">Pilih halaman → isi form → klik Generate.</p>
           </div>
           <div class="rounded-xl border border-white/10 bg-white/5 p-3">
             <div class="text-sm font-medium">⚙️ Settings</div>
-            <p class="text-[11px] text-white/70 mt-1">Setelan umum disimpan lokal (localStorage) untuk proses ini.</p>
+            <p class="text-[11px] text-white/70 mt-1">Setelan umum disimpan lokal (localStorage).</p>
           </div>
         </div>
 
-        <!-- NAV ke 5 halaman -->
         <div class="mt-3 flex flex-wrap gap-2">
           <button data-page="TiktokAffiliate" class="px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-fuchsia-600 text-sm shadow">🔗 Tiktok Affiliate</button>
           <button data-page="FotoProduk"      class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">📷 Foto Produk</button>
@@ -80,97 +71,86 @@
         </div>
       </header>
 
-      <!-- ====== ROOT RENDER ====== -->
       <main class="max-w-6xl mx-auto p-4">
         <div id="root" class="min-h-[70vh] rounded-3xl border border-white/10 bg-white/5 overflow-hidden"></div>
       </main>
-    </div><!-- /#app -->
+    </div>
 
-    <!-- ===== Overlay Freeze (tidak dibekukan, tetap bisa klik tombol login) ===== -->
+    <!-- OVERLAY -->
     <div id="freeze-overlay">
       <div class="card">
         <h3 class="text-lg font-semibold mb-1">Akses dibatasi</h3>
         <p class="text-sm text-white/80">Silakan login untuk menggunakan Nafs Premium.</p>
-        <button id="overlayLogin" class="mt-3 rounded-lg px-3 py-2 bg-purple-600/90 hover:bg-purple-600">
-          🔐 Login
-        </button>
+        <button id="overlayLogin" class="mt-3 rounded-lg px-3 py-2 bg-purple-600/90 hover:bg-purple-600">🔐 Login</button>
       </div>
     </div>
 
-    <!-- ==== KONFIG URL ABSOLUT (Premium) + WIRING TANPA DUPLIKASI ==== -->
+    <!-- ============ K O N F I G   T U N G G A L  (no global const) ============ -->
     <script>
-      // URL penting
-      const HOME_URL  = "https://nafsflow.com/";                // tombol Home
-      const HERE      = new URL("/nfs/premium/", location.origin).toString();
-      const LOGIN_URL = "/nfs/premium/login.html";
-      const LOGOUT_URL= "/nfs/premium/logout.html";
+      (function () {
+        const URLs = {
+          HOME_URL : "https://nafsflow.com/",
+          HERE     : new URL("/nfs/premium/", location.origin).toString(),
+          LOGIN_URL: "/nfs/premium/login.html",
+          LOGOUT_URL:"/nfs/premium/logout.html",
+        };
 
-      // Elemen global (JANGAN dideklarasi ulang di script lain)
-      const appEl       = document.getElementById("app");
-      const overlayEl   = document.getElementById("freeze-overlay");
-      const overlayBtn  = document.getElementById("overlayLogin");
-      const homeBtn     = document.getElementById("homeBtn");
-      const loginBtn    = document.getElementById("loginBtn");
-      const logoutBtn   = document.getElementById("logoutBtn");
-      const accessBadge = document.getElementById("accessBadge");
+        const $ = id => document.getElementById(id);
+        const app     = $("app");
+        const overlay = $("freeze-overlay");
+        const badge   = $("accessBadge");
+        const btnHome = $("homeBtn");
+        const btnIn   = $("loginBtn");
+        const btnOut  = $("logoutBtn");
+        const btnOvIn = $("overlayLogin");
 
-      // Status login (sama dengan yang di-set oleh /nfs/premium/login.html)
-      function isLoggedIn(){ return localStorage.getItem("nafs_isLoggedIn") === "1"; }
+        const isLoggedIn = () => localStorage.getItem("nafs_isLoggedIn") === "1";
 
-      // Freeze/Unfreeze
-      function freeze(){
-        appEl.classList.add("nfs-frozen");
-        overlayEl.style.display = "grid";
-        accessBadge.textContent = "Belum Login";
-        loginBtn.classList.remove("hidden");
-        logoutBtn.classList.add("hidden");
-      }
-      function unfreeze(){
-        appEl.classList.remove("nfs-frozen");
-        overlayEl.style.display = "none";
-        accessBadge.textContent = "Premium Aktif";
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-      }
+        function freeze() {
+          app.classList.add("nfs-frozen");
+          overlay.style.display = "grid";
+          badge.textContent = "Belum Login";
+          btnIn.classList.remove("hidden");
+          btnOut.classList.add("hidden");
+        }
+        function unfreeze() {
+          app.classList.remove("nfs-frozen");
+          overlay.style.display = "none";
+          badge.textContent = "Premium Aktif";
+          btnIn.classList.add("hidden");
+          btnOut.classList.remove("hidden");
+        }
+        function syncAccessUI() { isLoggedIn() ? unfreeze() : freeze(); }
 
-      // Sinkron UI saat load
-      function syncAccessUI(){ isLoggedIn() ? unfreeze() : freeze(); }
+        function goLogin()  { sessionStorage.setItem("prev_page", URLs.HERE); location.href = URLs.LOGIN_URL; }
+        function goLogout() { sessionStorage.setItem("prev_page", URLs.HERE); location.href = URLs.LOGOUT_URL; }
 
-      // Aksi tombol
-      homeBtn.onclick = (e)=>{ e.preventDefault(); location.href = HOME_URL; };
+        btnHome.onclick = e => { e.preventDefault(); location.href = URLs.HOME_URL; };
+        btnIn.onclick   = goLogin;
+        btnOvIn.onclick = goLogin;
+        btnOut.onclick  = goLogout;
 
-      function goLogin(){
-        sessionStorage.setItem("prev_page", HERE);
-        location.href = LOGIN_URL;
-      }
-      function goLogout(){
-        sessionStorage.setItem("prev_page", HERE);
-        location.href = LOGOUT_URL;     // logout.html akan clear login & kembali ke prev_page
-      }
+        window.addEventListener("storage", e => { if (e.key === "nafs_isLoggedIn") syncAccessUI(); });
 
-      loginBtn.onclick   = goLogin;
-      overlayBtn.onclick = goLogin;
-      logoutBtn.onclick  = goLogout;
+        // SIMPAN SEKALI → hindari "already been declared"
+        window.NAFS = Object.assign(window.NAFS || {}, {
+          urls: URLs, isLoggedIn, goLogin, goLogout, syncAccessUI
+        });
 
-      // Pertama kali render → kunci/aktifkan sesuai status
-      syncAccessUI();
+        // Registry halaman (harus ada sebelum file .jsx dimuat)
+        window.NafsPages = window.NafsPages || {};
 
-      // Bila tab lain mengubah status (login/logout), auto-sync
-      window.addEventListener("storage", (e)=>{
-        if(e.key === "nafs_isLoggedIn") syncAccessUI();
-      });
-
-      // Ekspos helper untuk dipakai script Babel di bawah TANPA redeclare
-      window.__NAFS_PREMIUM__ = { LOGIN_URL, goLogin, goLogout, isLoggedIn };
+        // Sinkron UI di awal
+        syncAccessUI();
+      })();
     </script>
 
-    <!-- ==== HELPERS + ROUTER (React) ==== -->
-    <script type="text/babel" data-presets="react,env">
-      const { LOGIN_URL, goLogin, goLogout, isLoggedIn } = window.__NAFS_PREMIUM__;
+    <!-- ===================== R O U T E R  (React) ===================== -->
+    <script type="text/babel">
       const mountEl = document.getElementById("root");
-      window.NafsPages = {}; // akan diisi oleh file JSX yang dimuat di bawah
+      const { urls, isLoggedIn } = window.NAFS;
 
-      // UI helpers
+      // UI helpers untuk semua halaman
       function Field({ label, children, hint }) {
         return (
           <div className="space-y-1">
@@ -184,7 +164,7 @@
         const C = as;
         return (
           <C {...rest}
-             className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400/30" />
+            className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-400/30" />
         );
       }
       function ModelSelect({ value, onChange, disabled }) {
@@ -194,7 +174,7 @@
             <label className="text-xs text-white/60">Model</label>
             <div className="relative mt-1">
               <select disabled={disabled} value={value} onChange={e=>onChange(e.target.value)}
-                className={`w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}>
+                className={`w-full appearance-none rounded-xl bg-white/5 border border-white/10 px-3 py-2 pr-9 text-sm text-white/90 focus:outline-none ${disabled?"opacity-60 cursor-not-allowed":""}`}>
                 {models.map(m => <option key={m} className="bg-[#1a0b2e]" value={m}>{m}</option>)}
               </select>
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60">▾</span>
@@ -214,28 +194,31 @@
           return;
         }
         ReactDOM.createRoot(mountEl).render(
-          <Comp isLoggedIn={isLoggedIn()} loginUrl={LOGIN_URL} Field={Field} GhostInput={GhostInput} ModelSelect={ModelSelect} />
+          <Comp
+            isLoggedIn={isLoggedIn()}
+            loginUrl={urls.LOGIN_URL}
+            Field={Field}
+            GhostInput={GhostInput}
+            ModelSelect={ModelSelect}
+          />
         );
       }
 
-      // Wire tombol nav
       document.querySelectorAll("[data-page]").forEach(btn=>{
         btn.addEventListener("click", ()=> renderPage(btn.dataset.page));
       });
 
-      // Render awal
+      // Layar awal
       ReactDOM.createRoot(mountEl).render(
-        <div className="p-6 text-sm text-white/70">
-          Pilih salah satu halaman di bar tombol di atas untuk memulai.
-        </div>
+        <div className="p-6 text-sm text-white/70">Pilih salah satu halaman di bar tombol di atas untuk memulai.</div>
       );
     </script>
 
-    <!-- ====== MUAT 5 FILE JSX (Babel) ====== -->
-    <script type="text/babel" data-presets="react,env" src="./generateimage.jsx?v=2"></script>
-    <script type="text/babel" data-presets="react,env" src="./generatevideo.jsx?v=2"></script>
-    <script type="text/babel" data-presets="react,env" src="./generateaudio.jsx?v=2"></script>
-    <script type="text/babel" data-presets="react,env" src="./fotoproduk.jsx?v=2"></script>
-    <script type="text/babel" data-presets="react,env" src="./tiktokaffiliate.jsx?v=2"></script>
+    <!-- =============== M U A T  H A L A M A N  (URUT & PAKAI PRESETS) =============== -->
+    <script type="text/babel" data-presets="react,env" src="./generateimage.jsx?v=3"></script>
+    <script type="text/babel" data-presets="react,env" src="./generatevideo.jsx?v=3"></script>
+    <script type="text/babel" data-presets="react,env" src="./generateaudio.jsx?v=3"></script>
+    <script type="text/babel" data-presets="react,env" src="./fotoproduk.jsx?v=3"></script>
+    <script type="text/babel" data-presets="react,env" src="./tiktokaffiliate.jsx?v=3"></script>
   </body>
 </html>
