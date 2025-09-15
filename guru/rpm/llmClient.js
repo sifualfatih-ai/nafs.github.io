@@ -1,14 +1,11 @@
 /* NafsFlow LLM Client (rpm) — unified endpoint */
 (function (global) {
-  const ENDPOINTS = [
-    '/api/generate.php',
-  ];
+  const ENDPOINTS = ['/api/generate.php'];
 
   async function getIdToken() {
     try {
       const mod = await import('/firebase.js');
-      const auth = mod.auth;
-      return auth?.currentUser ? await auth.currentUser.getIdToken() : null;
+      return mod.getIdToken ? await mod.getIdToken() : null;
     } catch { return null; }
   }
 
@@ -24,7 +21,7 @@
             ...(token ? {'Authorization':'Bearer '+token} : {}),
           },
           body: JSON.stringify(body),
-          credentials:'include'
+          credentials:'include',
         });
         if(!res.ok){ lastErr = new Error('HTTP '+res.status+' @ '+url); continue; }
         const json = await res.json();
