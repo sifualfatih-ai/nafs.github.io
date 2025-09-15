@@ -140,6 +140,14 @@
         // Registry halaman (harus ada sebelum file .jsx dimuat)
         window.NafsPages = window.NafsPages || {};
 
+const URLs = {
+  HOME_URL : "https://nafsflow.com/",
+  HERE     : new URL("/nfs/premium/", location.origin).toString(),
+  LOGIN_URL: "/nfs/premium/login.html",
+  LOGOUT_URL:"/nfs/premium/logout.html",
+  API_BASE : "https://nafsflow.com/api"   // <— tambahkan ini
+};
+        
         // Sinkron UI di awal
         syncAccessUI();
       })();
