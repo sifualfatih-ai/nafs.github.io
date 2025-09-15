@@ -1,7 +1,7 @@
-// /firebase.js (unified, conditional by path)
-// This module chooses Firebase project by current path:
-// - /guru/rpm/*  -> NafsAppStudio (teachers tools)
-// - others       -> nafs-gen (premium studio)
+// /firebase.js (unified, pilih project berdasar path)
+//
+// - /guru/rpm/*  -> NafsAppStudio
+// - lainnya       -> nafs-gen
 
 const CFG_NAFS_GEN = {
   apiKey: "AIzaSyDRroJEkBTlADbB7C504ltyy3pG6kpMK04",
@@ -10,28 +10,34 @@ const CFG_NAFS_GEN = {
   storageBucket: "nafs-gen.appspot.com",
   messagingSenderId: "514651223524",
   appId: "1:514651223524:web:367229fb2c5ece794583f1",
-  measurementId: "G-0948R8WGQG"
+  measurementId: "G-0948R8WGQG",
 };
 
-// TODO: paste real public config for NafsAppStudio below
-const CFG_NAFS_APP = (window.__FIREBASE_NAFS_APP__ /* optional override */) || {
-  apiKey: "PASTE_NAFSAPP_apiKey",
-  authDomain: "PASTE_NAFSAPP_authDomain",
-  projectId: "NafsAppStudio",
-  storageBucket: "PASTE_NAFSAPP_bucket",
-  messagingSenderId: "PASTE_NAFSAPP_sender",
-  appId: "PASTE_NAFSAPP_appId",
+// ⬇️ NafsAppStudio (dari kamu)
+const CFG_NAFS_APP = {
+  apiKey: "AIzaSyAcAW_IktSOIXb0m7t849grkO2rMVeZVBc",
+  authDomain: "nafsappstudio.firebaseapp.com",
+  projectId: "nafsappstudio",
+  storageBucket: "nafsappstudio.firebasestorage.app",
+  messagingSenderId: "3195732092",
+  appId: "1:3195732092:web:65dd39633572221a7d49f9",
+  measurementId: "G-H304CL19EF",
 };
 
 const isGuruRpm = location.pathname.startsWith('/guru/rpm');
-
 const firebaseConfig = isGuruRpm ? CFG_NAFS_APP : CFG_NAFS_GEN;
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth }       from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth }                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore }            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const app = (getApps().length ? getApps()[0] : initializeApp(firebaseConfig));
+const app  = (getApps().length ? getApps()[0] : initializeApp(firebaseConfig));
 export const auth = getAuth(app);
 export const db   = getFirestore(app);
+
+// Helper supaya hotfix bisa ambil token
+export async function getIdToken() {
+  const u = auth.currentUser;
+  return u ? await u.getIdToken() : null;
+}
 export default app;
