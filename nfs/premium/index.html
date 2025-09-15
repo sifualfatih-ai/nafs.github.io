@@ -165,7 +165,7 @@
     </script>
 
     <!-- ==== HELPERS + ROUTER (React) ==== -->
-    <script type="text/babel">
+    <script type="text/babel" data-presets="react,env">
       const { LOGIN_URL, goLogin, goLogout, isLoggedIn } = window.__NAFS_PREMIUM__;
       const mountEl = document.getElementById("root");
       window.NafsPages = {}; // akan diisi oleh file JSX yang dimuat di bawah
@@ -232,10 +232,10 @@
     </script>
 
     <!-- ====== MUAT 5 FILE JSX (Babel) ====== -->
-    <script type="text/babel" src="./generateimage.jsx"></script>
-    <script type="text/babel" src="./generatevideo.jsx"></script>
-    <script type="text/babel" src="./generateaudio.jsx"></script>
-    <script type="text/babel" src="./fotoproduk.jsx"></script>
-    <script type="text/babel" src="./tiktokaffiliate.jsx"></script>
+    <script type="text/babel" data-presets="react,env" src="./generateimage.jsx?v=2"></script>
+    <script type="text/babel" data-presets="react,env" src="./generatevideo.jsx?v=2"></script>
+    <script type="text/babel" data-presets="react,env" src="./generateaudio.jsx?v=2"></script>
+    <script type="text/babel" data-presets="react,env" src="./fotoproduk.jsx?v=2"></script>
+    <script type="text/babel" data-presets="react,env" src="./tiktokaffiliate.jsx?v=2"></script>
   </body>
 </html>
