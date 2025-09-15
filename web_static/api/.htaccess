@@ -1,0 +1,15 @@
+# Jalankan PHP untuk semua file .php
+AddType application/x-httpd-php .php
+
+# Blok direktori listing
+Options -Indexes
+
+# CORS (same-origin allowed; kembangkan sesuai kebutuhan)
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "https://nafsflow.com"
+  Header set Access-Control-Allow-Methods "POST, OPTIONS"
+  Header set Access-Control-Allow-Headers "Content-Type, X-Requested-With"
+</IfModule>
+
+# Matikan output compression / filter yang kadang bikin HTTP2 PROTOCOL_ERROR
+SetEnv no-gzip 1
