@@ -1,6 +1,6 @@
 // /firebase.js (unified, pilih project berdasar path)
 const CFG_NAFS_GEN = {
-  apiKey: "AIzaSyDRroJEkBTlADbB7C504ltyy3pG6kpMK04",
+  apiKey: "xx",
   authDomain: "nafs-gen.firebaseapp.com",
   projectId: "nafs-gen",
   storageBucket: "nafs-gen.appspot.com",
@@ -9,7 +9,7 @@ const CFG_NAFS_GEN = {
   measurementId: "G-0948R8WGQG",
 };
 const CFG_NAFS_APP = {
-  apiKey: "AIzaSyAcAW_IktSOIXb0m7t849grkO2rMVeZVBc",
+  apiKey: "xxx",
   authDomain: "nafsappstudio.firebaseapp.com",
   projectId: "nafsappstudio",
   storageBucket: "nafsappstudio.firebasestorage.app",
