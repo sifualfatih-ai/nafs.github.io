@@ -7,51 +7,61 @@
   <meta name="description" content="Nafsflow dashboard">
   <style>
     :root { color-scheme: dark; }
-    body { font-family: system-ui, Arial, sans-serif; margin: 0; background:#0b0f14; color:#e8eef5; }
-    .wrap { max-width: 1000px; margin: 40px auto; padding: 0 16px; }
-    .card { background:#121a22; border:1px solid #1e2a36; border-radius:16px; padding:24px; box-shadow:0 8px 30px rgba(0,0,0,.25); }
-    .logo { font-size:20px; font-weight:800; letter-spacing:.5px; margin-bottom:12px; opacity:.9;}
+    html, body { height: 100%; margin: 0; }
+    body { font-family: system-ui, Arial, sans-serif; background:#0b0f14; color:#e8eef5; }
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; background:#0f151c; border-bottom:1px solid #1e2a36;
+      position:sticky; top:0; z-index:1;
+    }
+    .title { font-weight:800; letter-spacing:.3px; }
+    .gate, .content { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+    .card { background:#121a22; border:1px solid #1e2a36; border-radius:16px; padding:20px; }
     label { display:block; margin-bottom:8px; font-weight:600;}
     input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #273445; background:#0e141b; color:#e8eef5; }
     button { margin-top:12px; padding:12px 16px; border:0; border-radius:12px; background:#4f8cff; color:white; font-weight:700; cursor:pointer;}
-    button:active { transform: translateY(1px); }
     .error { color:#ff6b6b; margin-top:8px; display:none;}
-    iframe { width:100%; height:80vh; border:0; border-radius:16px; }
-    .muted { opacity:.7; font-size:14px; }
-    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    .row a { color:#b8d1ff; text-decoration:none; font-weight:600; }
+    .framewrap { height: calc(100vh - 100px); } /* hampir layar penuh */
+    iframe { width:100%; height:100%; border:0; border-radius:16px; background:#0b0f14; }
+    .muted { opacity:.75; font-size:14px; }
+    .actions a { color:#b8d1ff; text-decoration:none; font-weight:600; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div id="gate" class="card">
-      <div class="logo">🔒 Nafsflow Access</div>
-      <label for="code">Masukkan kode akses</label>
-      <div class="row">
-        <input id="code" type="password" placeholder="Contoh: NF-2025-ACCESS" autocomplete="current-password"/>
-        <button id="enter">Masuk</button>
-      </div>
-      <div id="err" class="error">Kode salah. Coba lagi.</div>
-      <p class="muted">
-        Butuh akses?
-        <a href="https://wa.me/6285134882357?text=Halo%20Nafsflow%2C%20mohon%20izin%20akses" target="_blank" rel="noopener">Chat WhatsApp admin</a>
-      </p>
+  <div class="topbar">
+    <div class="title">📊 Nafsflow Dashboard</div>
+    <div class="actions">
+      <a href="https://wa.me/6285134882357?text=Halo%20Nafsflow%2C%20mohon%20izin%20akses" target="_blank" rel="noopener">Butuh akses?</a>
     </div>
+  </div>
 
-    <div id="content" class="card" style="display:none;">
-      <div class="logo">📊 Dashboard</div>
-      <iframe id="report" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-      <p class="muted" id="embedWarn" style="display:none;margin-top:10px;">
-        Jika konten tidak tampil (refused to connect), platform sumber mungkin menolak di-embed. Nanti kita pakai link embed resmi/alternatif.
+  <div id="gate" class="gate">
+    <div class="card">
+      <label for="code">Masukkan kode akses</label>
+      <input id="code" type="password" placeholder="Contoh: NF-2025-ACCESS" autocomplete="current-password"/>
+      <button id="enter">Masuk</button>
+      <div id="err" class="error">Kode salah. Coba lagi.</div>
+      <p class="muted">Setelah masuk, dashboard akan tampil layar penuh.</p>
+    </div>
+  </div>
+
+  <div id="content" class="content" style="display:none;">
+    <div class="card">
+      <div class="framewrap">
+        <iframe id="report" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <p id="fallback" class="muted" style="display:none; margin-top:12px;">
+        Konten tidak bisa ditampilkan di dalam halaman (situs sumber menolak di-embed).
+        <a id="openDirect" href="#" target="_blank" rel="noopener">Buka di tab baru</a>.
       </p>
     </div>
   </div>
 
   <script>
     // ======== ATUR DI SINI =========
-    const VALID_CODES = ["NF-2025-ACCESS"]; // ganti sesuai kebutuhan
+    const VALID_CODES = ["NF-2025-ACCESS"];               // ubah sesuai kebutuhan
     const IFRAME_EMBED_URL = "https://ai.studio/apps/drive/1sjTlxY3GFur6gxgkKPON-4KRd3N5jPOE"; // ganti kalau ada link embed resmi
-    const KEY = "nafsflow_access_ok"; // simpan status akses di tab
+    const KEY = "nafsflow_access_ok";
     // =================================
 
     const $code = document.getElementById('code');
@@ -59,7 +69,8 @@
     const $gate = document.getElementById('gate');
     const $content = document.getElementById('content');
     const $iframe = document.getElementById('report');
-    const $embedWarn = document.getElementById('embedWarn');
+    const $fallback = document.getElementById('fallback');
+    const $openDirect = document.getElementById('openDirect');
 
     if (sessionStorage.getItem(KEY) === "1") unlock();
 
@@ -74,12 +85,15 @@
       $gate.style.display = 'none';
       $content.style.display = 'block';
       $iframe.src = IFRAME_EMBED_URL;
-      setTimeout(() => {
-        try { if (!$iframe.contentWindow) $embedWarn.style.display = 'block'; }
-        catch(e){ $embedWarn.style.display = 'block'; }
-      }, 1000);
+      $openDirect.href = IFRAME_EMBED_URL;
+
+      // Jika dalam 2 detik iframe belum bisa di-load (umum saat X-Frame-Options block), tampilkan tombol "Buka di tab baru".
+      let done = false;
+      $iframe.onload = () => { done = true; };
+      setTimeout(() => { if (!done) $fallback.style.display = 'block'; }, 2000);
     }
 
+    // Enter untuk submit
     $code.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') document.getElementById('enter').click();
     });
