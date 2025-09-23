@@ -6,19 +6,33 @@
   <title>Uji Gemini via api.nafsflow.com</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    body { margin: 0; padding: 24px; background: #fafafa; color: #222; }
+    body { margin: 0; padding: 24px; background:#fafafa; color:#222; }
     .wrap { max-width: 720px; margin: 0 auto; }
     h1 { font-size: 20px; margin: 0 0 12px; }
-    textarea { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background:#fff; }
-    button { padding: 10px 16px; border: 0; border-radius: 8px; cursor: pointer; }
-    button.primary { background: #111; color: #fff; }
+    .bar {
+      display:flex; gap:8px; align-items:center; justify-content:space-between;
+      background:#fff; border:1px solid #eee; border-radius:10px; padding:10px 12px; margin-bottom:14px;
+    }
+    .user { font-size:14px; color:#555; }
+    button { padding:8px 12px; border:0; border-radius:8px; cursor:pointer; }
+    button.primary { background:#111; color:#fff; }
     button[disabled] { opacity:.6; cursor:not-allowed; }
-    pre { white-space: pre-wrap; background:#f5f5f5; padding:12px; border-radius:10px; margin-top:12px; }
-    .hint { color:#666; font-size: 13px; margin-top: 6px; }
+    textarea { width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:1px solid #ddd; background:#fff; }
+    pre { white-space:pre-wrap; background:#f5f5f5; padding:12px; border-radius:10px; margin-top:12px; }
+    .hint { color:#666; font-size:13px; margin-top:6px; }
   </style>
 </head>
 <body>
   <div class="wrap">
+    <!-- AUTH BAR -->
+    <div class="bar">
+      <div class="user" id="userInfo">Belum login</div>
+      <div>
+        <button id="loginBtn" class="primary">Login dengan Google</button>
+        <button id="logoutBtn" style="display:none;">Logout</button>
+      </div>
+    </div>
+
     <h1>Uji Gemini via <code>api.nafsflow.com</code></h1>
 
     <textarea id="prompt" rows="4">tuliskan pantun satu bait</textarea>
@@ -31,9 +45,76 @@
     <pre id="out"></pre>
   </div>
 
-  <script>
+  <!-- Firebase v10 (modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, GoogleAuthProvider,
+      signInWithPopup, signOut, getIdToken
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // 1) GANTI dengan config dari Firebase Console (Project settings → Web app)
+   const firebaseConfig = {
+  apiKey: "AIzaSyAcAW_IktSOIXb0m7t849grkO2rMVeZVBc",
+  authDomain: "nafsappstudio.firebaseapp.com",
+  projectId: "nafsappstudio",
+  storageBucket: "nafsappstudio.firebasestorage.app",
+  messagingSenderId: "3195732092",
+  appId: "1:3195732092:web:65dd39633572221a7d49f9",
+  measurementId: "G-H304CL19EF"
+};
+
+    // 2) Init
+    const fbApp = initializeApp(firebaseConfig);
+    const auth = getAuth(fbApp);
+    const provider = new GoogleAuthProvider();
+
+    // 3) UI elemen
+    const userInfo = document.getElementById("userInfo");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const sendBtn = document.getElementById("btn");
+    const promptEl = document.getElementById("prompt");
+    const out = document.getElementById("out");
+
+    // 4) Observasi status login
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        userInfo.textContent = `Login sebagai: ${user.displayName || user.email}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+        sendBtn.disabled = false;
+        // (Opsional) dapatkan ID token & tampilkan di console – untuk langkah 2 (server verify)
+        const idToken = await getIdToken(user, true);
+        console.log("Firebase ID Token:", idToken.slice(0, 32) + "…");
+      } else {
+        userInfo.textContent = "Belum login";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+        // di langkah 1, kita sekadar menonaktifkan kirim jika belum login:
+        // (kalau mau tetap bisa kirim, hapus baris di bawah)
+        // sendBtn.disabled = true;
+      }
+    });
+
+    loginBtn.onclick = async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (e) {
+        alert("Gagal login: " + e.message);
+      }
+    };
+    logoutBtn.onclick = async () => {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        alert("Gagal logout: " + e.message);
+      }
+    };
+
+    // === Bagian Gemini (tetap pakai x-access-code untuk sementara) ===
     const API_BASE = "https://api.nafsflow.com";
-    const ACCESS_CODE = "nafs8087"; // harus sama dengan APP_ACCESS_CODE di Cloud Run
+    const ACCESS_CODE = "nafs8087"; // sementara; akan diganti ID Token di langkah 2
 
     async function askGemini(promptText) {
       const r = await fetch(`${API_BASE}/generate`, {
@@ -45,53 +126,36 @@
         body: JSON.stringify({ prompt: promptText })
       });
 
-      // Bila server balas error, coba tampilkan isi errornya
       if (!r.ok) {
         let msg = `HTTP ${r.status}`;
-        try {
-          const err = await r.json();
-          if (err?.error) msg += ` - ${err.error}`;
-        } catch (_) {}
+        try { const err = await r.json(); if (err?.error) msg += ` - ${err.error}`; } catch {}
         throw new Error(msg);
       }
-
       const data = await r.json();
-      // Ambil teksnya dari struktur respons Gemini:
-      return (
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ??
-        JSON.stringify(data, null, 2)
-      );
+      return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? JSON.stringify(data, null, 2);
     }
 
     async function send() {
-      const out = document.getElementById("out");
-      const btn = document.getElementById("btn");
-      const prompt = document.getElementById("prompt").value.trim();
+      const text = promptEl.value.trim();
+      if (!text) return;
+      // (Langkah 1) optional gate: wajib login
+      if (!auth.currentUser) { out.textContent = "Silakan login dulu."; return; }
 
-      if (!prompt) {
-        out.textContent = "Masukkan prompt terlebih dahulu.";
-        return;
-      }
-
-      btn.disabled = true;
+      sendBtn.disabled = true;
       out.textContent = "Sebentar…";
-
       try {
-        const text = await askGemini(prompt);
-        out.textContent = text;
+        const res = await askGemini(text);
+        out.textContent = res;
       } catch (e) {
         out.textContent = "Error: " + e.message;
       } finally {
-        btn.disabled = false;
+        sendBtn.disabled = false;
       }
     }
 
-    document.getElementById("btn").addEventListener("click", send);
-    document.getElementById("prompt").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        send();
-      }
+    sendBtn.addEventListener("click", send);
+    promptEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); }
     });
   </script>
 </body>
