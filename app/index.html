@@ -1,40 +1,98 @@
-<!-- Tambahkan di dalam <body> halaman kamu -->
-<section style="max-width:680px;margin:20px auto;font-family:system-ui;">
-  <h2>Uji Gemini via api.nafsflow.com</h2>
-  <textarea id="prompt" rows="4" style="width:100%;">tuliskan pantun satu bait</textarea>
-  <br/>
-  <button id="btn" style="padding:8px 14px;margin-top:8px;">Kirim</button>
-  <pre id="out" style="white-space:pre-wrap;background:#f5f5f5;padding:10px;border-radius:8px;margin-top:12px;"></pre>
-</section>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uji Gemini via api.nafsflow.com</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; padding: 24px; background: #fafafa; color: #222; }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    textarea { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background:#fff; }
+    button { padding: 10px 16px; border: 0; border-radius: 8px; cursor: pointer; }
+    button.primary { background: #111; color: #fff; }
+    button[disabled] { opacity:.6; cursor:not-allowed; }
+    pre { white-space: pre-wrap; background:#f5f5f5; padding:12px; border-radius:10px; margin-top:12px; }
+    .hint { color:#666; font-size: 13px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Uji Gemini via <code>api.nafsflow.com</code></h1>
 
-<script>
-  const API_BASE = "https://api.nafsflow.com";
+    <textarea id="prompt" rows="4">tuliskan pantun satu bait</textarea>
+    <div class="hint">Tekan <b>Ctrl + Enter</b> untuk mengirim cepat.</div>
 
-  async function askGemini(promptText) {
-    const r = await fetch(`${API_BASE}/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: promptText })
-    });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const data = await r.json();
+    <div style="margin-top:10px;">
+      <button id="btn" class="primary">Kirim</button>
+    </div>
 
-    // Ambil teksnya dari struktur respons Gemini:
-    const text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      JSON.stringify(data, null, 2);
-    return text;
-  }
+    <pre id="out"></pre>
+  </div>
 
-  document.getElementById("btn").onclick = async () => {
-    const out = document.getElementById("out");
-    out.textContent = "Sebentar...";
-    try {
-      const prompt = document.getElementById("prompt").value;
-      const text = await askGemini(prompt);
-      out.textContent = text;
-    } catch (e) {
-      out.textContent = "Error: " + e.message;
+  <script>
+    const API_BASE = "https://api.nafsflow.com";
+    const ACCESS_CODE = "nafs8087"; // harus sama dengan APP_ACCESS_CODE di Cloud Run
+
+    async function askGemini(promptText) {
+      const r = await fetch(`${API_BASE}/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-code": ACCESS_CODE
+        },
+        body: JSON.stringify({ prompt: promptText })
+      });
+
+      // Bila server balas error, coba tampilkan isi errornya
+      if (!r.ok) {
+        let msg = `HTTP ${r.status}`;
+        try {
+          const err = await r.json();
+          if (err?.error) msg += ` - ${err.error}`;
+        } catch (_) {}
+        throw new Error(msg);
+      }
+
+      const data = await r.json();
+      // Ambil teksnya dari struktur respons Gemini:
+      return (
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+        JSON.stringify(data, null, 2)
+      );
     }
-  };
-</script>
+
+    async function send() {
+      const out = document.getElementById("out");
+      const btn = document.getElementById("btn");
+      const prompt = document.getElementById("prompt").value.trim();
+
+      if (!prompt) {
+        out.textContent = "Masukkan prompt terlebih dahulu.";
+        return;
+      }
+
+      btn.disabled = true;
+      out.textContent = "Sebentar…";
+
+      try {
+        const text = await askGemini(prompt);
+        out.textContent = text;
+      } catch (e) {
+        out.textContent = "Error: " + e.message;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById("btn").addEventListener("click", send);
+    document.getElementById("prompt").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        send();
+      }
+    });
+  </script>
+</body>
+</html>
