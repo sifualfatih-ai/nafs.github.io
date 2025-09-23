@@ -39,7 +39,7 @@
     <div class="hint">Tekan <b>Ctrl + Enter</b> untuk mengirim cepat.</div>
 
     <div style="margin-top:10px;">
-      <button id="btn" class="primary">Kirim</button>
+      <button id="btn" class="primary" disabled>Kirim</button>
     </div>
 
     <pre id="out"></pre>
@@ -53,16 +53,16 @@
       signInWithPopup, signOut, getIdToken
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // 1) GANTI dengan config dari Firebase Console (Project settings → Web app)
-   const firebaseConfig = {
-  apiKey: "AIzaSyAcAW_IktSOIXb0m7t849grkO2rMVeZVBc",
-  authDomain: "nafsappstudio.firebaseapp.com",
-  projectId: "nafsappstudio",
-  storageBucket: "nafsappstudio.firebasestorage.app",
-  messagingSenderId: "3195732092",
-  appId: "1:3195732092:web:65dd39633572221a7d49f9",
-  measurementId: "G-H304CL19EF"
-};
+    // === Firebase config (punyamu) ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyAcAW_IktSOIXb0m7t849grkO2rMVeZVBc",
+      authDomain: "nafsappstudio.firebaseapp.com",
+      projectId: "nafsappstudio",
+      storageBucket: "nafsappstudio.firebasestorage.app",
+      messagingSenderId: "3195732092",
+      appId: "1:3195732092:web:65dd39633572221a7d49f9",
+      measurementId: "G-H304CL19EF"
+    };
 
     // 2) Init
     const fbApp = initializeApp(firebaseConfig);
@@ -84,16 +84,15 @@
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline-block";
         sendBtn.disabled = false;
-        // (Opsional) dapatkan ID token & tampilkan di console – untuk langkah 2 (server verify)
+
+        // (Debug) Tampilkan sebagian ID Token di console
         const idToken = await getIdToken(user, true);
         console.log("Firebase ID Token:", idToken.slice(0, 32) + "…");
       } else {
         userInfo.textContent = "Belum login";
         loginBtn.style.display = "inline-block";
         logoutBtn.style.display = "none";
-        // di langkah 1, kita sekadar menonaktifkan kirim jika belum login:
-        // (kalau mau tetap bisa kirim, hapus baris di bawah)
-        // sendBtn.disabled = true;
+        sendBtn.disabled = true;
       }
     });
 
@@ -112,16 +111,22 @@
       }
     };
 
-    // === Bagian Gemini (tetap pakai x-access-code untuk sementara) ===
+    // === Bagian Gemini: KIRIM ID TOKEN, bukan x-access-code ===
     const API_BASE = "https://api.nafsflow.com";
-    const ACCESS_CODE = "nafs8087"; // sementara; akan diganti ID Token di langkah 2
 
     async function askGemini(promptText) {
+      // pastikan user sudah login
+      const user = auth.currentUser;
+      if (!user) throw new Error("Silakan login dulu.");
+
+      // ambil ID token dari Firebase
+      const idToken = await getIdToken(user, true);
+
       const r = await fetch(`${API_BASE}/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-access-code": ACCESS_CODE
+          "Authorization": `Bearer ${idToken}`   // <<— penting
         },
         body: JSON.stringify({ prompt: promptText })
       });
@@ -138,7 +143,6 @@
     async function send() {
       const text = promptEl.value.trim();
       if (!text) return;
-      // (Langkah 1) optional gate: wajib login
       if (!auth.currentUser) { out.textContent = "Silakan login dulu."; return; }
 
       sendBtn.disabled = true;
