@@ -12,22 +12,23 @@
 
   <style>
     :root{
-      /* Tema ungu + pink (sesuai contoh sidebar: pink→ungu) */
+      /* Tema ungu + pink (custom) */
       --bg:#0c0717;
       --bg2:#140c25;
-      --card:rgba(22,13,42,.72);      /* transparan ringan utk kotak utama */
+      --card:rgba(22,13,42,.72);
       --line:#34245e;
       --text:#f4efff;
       --muted:#d1c6ff;
-      --btn:rgba(35,22,70,.55);       /* blok menu transparan */
+      --btn:rgba(35,22,70,.55);
       --btn-hover:rgba(49,31,99,.65);
       --accent:#a855f7;
       --accent-2:#c535b9;
       --green:#22c55e;
       --radius:18px;
       --shadow:0 12px 30px rgba(0,0,0,.35);
-      /* gradien pink→ungu (dipakai tombol premium/pengajar) */
-      --grad:linear-gradient(135deg,#ff3cac 0%, #a86bff 45%, #6d28d9 100%);
+
+      /* ⬇️ Ganti warna “pink” jadi #772785 */
+      --grad:linear-gradient(135deg, #772785 0%, #a86bff 45%, #6d28d9 100%);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -36,7 +37,6 @@
       background:var(--bg);
       display:grid; place-items:center; padding:28px; position:relative; overflow-x:hidden;
     }
-    /* BACKGROUND: foto full-bleed + blur + gelap ~70% */
     body::before{
       content:"";
       position:fixed; inset:-10px;
@@ -49,7 +49,6 @@
     }
 
     .wrap{width:min(980px, 94vw)}
-    /* KOTAK UTAMA transparan sedikit */
     .card{
       background:var(--card); border:1px solid #ffffff17; border-radius:28px; box-shadow:var(--shadow); padding:28px;
       backdrop-filter:saturate(140%) blur(10px);
@@ -59,7 +58,6 @@
     h1{margin:0 0 6px; text-align:center; font-size:34px}
     .subtitle{margin:0; text-align:center; color:var(--muted)}
 
-    /* ikon bulat medsos */
     .socials{display:flex; gap:16px; justify-content:center; margin:18px 0 8px}
     .circle{
       width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
@@ -70,12 +68,10 @@
     .circle:hover{transform:translateY(-2px); background:var(--btn-hover)}
     .circle svg{width:22px; height:22px}
 
-    /* MENU: grid 2 kolom → jadi “blok transparan” */
     .links{
       display:grid; gap:12px; margin-top:16px;
       grid-template-columns:repeat(2,minmax(0,1fr));
     }
-    /* Kotak menu umum */
     .btn{
       display:flex; align-items:center; gap:12px; padding:16px; border-radius:16px;
       background:var(--btn); border:1px solid #ffffff1a; color:var(--text); text-decoration:none; font-weight:700;
@@ -86,7 +82,7 @@
     .btn:hover{background:var(--btn-hover); transform:translateY(-1px); border-color:#ffffff2e}
     .btn svg{width:20px; height:20px; flex:0 0 auto; opacity:.95}
 
-    /* Tombol gradien (Premium & Pengajar) — persis nuansa ungu-pink */
+    /* Tombol gradien */
     .violet-btn{
       display:flex; align-items:center; gap:12px; padding:16px; border-radius:16px;
       background:var(--grad);
@@ -98,7 +94,17 @@
     .violet-btn:hover{ transform:translateY(-1px); filter:brightness(1.06); }
     .violet-btn svg{ width:20px; height:20px; flex:0 0 auto;}
 
-    /* tombol login (tetap) */
+    /* ====== KELAS PER BUTTON (mudah dimodifikasi ke depan) ====== */
+    .btn-home{}                 /* utk Halaman Umum */
+    .btn-premium{               /* utk Tools AI PREMIUM */
+      /* contoh override khusus kalau perlu di masa depan */
+      /* background:var(--grad);  (sudah dari .violet-btn) */
+    }
+    .btn-pengajar{}             /* utk Tools AI Pengajar (gradien via .violet-btn) */
+    .btn-generator{}            /* utk Prompt Generator */
+    .btn-agent{}                /* utk AI Agent Project */
+    .btn-web3{}                 /* utk Web3 Demo */
+
     .login-cta{ margin-top:18px; display:flex; justify-content:center; }
     .login-cta button{
       appearance:none; border:none; background:var(--green); color:#06280f;
@@ -107,10 +113,8 @@
       box-shadow:0 8px 18px -10px rgba(34,197,94,.6);
     }
 
-    /* footer */
     .foot{margin-top:10px; text-align:center; color:#cbbcffcc; font-size:13px}
 
-    /* modal login mengambang (tetap) */
     .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:20px}
     .modal{width:min(520px, 92vw); background:rgba(31,20,56,.9); border:1px solid var(--line); border-radius:16px; padding:18px; backdrop-filter:blur(6px)}
     .modal h3{margin:0 0 8px}
@@ -122,7 +126,6 @@
     .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
     .hint{margin-top:8px; color:var(--muted); font-size:13px}
 
-    /* RESPONSIVE */
     @media (max-width: 992px){
       h1{font-size:30px}
       .subtitle{font-size:14px}
@@ -131,7 +134,7 @@
       .circle{width:52px; height:52px}
     }
     @media (max-width: 680px){
-      .links{grid-template-columns:1fr;} /* ponsel: 1 kolom */
+      .links{grid-template-columns:1fr;}
     }
     @media (max-width: 560px){
       body{padding:18px}
@@ -159,22 +162,17 @@
 
   <main class="wrap">
     <section class="card" aria-label="Kartu profil">
-      <!-- URUTAN: gambar → judul → deskripsi → sosial (dipertahankan) -->
       <img class="avatar" src="nafslogo.jpeg" alt="Foto NafsFlow" />
       <h1>NafsFlow</h1>
       <p class="subtitle">Nafsflow - Workflow - Cashflow</p>
 
-      <!-- Ikon bulat medsos -->
       <div class="socials" role="navigation" aria-label="Tautan medsos">
-        <!-- WhatsApp -->
         <a class="circle" href="https://wa.me/6285134882357?text=Halo%20Nafs%20Project%2C%20saya%20ingin%20info" target="_blank" rel="noopener" aria-label="WhatsApp">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.1 17.6L2 22l4.5-1.2A11 11 0 1 0 20.5 3.5Zm-8.8 16.9c-1.9 0-3.6-.6-5-1.7l-.4-.3-2.6.7.7-2.5-.3-.4a8.6 8.6 0 1 1 7.6 4.2Zm4.7-6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7 7 0 0 1-2-1.2 7.5 7.5 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.3-.4.2-.4c.1-.2 0-.4 0-.5l-.9-2a.6.6 0 0 0-.6-.3h-.5c-.2 0-.5.2-.6.4s-.8.8-.8 2 .8 2.3.9 2.4c.1.2 1.7 2.7 4.1 3.7.6.3 1.1.5 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1 .1-1.2-.1-.2-.3-.3-.6-.4Z"/></svg>
         </a>
-        <!-- TikTok -->
         <a class="circle" href="https://www.tiktok.com/@nnafssh" target="_blank" rel="noopener" aria-label="TikTok">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 3h2.4c.2 1.6 1.2 3 2.9 3.8a6.9 6.9 0 0 0 1.5.4v2.3c-.8 0-1.6-.2-2.3-.5a7.5 7.5 0 0 1-2.1-1.4v6.8A6 6 0 1 1 10 8.6v2.5a2.6 2.6 0 1 0 1.9 2.5V3Z"/></svg>
         </a>
-        <!-- YouTube -->
         <a class="circle" href="https://www.youtube.com/@nnafshh" target="_blank" rel="noopener" aria-label="YouTube">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
         </a>
@@ -183,48 +181,48 @@
       <!-- MENU: blok transparan 2 kolom -->
       <div class="links" role="navigation" aria-label="Tautan utama">
 
-        <!-- Halaman Umum (ikon rumah) -->
-        <a href="home.html" class="btn">
+        <!-- Halaman Umum -->
+        <a href="home.html" class="btn btn-home">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 3 2 11h2v9h6v-6h4v6h6v-9h2L12 3z"/>
           </svg>
           Halaman Umum
         </a>
 
-        <!-- Tools AI PREMIUM (ikon mahkota raja, gradien ungu-pink) -->
-        <a href="https://app.nafsflow.com" class="violet-btn">
+        <!-- Tools AI PREMIUM (gradien #772785 → ungu) -->
+        <a href="https://app.nafsflow.com" class="violet-btn btn-premium">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M3 7l4.5 3 4.5-6 4.5 6L21 7v11H3V7zm2 9h14v-6l-3 2-4-5-4 5-3-2v6z"/>
           </svg>
           Tools AI PREMIUM
         </a>
 
-        <!-- Tools AI Pengajar (ikon topi wisuda, gradien) -->
-        <a href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" class="violet-btn">
+        <!-- Tools AI Pengajar (gradien sama) -->
+        <a href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" class="violet-btn btn-pengajar">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 3 1 8l11 5 9-4.09V17h2V8L12 3zm-6 9v4.5c1.8 1.1 4 1.5 6 1.5s4.2-.4 6-1.5V12l-6 2.7L6 12z"/>
           </svg>
           Tools AI Pengajar
         </a>
 
-        <!-- Prompt Generator (ikon spark/bolt) -->
-        <a href="generator.html" class="btn">
+        <!-- Prompt Generator -->
+        <a href="generator.html" class="btn btn-generator">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M13 2 3 14h7l-1 8 11-12h-7l0-8z"/>
           </svg>
           Prompt Generator (Free)
         </a>
 
-        <!-- AI Agent Project (ikon robot) -->
-        <a href="flowbuilder.html" class="btn">
+        <!-- AI Agent Project -->
+        <a href="flowbuilder.html" class="btn btn-agent">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M10 2h4v2h2a3 3 0 0 1 3 3v9a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3h2V2zm-1 7H7v3h2V9zm10 0h-2v3h2V9z"/>
           </svg>
           AI Agent Project Free (Desktop)
         </a>
 
-        <!-- Web3 Demo (ikon kubus/3D) -->
-        <a href="web3simulator.html" class="btn">
+        <!-- Web3 Demo -->
+        <a href="web3simulator.html" class="btn btn-web3">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.2 6.5 3.6L12 11 5.5 7.8 12 4.2zM5 9.3 11 13v7L5 16.3V9.3zm14 0v7L13 20v-7l6-3.7z"/>
           </svg>
@@ -233,7 +231,6 @@
 
       </div>
 
-      <!-- Tombol login (tetap) -->
       <div class="login-cta">
         <button id="openLogin">Login Langganan</button>
       </div>
@@ -242,7 +239,7 @@
     </section>
   </main>
 
-  <!-- Modal login (tetap) -->
+  <!-- Modal + JS tetap (tidak diubah) -->
   <div id="overlay" class="overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
       <h3 id="mTitle">Masuk Akun Khusus</h3>
@@ -262,7 +259,6 @@
     </div>
   </div>
 
-  <!-- JS tetap -->
   <script>
     const overlay = document.getElementById('overlay');
     document.getElementById('openLogin').onclick  = ()=>{ overlay.style.display='flex'; overlay.setAttribute('aria-hidden','false'); };
@@ -296,39 +292,37 @@
     if (params.get('logout') === '1') window.__nafsLogout();
   </script>
 
-<!-- NF: daftar komponen <nf-hero> tanpa file luar (tetap) -->
-<script>
-(() => {
-  if (customElements.get('nf-hero')) return;
-  class NfHero extends HTMLElement {
-    constructor(){ super(); this.attachShadow({mode:'open'}); }
-    connectedCallback(){
-      const title    = this.getAttribute('title')    || 'NafsFlow';
-      const subtitle = this.getAttribute('subtitle') || 'Solusi workflow AI untuk bisnis Anda.';
-      const ctaText  = this.getAttribute('cta-text') || 'Buka Halaman Pelanggan';
-      const ctaHref  = this.getAttribute('cta-href') || '/pelanggan/';
-      this.shadowRoot.innerHTML = `
-        <style>
-          :host{display:block;background:#17151f;color:#fff}
-          .wrap{max-width:1040px;margin:0 auto;padding:48px 16px}
-          h1{font-size:40px;line-height:1.1;margin:0 0 12px}
-          p{opacity:.85;max-width:680px;margin:0 0 20px}
-          a.cta{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:12px;background:#7c5cff;color:#fff}
-          a.cta:hover{filter:brightness(1.1)}
-        </style>
-        <section class="wrap">
-          <h1>${title}</h1>
-          <p>${subtitle}</p>
-          <a class="cta" href="${ctaHref}">${ctaText}</a>
-        </section>`;
+  <script>
+  (() => {
+    if (customElements.get('nf-hero')) return;
+    class NfHero extends HTMLElement {
+      constructor(){ super(); this.attachShadow({mode:'open'}); }
+      connectedCallback(){
+        const title    = this.getAttribute('title')    || 'NafsFlow';
+        const subtitle = this.getAttribute('subtitle') || 'Solusi workflow AI untuk bisnis Anda.';
+        const ctaText  = this.getAttribute('cta-text') || 'Buka Halaman Pelanggan';
+        const ctaHref  = this.getAttribute('cta-href') || '/pelanggan/';
+        this.shadowRoot.innerHTML = `
+          <style>
+            :host{display:block;background:#17151f;color:#fff}
+            .wrap{max-width:1040px;margin:0 auto;padding:48px 16px}
+            h1{font-size:40px;line-height:1.1;margin:0 0 12px}
+            p{opacity:.85;max-width:680px;margin:0 0 20px}
+            a.cta{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:12px;background:#7c5cff;color:#fff}
+            a.cta:hover{filter:brightness(1.1)}
+          </style>
+          <section class="wrap">
+            <h1>${title}</h1>
+            <p>${subtitle}</p>
+            <a class="cta" href="${ctaHref}">${ctaText}</a>
+          </section>`;
+      }
     }
-  }
-  customElements.define('nf-hero', NfHero);
-  document.documentElement.setAttribute('data-nf','ready');
-})();
-</script>
+    customElements.define('nf-hero', NfHero);
+    document.documentElement.setAttribute('data-nf','ready');
+  })();
+  </script>
 
-<script src="web-static/js/blocks-loader.js" defer></script>
-  
+  <script src="web-static/js/blocks-loader.js" defer></script>
 </body>
 </html>
