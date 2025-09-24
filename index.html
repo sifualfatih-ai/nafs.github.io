@@ -1,12 +1,10 @@
 <!doctype html>
 <html lang="id">
-
-
   <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NafsFlow</title>
-  <meta name="description" content="Sebagai Mitra Affiliate, UMKM dan industri kecil">
+  <meta name="description" content="Nafsflow - Workflow - Cashflow">
 
   <!-- Favicon (hindari 404) -->
   <link rel="icon" href="nafsweb.ico" />
@@ -14,32 +12,49 @@
 
   <style>
     :root{
-      /* Tema ungu */
-      --bg:#11071e;
-      --bg2:#1a0f2d;
-      --card:#1f1438;
-      --line:#2d2050;
-      --text:#efeaff;
-      --muted:#c7b7f0;
-      --btn:#2a1f4a;
-      --btn-hover:#3a2b69;
-      --accent:#7c3aed;
-      --accent-2:#a78bfa;
+      /* Tema ungu + pink (sesuai contoh sidebar: pink→ungu) */
+      --bg:#0c0717;
+      --bg2:#140c25;
+      --card:rgba(22,13,42,.72);      /* transparan ringan utk kotak utama */
+      --line:#34245e;
+      --text:#f4efff;
+      --muted:#d1c6ff;
+      --btn:rgba(35,22,70,.55);       /* blok menu transparan */
+      --btn-hover:rgba(49,31,99,.65);
+      --accent:#a855f7;
+      --accent-2:#ff4d8d;
       --green:#22c55e;
       --radius:18px;
       --shadow:0 12px 30px rgba(0,0,0,.35);
+      /* gradien pink→ungu (dipakai tombol premium/pengajar) */
+      --grad:linear-gradient(135deg,#ff3cac 0%, #a86bff 45%, #6d28d9 100%);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
-      background:
-        radial-gradient(1200px 700px at 50% -10%, rgba(124,58,237,.20), transparent 60%),
-        var(--bg);
-      display:grid; place-items:center; padding:28px;
+      background:var(--bg);
+      display:grid; place-items:center; padding:28px; position:relative; overflow-x:hidden;
     }
-    .wrap{width:min(860px, 94vw)}
-    .card{background:var(--card); border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow); padding:28px}
+    /* BACKGROUND: foto full-bleed + blur + gelap ~70% */
+    body::before{
+      content:"";
+      position:fixed; inset:-10px;
+      background:
+        linear-gradient(to bottom, rgba(10,6,22,.7), rgba(10,6,22,.7)),
+        url("robot-bg.jpg") center/cover no-repeat;
+      filter:blur(6px);
+      z-index:-1;
+      transform:scale(1.03);
+    }
+
+    .wrap{width:min(980px, 94vw)}
+    /* KOTAK UTAMA transparan sedikit */
+    .card{
+      background:var(--card); border:1px solid #ffffff17; border-radius:28px; box-shadow:var(--shadow); padding:28px;
+      backdrop-filter:saturate(140%) blur(10px);
+    }
+
     .avatar{width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #00000033; box-shadow:0 0 0 3px #ffffff22; display:block; margin:0 auto 14px}
     h1{margin:0 0 6px; text-align:center; font-size:34px}
     .subtitle{margin:0; text-align:center; color:var(--muted)}
@@ -48,84 +63,83 @@
     .socials{display:flex; gap:16px; justify-content:center; margin:18px 0 8px}
     .circle{
       width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
-      border:1px solid var(--line); background:var(--bg2); cursor:pointer; text-decoration:none; color:var(--text);
+      border:1px solid var(--line); background:rgba(20,12,37,.6); cursor:pointer; text-decoration:none; color:var(--text);
       transition:transform .15s ease, background .2s ease;
+      backdrop-filter:saturate(140%) blur(6px);
     }
     .circle:hover{transform:translateY(-2px); background:var(--btn-hover)}
     .circle svg{width:22px; height:22px}
 
-    /* daftar tombol utama */
-    .links{display:grid; gap:12px; margin-top:14px}
+    /* MENU: grid 2 kolom → jadi “blok transparan” */
+    .links{
+      display:grid; gap:12px; margin-top:16px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    /* Kotak menu umum */
     .btn{
-      display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:16px;
-      background:var(--btn); border:1px solid var(--line); color:var(--text); text-decoration:none; font-weight:600;
+      display:flex; align-items:center; gap:12px; padding:16px; border-radius:16px;
+      background:var(--btn); border:1px solid #ffffff1a; color:var(--text); text-decoration:none; font-weight:700;
+      backdrop-filter:saturate(140%) blur(8px);
+      box-shadow:0 10px 26px -14px rgba(0,0,0,.45);
+      transition:transform .15s ease, background .2s ease, border-color .2s ease;
     }
-    .btn:hover{background:var(--btn-hover)}
-    .btn svg{width:18px; height:18px}
+    .btn:hover{background:var(--btn-hover); transform:translateY(-1px); border-color:#ffffff2e}
+    .btn svg{width:20px; height:20px; flex:0 0 auto; opacity:.95}
 
-    /* tombol login khusus (hijau) — teks mengikuti menu (fw 600, ukuran sekelas menu) */
-    .login-cta{
-      margin-top:18px; display:flex; justify-content:center;
+    /* Tombol gradien (Premium & Pengajar) — persis nuansa ungu-pink */
+    .violet-btn{
+      display:flex; align-items:center; gap:12px; padding:16px; border-radius:16px;
+      background:var(--grad);
+      color:#fff; text-decoration:none; font-weight:800;
+      border:1px solid #7c3aed;
+      box-shadow:0 12px 30px -10px rgba(109,40,217,.55);
+      transition:transform .15s ease, filter .2s ease;
     }
+    .violet-btn:hover{ transform:translateY(-1px); filter:brightness(1.06); }
+    .violet-btn svg{ width:20px; height:20px; flex:0 0 auto;}
+
+    /* tombol login (tetap) */
+    .login-cta{ margin-top:18px; display:flex; justify-content:center; }
     .login-cta button{
       appearance:none; border:none; background:var(--green); color:#06280f;
       padding:12px 16px; border-radius:12px; cursor:pointer;
-      font-weight:600;          /* mengikuti menu */
-      font-size:15px;           /* nyaman & sekelas .btn */
-      line-height:1.15;
+      font-weight:600; font-size:15px; line-height:1.15;
+      box-shadow:0 8px 18px -10px rgba(34,197,94,.6);
     }
 
     /* footer */
-    .foot{margin-top:10px; text-align:center; color:#cbbcff88; font-size:13px}
+    .foot{margin-top:10px; text-align:center; color:#cbbcffcc; font-size:13px}
 
-    /* modal login mengambang */
+    /* modal login mengambang (tetap) */
     .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:20px}
-    .modal{width:min(520px, 92vw); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px}
+    .modal{width:min(520px, 92vw); background:rgba(31,20,56,.9); border:1px solid var(--line); border-radius:16px; padding:18px; backdrop-filter:blur(6px)}
     .modal h3{margin:0 0 8px}
     .row{display:grid; gap:8px; margin-top:10px}
     .row label{font-size:13px; color:var(--muted)}
-    .row input{
-      width:100%; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--bg2); color:var(--text);
-    }
+    .row input{width:100%; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--bg2); color:var(--text);}
     .modal .actions{display:flex; gap:10px; margin-top:14px; justify-content:flex-end}
     .ghost{background:transparent; border:1px solid var(--line); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer}
     .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
     .hint{margin-top:8px; color:var(--muted); font-size:13px}
 
-    /* === Khusus tombol Halaman Pelanggan: GRADIENT ungu → ungu tua === */
-    .violet-btn{
-      display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:16px;
-      background:linear-gradient(135deg, #8b5cf6 0%, #6d28d9 45%, #4c1d95 100%);
-      color:#f7f5ff;
-      text-decoration:none; font-weight:600;
-      border:1px solid #6d28d9;
-      box-shadow:0 10px 28px -10px rgba(109,40,217,.55);
-      transition:transform .15s ease, filter .2s ease;
-    }
-    .violet-btn:hover{ transform:translateY(-1px); filter:brightness(1.03); }
-    .violet-btn svg{ width:18px; height:18px; }
-
-    /* =======================
-       RESPONSIVE TWEAKS (desktop & ponsel)
-       Sedikit mengecilkan ukuran font/padding agar ramah di mata
-    ========================*/
-    /* Tablet & bawah */
+    /* RESPONSIVE */
     @media (max-width: 992px){
       h1{font-size:30px}
       .subtitle{font-size:14px}
-      .btn, .violet-btn{padding:12px 14px}
-      .btn svg, .violet-btn svg{width:16px; height:16px}
+      .btn, .violet-btn{padding:14px}
+      .btn svg, .violet-btn svg{width:18px; height:18px}
       .circle{width:52px; height:52px}
     }
-    /* Ponsel */
+    @media (max-width: 680px){
+      .links{grid-template-columns:1fr;} /* ponsel: 1 kolom */
+    }
     @media (max-width: 560px){
       body{padding:18px}
       .card{padding:20px; border-radius:22px}
       .avatar{width:84px; height:84px}
       h1{font-size:26px}
       .subtitle{font-size:13px}
-      .links{gap:10px}
-      .btn, .violet-btn{padding:11px 12px; font-size:14px; border-radius:14px}
+      .btn, .violet-btn{padding:12px; font-size:14px; border-radius:14px}
       .login-cta button{font-size:14px; padding:10px 14px}
       .circle{width:46px; height:46px}
       .foot{font-size:12px}
@@ -145,6 +159,7 @@
 
   <main class="wrap">
     <section class="card" aria-label="Kartu profil">
+      <!-- URUTAN: gambar → judul → deskripsi → sosial (dipertahankan) -->
       <img class="avatar" src="nafslogo.jpeg" alt="Foto NafsFlow" />
       <h1>NafsFlow</h1>
       <p class="subtitle">Mitra kreator, affiliate, UMKM, dan industri kecil dan menengah</p>
@@ -165,44 +180,60 @@
         </a>
       </div>
 
-      <!-- Tombol daftar -->
+      <!-- MENU: blok transparan 2 kolom -->
       <div class="links" role="navigation" aria-label="Tautan utama">
+
+        <!-- Halaman Umum (ikon rumah) -->
         <a href="home.html" class="btn">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 3 2 11h2v9h6v-6h4v6h6v-9h2L12 3z"/>
+          </svg>
           Halaman Umum
         </a>
 
-        
-        <!-- GRADIENT: Halaman Pelanggan -->
+        <!-- Tools AI PREMIUM (ikon mahkota raja, gradien ungu-pink) -->
         <a href="https://app.nafsflow.com" class="violet-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M3 7l4.5 3 4.5-6 4.5 6L21 7v11H3V7zm2 9h14v-6l-3 2-4-5-4 5-3-2v6z"/>
+          </svg>
           Tools AI PREMIUM
         </a>
 
+        <!-- Tools AI Pengajar (ikon topi wisuda, gradien) -->
         <a href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" class="violet-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h12v2H3z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 3 1 8l11 5 9-4.09V17h2V8L12 3zm-6 9v4.5c1.8 1.1 4 1.5 6 1.5s4.2-.4 6-1.5V12l-6 2.7L6 12z"/>
+          </svg>
           Tools AI Pengajar
         </a>
-      
 
+        <!-- Prompt Generator (ikon spark/bolt) -->
         <a href="generator.html" class="btn">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 2 3 14h7l-1 8 11-12h-7l0-8z"/>
+          </svg>
           Prompt Generator (Free)
         </a>
 
+        <!-- AI Agent Project (ikon robot) -->
         <a href="flowbuilder.html" class="btn">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 2h4v2h2a3 3 0 0 1 3 3v9a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3h2V2zm-1 7H7v3h2V9zm10 0h-2v3h2V9z"/>
+          </svg>
           AI Agent Project Free (Desktop)
         </a>
 
-       <a href="web3simulator.html" class="btn">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v3H4zm0 6h16v3H4zm0 6h16v3H4z"/></svg>
-         Web3 Project - Demo (Desktop)
+        <!-- Web3 Demo (ikon kubus/3D) -->
+        <a href="web3simulator.html" class="btn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.2 6.5 3.6L12 11 5.5 7.8 12 4.2zM5 9.3 11 13v7L5 16.3V9.3zm14 0v7L13 20v-7l6-3.7z"/>
+          </svg>
+          Web3 Project - Demo (Desktop)
         </a>
-        
+
       </div>
 
-      <!-- Tombol login khusus (modal) -->
+      <!-- Tombol login (tetap) -->
       <div class="login-cta">
         <button id="openLogin">Login Langganan</button>
       </div>
@@ -265,10 +296,10 @@
     if (params.get('logout') === '1') window.__nafsLogout();
   </script>
 
-<!-- NF: daftar komponen <nf-hero> tanpa file luar -->
+<!-- NF: daftar komponen <nf-hero> tanpa file luar (tetap) -->
 <script>
 (() => {
-  if (customElements.get('nf-hero')) return; // hindari double define
+  if (customElements.get('nf-hero')) return;
   class NfHero extends HTMLElement {
     constructor(){ super(); this.attachShadow({mode:'open'}); }
     connectedCallback(){
