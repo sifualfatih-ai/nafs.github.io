@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rekomendasi Produk — NafsFlow</title>
+  <meta name="description" content="Rekomendasi Produk eBook pilihan dengan checkout cepat via WhatsApp." />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font modern -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent:#22c55e;              /* hijau tombol/label */
+      --bg:#1b1830;                   /* gelap ungu */
+      --surface:#221d3c;              /* kartu */
+      --text:#e6e9f3;                 /* teks utama */
+      --text-dim:#b7bed1;             /* teks pudar */
+      --border:rgba(255,255,255,.18); /* border tipis putih */
+      --gradient-main:linear-gradient(135deg,#1f1438,#2a1f4a,#2a1f4b,#1e1337,#20153a);
+    }
+    html,body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
+    }
+    .card{ background:var(--surface); border:1px solid var(--border); border-radius:18px; }
+    .pill{ background:var(--accent); color:#05240e; font-weight:800; border-radius:999px; padding:.4rem .9rem; display:inline-flex; align-items:center; gap:.4rem; }
+    .price-strong{ color:var(--accent); font-weight:800; letter-spacing:.2px }
+    .btn-wa{ background:var(--accent); color:#06230d; font-weight:800 }
+    .btn-wa:hover{ filter:brightness(1.05) }
+    .muted{ color:var(--text-dim) }
+    .bullet li{ position:relative; padding-left:1.25rem }
+    .bullet li::before{ content:"•"; position:absolute; left:.2rem; top:.1rem; color:var(--accent) }
+  </style>
+</head>
+<body>
+
+  <!-- Header: Logo NF + Menu -->
+  <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-black/20">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="flex items-center justify-between py-4">
+        <a href="https://www.nafsflow.com" class="flex items-center gap-2">
+          <!-- Logo NF seperti di home (kotak gradien) -->
+          <div class="h-9 w-9 rounded-xl" style="background: var(--gradient-main);"></div>
+          <span class="font-extrabold tracking-tight">NafsFlow</span>
+        </a>
+        <nav class="text-sm flex items-center gap-5">
+          <!-- Menu sesuai permintaan -->
+          <a class="opacity-80 hover:opacity-100" href="https://www.nafsflow.com">Main</a>
+          <a class="opacity-80 hover:opacity-100" href="https://www.nafsflow.com/home">Home</a>
+          <!-- Fallback lokal (optional) -->
+          <a class="hidden" href="/indek.html">/indek.html</a>
+          <a class="hidden" href="/home.html">/home.html</a>
+        </nav>
+      </div>
+    </div>
+    <div class="border-t" style="border-color:var(--border)"></div>
+  </header>
+
+  <!-- Judul Halaman -->
+  <section class="py-12">
+    <div class="mx-auto max-w-6xl px-4 text-center">
+      <h1 class="text-3xl md:text-4xl font-extrabold">Rekomendasi Produk</h1>
+      <p class="mt-3 muted">Pilihan eBook terbaik. Checkout cepat langsung ke WhatsApp.</p>
+    </div>
+  </section>
+
+  <!-- SECTION PRODUK -->
+  <main id="produk" class="pb-16">
+    <div class="mx-auto max-w-6xl px-4 grid gap-6">
+
+      <!-- ====== KARTU PRODUK (Duplikat untuk item lain) ====== -->
+      <article class="card p-5 md:p-7">
+        <div class="grid md:grid-cols-2 gap-6 items-center">
+          <!-- Gambar -->
+          <figure class="rounded-xl overflow-hidden ring-1" style="--tw-ring-color: var(--border);">
+            <img src="URL_GAMBAR_EBOOK.jpg" alt="Sampul eBook" class="w-full h-auto block" loading="lazy">
+          </figure>
+
+          <!-- Konten -->
+          <div>
+            <!-- Judul dalam kotak hijau -->
+            <div class="pill mb-3 w-fit">Judul eBook Kamu</div>
+
+            <!-- Harga -->
+            <div class="mt-1">
+              <div class="text-3xl md:text-[2.1rem] price-strong leading-none">
+                Rp 149.000
+                <span class="align-middle ml-3 text-base md:text-lg line-through opacity-60 muted">Rp 249.000</span>
+              </div>
+              <p class="mt-1 text-xs muted">Harga promo terbatas</p>
+            </div>
+
+            <!-- Deskripsi bullet kecil -->
+            <ul class="bullet mt-5 space-y-2 text-sm muted">
+              <li>Panduan langkah-demi-langkah membangun sistem konten otomatis.</li>
+              <li>Template copywriting & desain siap pakai.</li>
+              <li>Bonus: akses update gratis seumur hidup.</li>
+              <li>Format: PDF (A4) + file pendamping.</li>
+            </ul>
+
+            <!-- Checkout via WA (nomor sudah diperbarui) -->
+            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+              <a
+                class="btn-wa inline-flex items-center justify-center rounded-xl px-5 py-3 text-center"
+                href="https://wa.me/6285134882357?text=Halo%20NafsFlow%2C%20saya%20ingin%20membeli%20eBook%20%22Judul%20eBook%20Kamu%22%20seharga%20Rp149.000.%20Mohon%20proses%20checkout.%20Terima%20kasih!"
+                target="_blank" rel="noopener">
+                Checkout via WhatsApp
+              </a>
+
+              <!-- Tombol preview/FAQ opsional -->
+              <a href="#preview-1" class="inline-flex items-center justify-center rounded-xl border px-5 py-3"
+                 style="border-color:var(--border)">
+                Lihat Sampel
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <!-- ====== /KARTU PRODUK ====== -->
+
+      <!-- Contoh kartu kedua (opsional) -->
+      <article class="card p-5 md:p-7">
+        <div class="grid md:grid-cols-2 gap-6 items-center">
+          <figure class="rounded-xl overflow-hidden ring-1" style="--tw-ring-color: var(--border);">
+            <img src="URL_GAMBAR_EBOOK.jpg" alt="Sampul eBook 2" class="w-full h-auto block" loading="lazy">
+          </figure>
+          <div>
+            <div class="pill mb-3 w-fit">Judul eBook Lain</div>
+            <div class="text-3xl md:text-[2.1rem] price-strong leading-none">
+              Rp 99.000
+              <span class="align-middle ml-3 text-base md:text-lg line-through opacity-60 muted">Rp 159.000</span>
+            </div>
+            <p class="mt-1 text-xs muted">Diskon s/d 40%</p>
+            <ul class="bullet mt-5 space-y-2 text-sm muted">
+              <li>Checklist riset kata kunci & kalender konten.</li>
+              <li>Framework caption & hook viral.</li>
+              <li>Akses komunitas dan Q&amp;A bulanan.</li>
+            </ul>
+            <div class="mt-6">
+              <a
+                class="btn-wa inline-flex items-center justify-center rounded-xl px-5 py-3"
+                href="https://wa.me/6285134882357?text=Halo%2C%20saya%20mau%20checkout%20eBook%20%22Judul%20eBook%20Lain%22%20Rp99.000."
+                target="_blank" rel="noopener">
+                Checkout via WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-10">
+    <div class="mx-auto max-w-6xl px-4 text-center muted text-sm">
+      © 2025 NafsFlow — Rekomendasi Produk.
+    </div>
+  </footer>
+
+</body>
+</html>
