@@ -7,86 +7,87 @@
   <link rel="icon" href="https://nafsflow.com/nafsweb.ico" />
   <style>
     :root{
-      --panel-dark:#12062a;
-      --panel:#241238;
+      --panel:#0f1724;
+      --panel-2:#12062a;
       --accent:#8a50ff;
       --accent-dark:#5c2fa8;
-      --text:#e9e7ff;
-      --muted:#bfb1f0;
-      --card:#1b1130;
+      --text:#eaf0ff;
+      --muted:#b9aedf;
+      --card:#171026;
       --radius:12px;
-      font-family: 'Segoe UI', Calibri, Inter, system-ui, -apple-system, 'Helvetica Neue', Arial;
+      --sidebar-w:220px;
+      font-family: 'Segoe UI', Calibri, system-ui, -apple-system, 'Helvetica Neue', Arial;
       font-size:14px;
+      line-height:1.45;
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{background:linear-gradient(180deg,#070216,#0b0720); color:var(--text); min-height:100vh;}
+    body{background:linear-gradient(180deg,#070216,#0b0720); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; font-feature-settings: 'kern' 1;}
+    a{color:inherit; text-decoration:none}
 
     /* layout */
     .app{display:flex; min-height:100vh; align-items:stretch;}
 
-    /* SIDEBAR - visible on desktop */
+    /* SIDEBAR - desktop visible */
     .sidebar{
-      width:240px;
-      background:linear-gradient(180deg,var(--panel), var(--panel-dark));
-      padding:24px 16px;
+      width:var(--sidebar-w);
+      background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%);
+      padding:22px 14px;
       border-right:1px solid rgba(255,255,255,0.03);
       position:fixed;
-      left:0;
-      top:0;
-      bottom:0;
+      left:0; top:0; bottom:0;
       overflow:auto;
-      transition: transform .28s ease;
       z-index:60;
     }
-    .sidebar .brand{display:flex; gap:10px; align-items:center; margin-bottom:18px}
-    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-dark)); display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
-    .brand-name{font-weight:800;font-size:15px}
+    .brand{display:flex; gap:10px; align-items:center; margin-bottom:18px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-dark)); display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px}
+    .brand-name{font-weight:800;font-size:14px}
     nav{margin-top:6px}
-    .menu-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;color:var(--muted);text-decoration:none}
+    .menu-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;color:var(--muted);cursor:pointer}
+    .menu-item .icon{width:18px;height:18px;flex-shrink:0;opacity:0.95}
     .menu-item:hover{background:rgba(255,255,255,0.02); color:var(--text)}
     .menu-item.active{background:linear-gradient(90deg, rgba(138,80,255,0.12), rgba(92,47,168,0.04)); color:var(--text)}
     .menu-label{font-weight:700;font-size:13px}
 
-    /* CONTENT area */
-    .content{flex:1;margin-left:240px;padding:28px 32px;}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    /* CONTENT */
+    .content{flex:1;margin-left:var(--sidebar-w);padding:24px 32px;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
     .btn-cta{background:linear-gradient(90deg,var(--accent),var(--accent-dark)); color:#fff; padding:8px 12px; border-radius:8px; border:none; font-weight:700; cursor:pointer}
-
-    .hero h1{font-size:22px;margin-bottom:6px}
+    .hero h1{font-size:22px;margin-bottom:6px; font-weight:800}
     .hero p{color:var(--muted); font-size:13px;margin-bottom:12px}
 
     .pricing{max-width:980px;margin-top:12px; display:grid; grid-template-columns: 1fr 1fr; gap:16px;}
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.01)); padding:18px; border-radius:10px; border:1px solid rgba(255,255,255,0.04)}
-    .card h3{color:var(--accent); margin-bottom:6px}
+    .card h3{color:var(--accent); margin-bottom:6px; font-size:15px}
     .price{font-weight:800;font-size:20px;color:#efe8ff;margin-bottom:6px}
     .muted{color:var(--muted); font-size:13px}
-    .features{margin:10px 0 0 18px; color:var(--muted)}
+    .features{margin:10px 0 0 18px; color:var(--muted); font-size:13px}
 
-    /* HAMBURGER for mobile */
-    .hamburger{display:none; position:fixed; left:14px; top:12px; z-index:80; background:transparent; border:none; padding:8px; cursor:pointer}
-    .hamburger span{display:block;width:24px;height:3px;background:var(--accent);border-radius:3px;margin:4px 0;}
+    /* HAMBURGER for mobile - hidden desktop */
+    .hamburger{display:none; position:fixed; left:12px; top:12px; z-index:120; background:transparent; border:none; padding:8px; cursor:pointer}
+    .hamburger span{display:block;width:22px;height:3px;background:var(--accent);border-radius:3px;margin:4px 0;}
 
-    /* mobile drawer overlay */
-    .overlay{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:70; opacity:0; transition:opacity .2s ease;}
-    .overlay.show{display:block; opacity:1;}
+    /* overlay */
+    .overlay{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:110; opacity:0; transition:opacity .2s ease;}
 
-    /* MOBILE behavior */
+    /* responsive behavior */
     @media (max-width:900px){
-      .sidebar{transform:translateX(-110%); position:fixed;}
+      .sidebar{transform:translateX(-110%); position:fixed; transition:transform .28s ease;}
       .sidebar.open{transform:translateX(0);}
-      .content{margin-left:0; padding:18px;}
+      .content{margin-left:0;padding:20px;padding-top:72px;} /* extra top padding so hamburger doesn't overlap content */
       .hamburger{display:block;}
+      .overlay.show{display:block; opacity:1;}
     }
-
-    /* small screens: single column pricing */
     @media (max-width:620px){
       .pricing{grid-template-columns:1fr}
-      .brand-name{font-size:14px}
+      .brand-name{font-size:13px}
+      .logo{width:40px;height:40px;font-size:13px}
+      .hero h1{font-size:20px}
     }
   </style>
 </head>
 <body>
-  <button class="hamburger" aria-label="Buka menu" onclick="toggleMenu()">
+  <!-- hamburger only for mobile; hidden on desktop -->
+  <button class="hamburger" aria-label="Buka menu" onclick="toggleMenu()" id="hamb">
     <span></span><span></span><span></span>
   </button>
 
@@ -102,12 +103,17 @@
     </div>
 
     <nav>
-      <a class="menu-item" href="https://nafsflow.com" target="_blank" rel="noopener"><span class="menu-label">Halaman Utama</span></a>
-      <a class="menu-item active" href="#pembuatan-web"><span class="menu-label">Pembuatan WEB</span></a>
-      <a class="menu-item" href="#sosmed"><span class="menu-label">Pengelolaan Sosial Media</span></a>
-      <a class="menu-item" href="#desain"><span class="menu-label">Jasa Desain & Editing Video</span></a>
-      <a class="menu-item" href="#automasi"><span class="menu-label">Automisasi</span></a>
-      <a class="menu-item" href="#web3"><span class="menu-label">Project Web 3</span></a>
+      <div class="menu-item"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg><a class="menu-label" href="https://nafsflow.com" target="_blank" rel="noopener">Halaman Utama</a></div>
+
+      <div class="menu-item active"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg><a class="menu-label" href="#pembuatan-web">Pembuatan WEB</a></div>
+
+      <div class="menu-item"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg><a class="menu-label" href="#sosmed">Pengelolaan Sosial Media</a></div>
+
+      <div class="menu-item"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg><a class="menu-label" href="#desain">Jasa Desain & Editing Video</a></div>
+
+      <div class="menu-item"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg><a class="menu-label" href="#automasi">Automisasi</a></div>
+
+      <div class="menu-item"><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg><a class="menu-label" href="#web3">Project Web 3</a></div>
     </nav>
 
     <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.03); padding-top:12px; color:var(--muted); font-size:12px">Versi Beta • Siap Expand</div>
@@ -164,6 +170,7 @@
     const DEST_PHONE = '6285134882357'; // +62 851-3488-2357
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
+    const hamb = document.getElementById('hamb');
 
     function openWA(text){
       const msg = encodeURIComponent('Halo, saya ingin pemesanan / info: ' + text + '\nMohon info langkah selanjutnya.');
@@ -187,7 +194,7 @@
     }
 
     // Close menu when clicking a link (mobile)
-    document.querySelectorAll('.menu-item').forEach(a=>{
+    document.querySelectorAll('.menu-item a').forEach(a=>{
       a.addEventListener('click', ()=>{ if(window.innerWidth <= 900){ closeMenu(); } });
     });
 
