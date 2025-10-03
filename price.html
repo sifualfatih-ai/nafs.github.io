@@ -1,167 +1,188 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Paket — NafsFlow</title>
-  <meta name="description" content="Paket pembuatan landing page & web interaktif. Siap deploy ke GitHub Pages." />
-  <link rel="icon" href="https://nafsflow.com/nafsweb.ico" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NafsFlow - Pricing</title>
+  <link rel="icon" href="https://nafsflow.com/nafsweb.ico" type="image/x-icon" />
   <style>
-    :root{
-      --bg:#0b0720;         /* very dark purple */
-      --panel:#12062a;      /* dark purple panel */
-      --card:#171026;
-      --muted:#b9aedf;
-      --accent:#9a6bff;     /* mid purple */
-      --accent-dark:#5c2fa8;/* dark purple */
-      --radius:10px;
-      font-family: 'Segoe UI', Calibri, Inter, system-ui, -apple-system, 'Helvetica Neue', Arial;
-      font-size:13px;
+    :root {
+      --primary: #8a50ff;
+      --dark: #1a112e;
+      --light: #f5f5f5;
     }
-    *{box-sizing:border-box}
-    body{margin:0; min-height:100vh; background:linear-gradient(180deg,var(--bg), #0a0620); color:#fff; -webkit-font-smoothing:antialiased;}
-    .app{display:flex; align-items:stretch; min-height:100vh}
-
-    /* SIDEBAR */
-    .sidebar{width:220px; background:var(--panel); padding:24px 14px; border-right:1px solid rgba(255,255,255,0.03)}
-    .brand{display:flex; gap:10px; align-items:center; margin-bottom:18px}
-    .logo{width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--accent), var(--accent-dark)); display:flex; align-items:center; justify-content:center; font-weight:800}
-    .brand-name{font-weight:800; font-size:14px; color:#fff}
-    nav{display:flex; flex-direction:column; gap:8px; margin-top:4px}
-    .menu-item{display:flex; gap:12px; align-items:center; padding:10px; border-radius:8px; color:var(--muted); text-decoration:none}
-    .menu-item svg{width:16px;height:16px; opacity:0.9; flex-shrink:0}
-    .menu-item.active{background:linear-gradient(90deg, rgba(154,107,255,0.12), rgba(92,47,168,0.04)); color:#fff}
-    .menu-label{font-weight:700; font-size:13px}
-    .sidebar-foot{margin-top:16px; color:var(--muted); font-size:12px}
-
-    /* CONTENT */
-    .content{flex:1; padding:22px 34px}
-    .topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
-    .btn-cta{background:linear-gradient(90deg,var(--accent),var(--accent-dark)); color:#fff; padding:8px 12px; border-radius:8px; border:none; font-weight:700; cursor:pointer}
-
-    .hero h1{margin:0; font-size:20px}
-    .hero p{margin:6px 0 0; color:var(--muted); font-size:13px}
-
-    .pricing{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.01)); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.03)}
-    .tag{display:inline-block; padding:6px 10px; background:rgba(154,107,255,0.08); color:var(--accent); border-radius:999px; font-weight:700; font-size:12px}
-    .price{font-weight:800; font-size:18px; margin-top:8px; color:#efe8ff}
-    .muted{color:var(--muted); margin-top:6px; font-size:13px}
-    .features{margin:12px 0 10px; color:var(--muted); font-size:13px}
-    .features li{margin:6px 0}
-
-    /* responsive */
-    @media (max-width:900px){ .sidebar{display:none} .pricing{grid-template-columns:1fr} .content{padding:16px} }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Calibri, sans-serif;
+    }
+    body {
+      display: flex;
+      background: var(--dark);
+      color: var(--light);
+      min-height: 100vh;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: #2b1b47;
+      padding: 20px 0;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transition: transform 0.3s ease;
+      z-index: 200;
+    }
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+    .logo {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .menu {
+      list-style: none;
+    }
+    .menu li {
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+    .menu li.active {
+      background: var(--primary);
+      border-radius: 6px;
+    }
+    .menu li a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 300;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    /* Content */
+    .content {
+      margin-left: 240px;
+      padding: 20px;
+      flex: 1;
+    }
+    .pricing {
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #2b1b47;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card h3 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .card ul {
+      margin: 10px 0 20px 20px;
+    }
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    /* Responsive */
+    @media(max-width: 768px){
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.show {
+        transform: translateX(0);
+      }
+      .hamburger {
+        display: flex;
+      }
+      .content {
+        margin-left: 0;
+        padding-top: 60px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar" role="navigation">
-      <div class="brand">
-        <div class="logo">NF</div>
-        <div>
-          <div class="brand-name">NafsFlow</div>
-          <div style="color:var(--muted); font-size:12px">Digital Services</div>
-        </div>
-      </div>
-
-      <nav>
-        <a class="menu-item" href="https://nafsflow.com" target="_blank" rel="noopener">
-          <!-- simple 'hamburger' icon -->
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg>
-          <span class="menu-label">Halaman Utama</span>
-        </a>
-
-        <a class="menu-item active" href="#pembuatan-web">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg>
-          <span class="menu-label">Pembuatan WEB</span>
-        </a>
-
-        <a class="menu-item" href="#sosmed">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg>
-          <span class="menu-label">Pengelolaan Sosial Media</span>
-        </a>
-
-        <a class="menu-item" href="#desain">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg>
-          <span class="menu-label">Jasa Desain & Editing Video</span>
-        </a>
-
-        <a class="menu-item" href="#automasi">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg>
-          <span class="menu-label">Automisasi</span>
-        </a>
-
-        <a class="menu-item" href="#web3">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/><rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor"/></svg>
-          <span class="menu-label">Project Web 3</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-foot">Versi Beta • Siap Expand</div>
-    </aside>
-
-    <main class="content">
-      <div class="topbar">
-        <div>
-          <div style="font-weight:800; font-size:14px">Pembuatan WEB</div>
-          <div style="color:var(--muted); font-size:12px">Menu aktif: Pembuatan WEB</div>
-        </div>
-        <div>
-          <button class="btn-cta" onclick="openWA('Info Pembuatan WEB')">Pesan Sekarang</button>
-        </div>
-      </div>
-
-      <section class="hero" id="pembuatan-web">
-        <h1>Daftar Harga</h1>
-        <p class="muted">Investasi untuk pertumbuhan & konversi — paket ringkas siap pakai untuk bisnis dan UMKM</p>
-      </section>
-
-      <section class="pricing">
-        <article class="card">
-          <div class="tag">Starter</div>
-          <h3 style="margin:8px 0 0; font-size:15px">Landing Page Starter</h3>
-          <div class="price">Rp 1.200.000</div>
-          <div class="muted">1 halaman — responsive (desktop & HP) — basic SEO</div>
-          <ul class="features">
-            <li>1 halaman lengkap: Hero, Fitur, Testimoni, CTA</li>
-            <li>Gratis domain.com selama 1 tahun</li>
-            <li>Integrasi WhatsApp</li>
-            <li>5 revisi minor</li>
-          </ul>
-          <div style="margin-top:8px">
-            <button class="btn-cta" onclick="openWA('Landing Page Starter - Rp 1.200.000')">Pesan Sekarang</button>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="tag">Popular</div>
-          <h3 style="margin:8px 0 0; font-size:15px">Web Aplikasi</h3>
-          <div class="price">Rp 2.400.000</div>
-          <div class="muted">Multi-section interaktif & form generator berbasis AI</div>
-          <ul class="features">
-            <li>User friendly, ringan & interaktif</li>
-            <li>Logika backend sederhana</li>
-            <li>Optimasi loading & SEO dasar</li>
-            <li>Domain.com dan sub domain app.domain.com free 1 tahun</li>
-            <li>5 revisi minor</li>
-          </ul>
-          <div style="margin-top:8px">
-            <button class="btn-cta" onclick="openWA('Web Interaktif - Rp 2.800.000')">Pesan Sekarang</button>
-          </div>
-        </article>
-      </section>
-
-    </main>
+  <!-- Hamburger -->
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
-
+  <!-- Sidebar -->
+  <nav class="sidebar hidden" id="sidebar">
+    <div class="logo">NF</div>
+    <ul class="menu">
+      <li><a href="https://nafsflow.com">Halaman Utama</a></li>
+      <li class="active"><a href="#">Pembuatan WEB</a></li>
+      <li><a href="#">Pengelolaan Sosial Media</a></li>
+      <li><a href="#">Jasa Desain & Editing Video</a></li>
+      <li><a href="#">Automisasi</a></li>
+      <li><a href="#">Project Web 3</a></li>
+    </ul>
+  </nav>
+  <!-- Content -->
+  <div class="content">
+    <div class="pricing">
+      <h1>Daftar Harga</h1>
+      <p>Investasi untuk pertumbuhan & konversi — paket ringkas siap pakai untuk bisnis dan UMKM</p>
+      <div class="card">
+        <h3>Landing Page Starter</h3>
+        <h2>Rp 1.200.000</h2>
+        <ul>
+          <li>1 halaman lengkap: Hero, Fitur, Testimoni, CTA</li>
+          <li>Gratis domain.com selama 1 tahun</li>
+          <li>Integrasi WhatsApp</li>
+          <li>5 revisi minor</li>
+        </ul>
+        <a class="btn" href="https://wa.me/6285134882357?text=Halo,%20saya%20ingin%20pesan%20Landing%20Page%20Starter">Pesan Sekarang</a>
+      </div>
+      <div class="card">
+        <h3>Web Aplikasi</h3>
+        <h2>Rp 2.400.000</h2>
+        <ul>
+          <li>Multi-section interaktif & form generator berbasis AI</li>
+          <li>User friendly, ringan & interaktif</li>
+          <li>Logika backend sederhana</li>
+          <li>Optimasi loading & SEO dasar</li>
+          <li>Domain.com dan sub domain app.domain.com free 1 tahun</li>
+          <li>5 revisi minor</li>
+        </ul>
+        <a class="btn" href="https://wa.me/6285134882357?text=Halo,%20saya%20ingin%20pesan%20Web%20Aplikasi">Pesan Sekarang</a>
+      </div>
+    </div>
+  </div>
   <script>
-    const DEST_PHONE = '6285134882357'; // +62 851-3488-2357
-
-    function openWA(text){
-      const msg = encodeURIComponent('Halo, saya ingin pemesanan / info: ' + text + '\\nMohon info langkah selanjutnya.');
-      const url = `https://wa.me/${DEST_PHONE}?text=${msg}`;
-      window.open(url, '_blank');
+    function toggleMenu(){
+      document.getElementById('sidebar').classList.toggle('show');
+      document.getElementById('sidebar').classList.toggle('hidden');
     }
   </script>
 </body>
