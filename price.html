@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Paket Landing Page — NafsFlow Style</title>
+  <meta name="description" content="Paket pembuatan landing page & web interaktif. Paket rapi, siap deploy ke GitHub Pages." />
+  <style>
+    :root{
+      --bg:#0b1220; /* dark navy */
+      --panel:#0f1724; /* sidebar */
+      --card:#101828; 
+      --muted:#9aa6c7;
+      --accent:#8a50ff; /* refined purple accent */
+      --accent-2:#28e07b; /* green CTA */
+      --glass: rgba(255,255,255,0.02);
+      --radius:12px;
+      font-family: 'Segoe UI', Calibri, Inter, ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;}
+    body{margin:0; background:linear-gradient(180deg,#071025 0%, #0b1220 100%); color:#eaf0ff; -webkit-font-smoothing:antialiased; font-size:14px}
+
+    /* layout */
+    .app{display:flex; min-height:100vh}
+    .sidebar{width:220px; background:var(--panel); padding:28px 16px; box-shadow: 0 4px 24px rgba(2,6,23,0.6)}
+    .sidebar .brand{display:flex; align-items:center; gap:12px; margin-bottom:20px}
+    .logo-box{width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,var(--accent), #a070ff); display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff}
+    .brand-name{font-weight:800; letter-spacing:0.2px; font-size:14px}
+    nav.menu{display:flex; flex-direction:column; gap:6px}
+    .menu-item{display:flex; gap:12px; align-items:center; padding:10px 10px; border-radius:10px; color:var(--muted); cursor:pointer; text-decoration:none}
+    .menu-item svg{opacity:0.95; width:18px; height:18px; flex-shrink:0}
+    .menu-item .icon{color:var(--muted)}
+    .menu-item.active{background:linear-gradient(90deg, rgba(138,80,255,0.10), rgba(40,224,123,0.04)); color:#fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02)}
+    .menu-item.active .icon{color:var(--accent)}
+    .menu-label{font-weight:700; font-size:13px}
+    .menu-sub{font-size:12px; color:var(--muted); margin-top:8px; padding-left:8px}
+
+    /* content area */
+    .content{flex:1; padding:22px 28px}
+    .topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px}
+    .topbar .actions{display:flex; gap:12px}
+    .btn-green{background:var(--accent-2); color:#041018; padding:9px 12px; border-radius:8px; font-weight:700; border:none; cursor:pointer}
+
+    /* hero */
+    .hero{padding:6px 0 14px}
+    .hero h1{font-size:22px; margin:0}
+    .hero p{color:var(--muted); margin:6px 0 0; font-size:13px}
+
+    /* pricing grid */
+    .pricing{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:14px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:16px; border:1px solid rgba(255,255,255,0.03); box-shadow: 0 8px 26px rgba(2,2,6,0.6)}
+    .card.popular{border:2px solid rgba(138,80,255,0.12); transform:translateY(-6px)}
+    .tag{display:inline-block; padding:6px 10px; background:rgba(138,80,255,0.12); color:var(--accent); border-radius:999px; font-weight:700; font-size:12px}
+    .price{font-size:18px; font-weight:800; color:#dfefff}
+    .muted{color:var(--muted); margin-top:6px; font-size:13px}
+    .features{margin:10px 0 14px; color:var(--muted); font-size:13px}
+    .features li{margin:6px 0}
+
+    /* order */
+    .order-wrap{margin-top:18px; padding:16px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02))}
+    .order-grid{display:grid; grid-template-columns:1fr 320px; gap:14px}
+    input, textarea{width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color: #eaf0ff; font-size:13px}
+    label{font-size:13px; font-weight:700}
+    .checkboxes label{font-weight:600}
+    .small-muted{color:var(--muted); font-size:12px}
+
+    /* responsive */
+    @media (max-width:980px){
+      .sidebar{display:none}
+      .pricing{grid-template-columns:1fr}
+      .order-grid{grid-template-columns:1fr}
+      .content{padding:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Sidebar menu">
+      <div class="brand">
+        <div class="logo-box">NF</div>
+        <div>
+          <div class="brand-name">NafsFlow</div>
+          <div class="menu-sub">Digital Services</div>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <a class="menu-item" href="#home">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10L12 3L21 10V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V10Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="menu-label">Halaman Utama</span>
+        </a>
+
+        <a class="menu-item active" href="#main">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9.5L12 3L21 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 10.5V18C21 18.5523 20.5523 19 20 19H4C3.44772 19 3 18.5523 3 18V10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="menu-label">Pembuatan WEB</span>
+        </a>
+
+        <a class="menu-item" href="#sosmed">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9C5 12.87 8.13 16 12 16C15.87 16 19 12.87 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 22C2 17.58 6.03 14 11 14H13C17.97 14 22 17.58 22 22" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="menu-label">Pengelolaan Sosial Media</span>
+        </a>
+
+        <a class="menu-item" href="#desain">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15V19C21 19.5523 20.5523 20 20 20H16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 9L9 3L15 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3V12C9 13.1046 9.89543 14 11 14H13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="menu-label">Jasa Desain & Editing Video</span>
+        </a>
+
+        <a class="menu-item" href="#auto">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3V21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="menu-label">Automisasi</span>
+        </a>
+
+        <a class="menu-item" href="#web3">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M19.4 4.6L14.6 9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.6 19.4L9.4 14.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="menu-label">Project Web 3</span>
+        </a>
+      </nav>
+
+      <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.02); padding-top:12px; color:var(--muted); font-size:12px">Versi Beta • Siap Expand</div>
+    </aside>
+
+    <div class="content">
+      <div class="topbar">
+        <div>
+          <h2 style="margin:0; font-size:16px">Pembuatan WEB</h2>
+          <div class="small-muted">Menu aktif: Pembuatan WEB</div>
+        </div>
+        <div class="actions">
+          <button class="btn-green" onclick="scrollToOrder()">Pesan Sekarang</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <h1>Daftar Harga</h1>
+        <p class="muted">Investasi untuk pertumbuhan & konversi — paket ringkas siap pakai untuk bisnis dan UMKM</p>
+      </section>
+
+      <section class="pricing" id="main">
+        <!-- Paket 1: Landing Page Starter -->
+        <article class="card">
+          <div class="tag">Starter</div>
+          <h3 style="margin-top:10px; font-size:15px">Landing Page Starter</h3>
+          <div class="price">Rp 1.200.000</div>
+          <div class="muted">1 halaman — responsive — basic SEO</div>
+          <ul class="features">
+            <li>✓ 1 halaman lengkap: Hero, Fitur, Testimoni, Form</li>
+            <li>✓ HTML + CSS (siap push ke GitHub)</li>
+            <li>✓ Integrasi WhatsApp / tautan kontak</li>
+            <li>✓ 2 revisi minor</li>
+          </ul>
+          <div class="cta">
+            <button class="btn-green" onclick="selectPackage('Landing Page Starter','Rp 1.200.000')">Pesan Sekarang</button>
+            <button class="btn-order" onclick="scrollToOrder()">Detail & Order</button>
+          </div>
+        </article>
+
+        <!-- Paket 2: Web Interaktif -->
+        <article class="card popular">
+          <div class="tag">Most Popular</div>
+          <h3 style="margin-top:10px; font-size:15px">Web Interaktif</h3>
+          <div class="price">Rp 2.800.000</div>
+          <div class="muted">Single-site interaktif — animasi & form penyimpanan sederhana</div>
+          <ul class="features">
+            <li>✓ Multi-section interaktif (parallax sederhana & animasi)</li>
+            <li>✓ Form order + notifikasi WhatsApp otomatis</li>
+            <li>✓ Optimasi loading & SEO dasar</li>
+            <li>✓ 3 kali revisi minor</li>
+          </ul>
+          <div class="cta">
+            <button class="btn-green" onclick="selectPackage('Web Interaktif','Rp 2.800.000')">Pesan Sekarang</button>
+            <button class="btn-order" onclick="scrollToOrder()">Detail & Order</button>
+          </div>
+        </article>
+
+        <!-- Empty card to balance layout (visual) -->
+        <article class="card">
+          <div style="opacity:0.9; font-weight:800; font-size:14px">Custom</div>
+          <h3 style="margin-top:10px; font-size:15px">Halaman Tambahan & Add-ons</h3>
+          <div class="muted">Halaman extra, copywriting, atau integrasi payment gateway</div>
+          <ul class="features">
+            <li>Harga mulai: Rp 300.000 / halaman</li>
+            <li>Copywriting & visual tambahan: harga terpisah</li>
+          </ul>
+          <div style="margin-top:10px"><button class="btn-order" onclick="scrollToOrder()">Minta Penawaran</button></div>
+        </article>
+      </section>
+
+      <section class="order-wrap" id="order">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+          <div>
+            <h2 style="margin:0; font-size:15px">Formulir Order & Brief</h2>
+            <div class="small-muted">Isi data di bawah — saya akan kirim via WhatsApp untuk konfirmasi</div>
+          </div>
+          <div class="price-table">
+            <div style="background:var(--card); padding:10px 12px; border-radius:8px">Paket terpilih: <strong id="sel-pack">-</strong></div>
+            <div style="background:var(--card); padding:10px 12px; border-radius:8px">Harga: <strong id="sel-price">-</strong></div>
+          </div>
+        </div>
+
+        <div class="order-grid">
+          <form id="orderForm" onsubmit="handleOrder(event)">
+            <div style="display:flex; gap:12px; margin-bottom:12px">
+              <div style="flex:1">
+                <label for="name">Nama Lengkap</label>
+                <input id="name" name="name" required />
+              </div>
+              <div style="flex:1">
+                <label for="phone">No. WhatsApp (contoh: 62812...)</label>
+                <input id="phone" name="phone" required placeholder="62812xxxx" />
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px">
+              <label for="company">Nama Usaha / Brand (opsional)</label>
+              <input id="company" name="company" />
+            </div>
+
+            <div style="margin-bottom:12px">
+              <label for="website">Domain aktif / GitHub repo (jika ada)</label>
+              <input id="website" name="website" placeholder="contoh: https://username.github.io/repo-name atau contoh.com" />
+            </div>
+
+            <div style="margin-bottom:12px">
+              <label for="notes">Catatan singkat / Brief</label>
+              <textarea id="notes" name="notes" placeholder="Deskripsikan tujuan landing page, warna preferensi, fitur wajib..." ></textarea>
+            </div>
+
+            <div class="checkboxes" style="display:flex; gap:12px; margin-bottom:12px">
+              <label><input type="checkbox" id="needDomain" /> Butuh bantu domain setup</label>
+              <label><input type="checkbox" id="needHosting" /> Butuh bantu hosting (GitHub Pages setup)</label>
+              <label><input type="checkbox" id="needCopy" /> Butuh copywriting (opsional)</label>
+            </div>
+
+            <div style="display:flex; gap:12px; align-items:center">
+              <button class="btn-green" type="submit">Kirim & Hubungi via WhatsApp</button>
+              <button type="button" class="btn-order" onclick="previewWA()">Pratinjau Pesan WA</button>
+            </div>
+          </form>
+
+          <aside style="background:var(--card); padding:14px; border-radius:10px">
+            <h4 style="margin-top:0">Petunjuk singkat</h4>
+            <p class="small-muted">Form ini akan membuka WhatsApp kamu (atau klien) dan mengirim pesan berisi ringkasan order. Dalam file repo yang saya serahkan terdapat README dengan langkah push ke GitHub Pages & instruksi DNS untuk custom domain.</p>
+            <hr style="border:none; height:1px; background:rgba(255,255,255,0.03); margin:12px 0" />
+            <div class="small-muted">Catatan teknis:</div>
+            <ul class="small-muted" style="padding-left:18px">
+              <li>Nomor WhatsApp tujuan: ubah variabel <code>DEST_PHONE</code> di file HTML jika perlu.</li>
+              <li>Form ini tidak menyimpan data ke server — hanya membuka WhatsApp dengan pesan praisi.</li>
+              <li>Jika mau, saya bisa tambahkan integrasi Formspree atau endpoint custom untuk menyimpan order.</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // -- UBAH NOMOR INI KE NOMOR WA YANG MAU MENERIMA PESAN (format internasional tanpa +)
+    const DEST_PHONE = '6285134882357'; // nomor +62 851-3488-2357
+
+    // default selected
+    let selectedPackage = '';
+    let selectedPrice = '';
+
+    function selectPackage(name, price){
+      selectedPackage = name;
+      selectedPrice = price;
+      document.getElementById('sel-pack').innerText = name;
+      document.getElementById('sel-price').innerText = price;
+      scrollToOrder();
+      // prefill notes with package info
+      const notes = document.getElementById('notes');
+      if(notes.value.trim()==='') notes.value = `Paket: ${name} - ${price}\nSaya ingin...`;
+    }
+
+    function scrollToOrder(){
+      document.getElementById('order').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function handleOrder(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const website = document.getElementById('website').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const needDomain = document.getElementById('needDomain').checked;
+      const needHosting = document.getElementById('needHosting').checked;
+      const needCopy = document.getElementById('needCopy').checked;
+
+      const pack = selectedPackage || 'Belum memilih paket';
+      const price = selectedPrice || '-';
+
+      const msg = `Halo, saya mau pesan layanan pembuatan website%0A%0ANama: ${encodeURIComponent(name)}%0ANo WA: ${encodeURIComponent(phone)}%0AUsaha: ${encodeURIComponent(company)}%0APaket: ${encodeURIComponent(pack)} - ${encodeURIComponent(price)}%0ADomain/Repo: ${encodeURIComponent(website)}%0AButuh domain setup: ${needDomain}%0AButuh hosting setup: ${needHosting}%0AButuh copywriting: ${needCopy}%0A%0ADeskripsi singkat:%0A${encodeURIComponent(notes)}`;
+
+      const waUrl = `https://wa.me/${DEST_PHONE}?text=` + msg;
+      window.open(waUrl, '_blank');
+    }
+
+    function previewWA(){
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const website = document.getElementById('website').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const needDomain = document.getElementById('needDomain').checked;
+      const needHosting = document.getElementById('needHosting').checked;
+      const needCopy = document.getElementById('needCopy').checked;
+      const pack = selectedPackage || 'Belum memilih paket';
+      const price = selectedPrice || '-';
+
+      const plainMsg = `Halo, saya mau pesan layanan pembuatan website\n\nNama: ${name}\nNo WA: ${phone}\nUsaha: ${company}\nPaket: ${pack} - ${price}\nDomain/Repo: ${website}\nButuh domain setup: ${needDomain}\nButuh hosting setup: ${needHosting}\nButuh copywriting: ${needCopy}\n\nDeskripsi singkat:\n${notes}`;
+      alert('Pratinjau pesan WA:\n\n' + plainMsg);
+    }
+
+    // small enhancement: pre-select starter
+    document.addEventListener('DOMContentLoaded',()=>{
+      selectPackage('Landing Page Starter','Rp 1.200.000');
+    });
+  </script>
+</body>
+</html>
