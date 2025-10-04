@@ -1,6 +1,0 @@
-/services/ai-proxy
-├─ package.json
-├─ server.js
-├─ .env.example
-├─ README.md
-└─ docker-compose.yml (opsional)
