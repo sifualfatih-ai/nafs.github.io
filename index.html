@@ -18,8 +18,8 @@
         /* social size adjustable */
         --social-size: 36px;
 
-        /* typographic baseline (ke-elegant-an) */
-        --base-font: 13.5px; /* sedikit lebih kecil */
+        /* typographic baseline (lebih elegan, lebih kecil) */
+        --base-font: 13px;
       }
 
       /* Dark theme variables (default) */
@@ -79,7 +79,7 @@
         font-size:var(--base-font);
         color:var(--text);
         background: linear-gradient(180deg,var(--bg) 0%, var(--bg-accent) 100%);
-        display:flex; align-items:center; justify-content:center;
+        display:flex; align-items:flex-start; justify-content:center;
         padding:22px;
       }
 
@@ -94,13 +94,13 @@
         opacity: .55;
       }
 
-      .wrap{ width:var(--wrap-w); display:flex; flex-direction:column; gap:16px; }
+      .wrap{ width:var(--wrap-w); display:flex; flex-direction:column; gap:14px; align-items:stretch; }
 
       .card {
         background: var(--card-bg);
         border:1px solid var(--line);
-        border-radius:26px;
-        padding:22px;
+        border-radius:20px;
+        padding:18px;
         box-shadow:var(--shadow-lg);
         backdrop-filter: blur(6px) saturate(120%);
       }
@@ -109,7 +109,7 @@
       .hero{
         position:relative;
         display:flex; flex-direction:column; align-items:center; gap:6px;
-        text-align:center; padding:16px; border-radius:18px;
+        text-align:center; padding:14px; border-radius:14px;
       }
       /* theme toggle button small top-right inside hero */
       .theme-toggle{
@@ -117,17 +117,19 @@
         width:34px; height:34px; border-radius:10px;
         display:grid; place-items:center; text-decoration:none;
         background:var(--btn-color); border:1px solid var(--line); color:var(--text);
-        cursor:pointer;
+        cursor:pointer; outline:none; border-radius:10px;
       }
+      .theme-toggle:focus{ box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+
       .avatar{
-        width:82px; height:82px; border-radius:50%; object-fit:cover;
+        width:78px; height:78px; border-radius:50%; object-fit:cover;
         border:3px solid rgba(0,0,0,.22);
-        box-shadow:0 0 0 6px rgba(255,255,255,0.02);
+        box-shadow:0 0 0 4px rgba(255,255,255,0.02);
       }
       h1{font-size:20px; margin:0; font-weight:600}
       .subtitle{font-size:12px; margin:0; color:var(--muted)}
 
-      /* socials row, icons smaller per request */
+      /* socials row, icons kecil seperti diminta */
       .socials{
         display:flex; gap:10px; justify-content:center; margin-top:6px;
       }
@@ -141,15 +143,10 @@
       .circle:hover{ background:var(--btn-hover); transform:translateY(-3px); }
       .circle svg{ width:calc(var(--social-size) * 0.66); height:calc(var(--social-size) * 0.66); }
 
-      /* main groups two-column */
-      .groups{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:6px; }
-
-      .group{
-        background: transparent;
-        border-radius:16px;
-        padding:12px;
+      /* groups: separated into two cards (Menu & Tools) */
+      .section-title{
+        font-size:12px; color:var(--muted); margin:0 0 8px 6px;
       }
-      .group-title{ font-size:12px; color:var(--muted); margin:0 0 10px 4px; }
 
       .tiles{
         display:grid;
@@ -161,18 +158,17 @@
         display:flex; flex-direction:column; align-items:center; justify-content:center;
         gap:6px; text-decoration:none; color:var(--text);
         background:var(--btn-color); border:1px solid var(--line);
-        padding:10px; border-radius:12px; min-height:70px;
+        padding:10px; border-radius:12px; min-height:72px;
         transition: transform .12s ease, background .12s ease;
       }
       .tile:hover{ transform:translateY(-6px); background:var(--btn-hover); }
-      .tile svg{ width:26px; height:26px; opacity:.96; }
+      .tile svg{ width:28px; height:28px; opacity:.96; }
       .label{ font-size:12px; text-align:center; font-weight:500; color:var(--text); line-height:1.05; }
 
       .foot{ text-align:center; font-size:12px; color:rgba(255,255,255,0.6); margin-top:6px; }
 
-      /* responsive rules */
+      /* responsive */
       @media (max-width: 980px) {
-        .groups{ grid-template-columns: 1fr; }
         .tiles{ grid-template-columns: repeat(4, 1fr); }
       }
       @media (max-width: 640px) {
@@ -180,20 +176,19 @@
         .tiles{ grid-template-columns: repeat(3, 1fr); gap:8px; }
       }
       @media (max-width: 420px) {
-        :root{ --social-size: 30px; --base-font:12.5px; }
+        :root{ --social-size: 30px; --base-font:12.25px; }
         .tiles{ grid-template-columns: repeat(2, 1fr); gap:8px; }
-        .avatar{ width:72px; height:72px; }
+        .avatar{ width:68px; height:68px; }
         h1{ font-size:18px; }
       }
     </style>
   </head>
 
   <body>
-    <main class="wrap">
-      <!-- Hero -->
+    <main class="wrap" id="mainWrap">
+      <!-- HERO -->
       <section class="card hero" aria-label="Kartu profil NafsFlow">
         <button class="theme-toggle" id="themeToggle" title="Ganti tema" aria-pressed="false" aria-label="Toggle tema">
-          <!-- simple sun/moon svg placeholder; will be swapped in JS -->
           <svg id="themeIcon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
             <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42zM1 13h3v-2H1v2zm10-9h2V1h-2v3zm7.45 1.46l1.79-1.8-1.41-1.41-1.8 1.79 1.42 1.42zM17 13h3v-2h-3v2zM12 6a6 6 0 1 0 .001 12.001A6 6 0 0 0 12 6z"/></svg>
         </button>
@@ -217,79 +212,82 @@
         </nav>
       </section>
 
-      <!-- Main two groups -->
-      <section class="card" aria-label="Navigasi utama">
-        <div class="groups">
+      <!-- MENU (kartu terpisah) -->
+      <section class="card" aria-label="Menu Utama">
+        <p class="section-title">Menu Utama</p>
+        <div class="tiles">
+          <a class="tile" href="home.html" title="Halaman Utama">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11h2v9h6v-6h4v6h6v-9h2L12 3z"/></svg>
+            <div class="label">Halaman Utama</div>
+          </a>
 
-          <!-- Left group -->
-          <div class="group" aria-label="Grup kiri">
-            <p class="group-title">Menu Utama</p>
+          <a class="tile" href="produk.html" title="Produk & Layanan">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 7h16v2H4V7zm0 4h10v2H4v-2zm0 4h8v2H4v-2z"/></svg>
+            <div class="label">Produk & Layanan</div>
+          </a>
 
-            <div class="tiles">
-              <a class="tile" href="home.html" title="Halaman Utama">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11h2v9h6v-6h4v6h6v-9h2L12 3z"/></svg>
-                <div class="label">Halaman Utama</div>
-              </a>
+          <a class="tile" href="ebook/produk.html" title="Buku & e-Book">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/></svg>
+            <div class="label">Buku & e-Book</div>
+          </a>
 
-              <a class="tile" href="produk.html" title="Produk & Layanan">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 7h16v2H4V7zm0 4h10v2H4v-2zm0 4h8v2H4v-2z"/></svg>
-                <div class="label">Produk & Layanan</div>
-              </a>
+          <a class="tile" href="flowbuilder.html" title="Workflow AI Agent">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
+            <div class="label">Workflow AI Agent</div>
+          </a>
 
-              <a class="tile" href="ebook/produk.html" title="Buku & e-Book">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/></svg>
-                <div class="label">Buku & e-Book</div>
-              </a>
+          <a class="tile" href="web3/project.html" title="WEB 3 Project">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5v-3l-10 5-10-5v3z"/></svg>
+            <div class="label">WEB 3 Project</div>
+          </a>
 
-              <a class="tile" href="flowbuilder.html" title="Workflow AI Agent">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
-                <div class="label">Workflow AI Agent</div>
-              </a>
+          <a class="tile" href="landingpage.html" title="WEB & Landing Page">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h18v4H3V3zm0 6h12v12H3V9zm14 0h4v12h-4V9z"/></svg>
+            <div class="label">WEB & Landing Page</div>
+          </a>
+        </div>
+      </section>
 
-              <a class="tile" href="web3/project.html" title="WEB 3 Project">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5v-3l-10 5-10-5v3z"/></svg>
-                <div class="label">WEB 3 Project</div>
-              </a>
+      <!-- TOOLS (kartu terpisah) -->
+      <section class="card" aria-label="Tools dan Lainnya">
+        <p class="section-title">Tools & Lainnya</p>
+        <div class="tiles">
+          <!-- Tools All In One (robot head icon) -->
+          <a class="tile" href="https://app.nafsflow.com" title="Tools All In One">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <!-- robot head simple -->
+              <path d="M12 2c1 0 2 .8 2 1.8V5h2a2 2 0 0 1 2 2v6a3 3 0 0 1-3 3v1a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-1a3 3 0 0 1-3-3V7a2 2 0 0 1 2-2h2V3.8C10 2.8 11 2 12 2zm-4 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+            </svg>
+            <div class="label">Tools All In One</div>
+          </a>
 
-              <a class="tile" href="landingpage.html" title="WEB & Landing Page">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v4H3V3zm0 6h12v12H3V9zm14 0h4v12h-4V9z"/></svg>
-                <div class="label">WEB & Landing Page</div>
-              </a>
-            </div>
-          </div>
+          <!-- Tools AI Affiliate (cart icon) -->
+          <a class="tile" href="affiliate.html" title="Tools AI Affiliate">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 6l.84 2h8.49c.46 0 .86.31.97.75l1.38 6.48c.12.58-.32 1.12-.92 1.12H8.53l-.31.9H19v2H8a1 1 0 0 1-.95-1.29l1.5-4.45L6.2 4H3V2h3.2c.4 0 .78.24.95.6L7.16 6z"/>
+            </svg>
+            <div class="label">Tools AI Affiliate</div>
+          </a>
 
-          <!-- Right group -->
-          <div class="group" aria-label="Grup kanan">
-            <p class="group-title">Tools & Lainnya</p>
+          <!-- Tools Guru PAUD (graduation cap icon) -->
+          <a class="tile" href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" title="Tools Guru PAUD">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3zm0 7.5L5.5 9 12 6.5 18.5 9 12 10.5zM5 13v2l7 3 7-3v-2l-7 3-7-3z"/>
+            </svg>
+            <div class="label">Tools Guru PAUD</div>
+          </a>
 
-            <div class="tiles">
-              <a class="tile" href="https://app.nafsflow.com" title="Tools All In One">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3 6h6l-4.8 3.5L19 20l-7-4-7 4 1.8-8.5L2 8h6l3-6z"/></svg>
-                <div class="label">Tools All In One</div>
-              </a>
+          <!-- Youtube Automasi -->
+          <a class="tile" href="https://www.youtube.com/@nnafshh" title="Youtube Automasi">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
+            <div class="label">Youtube Automasi</div>
+          </a>
 
-              <a class="tile" href="affiliate.html" title="Tools AI Affiliate">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l9 6-9 6-9-6 9-6zm0 9 9 6-9 6-9-6 9-6z"/></svg>
-                <div class="label">Tools AI Affiliate</div>
-              </a>
-
-              <a class="tile" href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" title="Tools Guru PAUD">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-3-7 3V4a1 1 0 0 1 1-1z"/></svg>
-                <div class="label">Tools Guru PAUD</div>
-              </a>
-
-              <a class="tile" href="https://www.youtube.com/@nnafshh" title="Youtube Automasi">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
-                <div class="label">Youtube Automasi</div>
-              </a>
-
-              <a class="tile" href="nafsflow-premium.html" title="Nafsflow Premium">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 9 8l-7 1 5 5-1 7L12 18l7 4-1-7 5-5-7-1L12 2z"/></svg>
-                <div class="label">Nafsflow Premium</div>
-              </a>
-
-            </div>
-          </div>
+          <!-- Nafsflow Premium -->
+          <a class="tile" href="nafsflow-premium.html" title="Nafsflow Premium">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 9 8l-7 1 5 5-1 7L12 18l7 4-1-7 5-5-7-1L12 2z"/></svg>
+            <div class="label">Nafsflow Premium</div>
+          </a>
 
         </div>
       </section>
@@ -312,9 +310,14 @@
           if(name === 'light'){ root.setAttribute('data-theme','light'); toggle.setAttribute('aria-pressed','true'); }
           else { root.setAttribute('data-theme','dark'); toggle.setAttribute('aria-pressed','false'); }
           updateIcon(name);
+
+          // After theme change, scroll to top so mobile header/toggle isn't hidden by browser chrome.
+          // This addresses "tampilan di handphone terpotong bagian atas setelah di klik togle light".
+          setTimeout(()=> {
+            try { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
+          }, 80);
         }
         function updateIcon(name){
-          // swap simple icons (sun for light, moon for dark)
           if(!icon) return;
           if(name === 'light'){
             icon.innerHTML = '<path d=\"M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42zM1 13h3v-2H1v2zm10-9h2V1h-2v3zm7.45 1.46l1.79-1.8-1.41-1.41-1.8 1.79 1.42 1.42zM17 13h3v-2h-3v2zM12 6a6 6 0 1 0 .001 12.001A6 6 0 0 0 12 6z\"/>';
@@ -345,6 +348,15 @@
         toggle.addEventListener('keydown', (e)=>{
           if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
         });
+
+        // Accessibility: tiles keyboard activation
+        document.querySelectorAll('.tile').forEach(t => {
+          t.setAttribute('tabindex','0');
+          t.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') t.click(); });
+        });
+
+        // Small UX: ensure top visible on first load on mobile (avoid clipped by address bar)
+        setTimeout(()=>{ try { window.scrollTo(0,0); } catch(e){} }, 120);
       })();
     </script>
   </body>
