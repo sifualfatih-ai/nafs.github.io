@@ -1,359 +1,328 @@
 <!doctype html>
 <html lang="id">
   <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NafsFlow</title>
-  <meta name="description" content="Mitra kreator, affiliate, UMKM, dan industri kecil dan menengah">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NafsFlow</title>
+    <meta name="description" content="Mitra kreator, affiliate, UMKM, dan industri kecil dan menengah">
 
-  <!-- Favicon (hindari 404) -->
-  <link rel="icon" href="nafsweb.ico" />
-  <link rel="shortcut icon" href="/nafs.github.io/nafsweb.ico" type="image/ico" />
+    <!-- Favicon (hindari 404) -->
+    <link rel="icon" href="nafsweb.ico" />
+    <link rel="shortcut icon" href="/nafs.github.io/nafsweb.ico" type="image/ico" />
 
-  <style>
-    :root{
-      /* Tema ungu */
-      --bg:#0c0717;
-      --bg2:#140c25;
-      --card:rgba(22,13,42,.72);
-      --line:#34245e;
-      --text:#f4efff;
-      --muted:#d1c6ff;
-      --btn:rgba(35,22,70,.55);
-      --btn-hover:rgba(49,31,99,.65);
-      --accent:#a855f7;
-      --accent-2:#c535b9;
-      --green:#22c55e;
-      --radius:18px;
-      --shadow:0 12px 30px rgba(0,0,0,.35);
+    <style>
+      :root{
+        /* Palet gelap netral */
+        --bg: #2a2533;
+        --bg-accent: #241b2b;
+        --card: rgba(22,13,42,.72);
+        --glass: rgba(255,255,255,.03);
+        --line: rgba(255,255,255,.06);
+        --text: #f4efff;
+        --muted: #d1c6ff;
+        --accent: #7c5cff;
+        --success: #22c55e;
 
-      /* Ungu solid untuk tombol (pengganti gradient) */
-      --purple:#772785;           /* dasar */
-      --purple-2:#6d28d9;         /* sedikit lebih gelap */
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; color:var(--text);
-      font-family: Calibri, "Segoe UI", Arial, sans-serif;
-      font-weight:400;                /* jangan bold */
-      background:var(--bg);
-      display:grid; place-items:center; padding:28px; position:relative; overflow-x:hidden;
-      font-size:15px;                 /* sedikit lebih kecil */
-    }
-    body::before{
-      content:"";
-      position:fixed; inset:-10px;
-      background:
-        linear-gradient(to bottom, rgba(10,6,22,.7), rgba(10,6,22,.7)),
-        url("nafsflow small.webp") center/cover no-repeat;
-      filter:blur(6px);
-      z-index:-1;
-      transform:scale(1.03);
-    }
+        /* Tombol tunggal (semua tombol memakai ini) */
+        --btn-color: rgba(255,255,255,0.04);
+        --btn-hover: rgba(255,255,255,0.06);
 
-    .wrap{width:min(980px, 94vw)}
-    .card{
-      background:var(--card); border:1px solid #ffffff17; border-radius:28px; box-shadow:var(--shadow); padding:28px;
-      backdrop-filter:saturate(140%) blur(10px);
-    }
+        --radius: 20px;
+        --shadow-lg: 0 14px 40px rgba(0,0,0,.45);
+      }
 
-    .avatar{width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #00000033; box-shadow:0 0 0 3px #ffffff22; display:block; margin:0 auto 14px}
-    h1{margin:0 0 6px; text-align:center; font-size:28px; font-weight:400} /* lebih kecil & tidak bold */
-    .subtitle{margin:0; text-align:center; color:var(--muted); font-size:13.5px}
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        color:var(--text);
+        font-family: Inter, Calibri, "Segoe UI", Arial, sans-serif;
+        background:linear-gradient(180deg,var(--bg) 0%, #211826 100%);
+        display:flex; align-items:center; justify-content:center;
+        padding:28px; font-size:15px;
+      }
 
-    .socials{display:flex; gap:16px; justify-content:center; margin:18px 0 8px}
-    .circle{
-      width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
-      border:1px solid var(--line); background:rgba(20,12,37,.6); cursor:pointer; text-decoration:none; color:var(--text);
-      transition:transform .15s ease, background .2s ease;
-      backdrop-filter:saturate(140%) blur(6px);
-    }
-    .circle:hover{transform:translateY(-2px); background:var(--btn-hover)}
-    .circle svg{width:22px; height:22px}
+      /* background blur image (mirip referensi) */
+      body::before{
+        content:"";
+        position:fixed; inset:0; z-index:-1;
+        background:
+          linear-gradient(to bottom, rgba(10,6,22,.6), rgba(10,6,22,.6)),
+          url("nafsflow small.webp") center/cover no-repeat;
+        filter: blur(6px) saturate(120%);
+        transform: scale(1.02);
+        opacity:.55;
+      }
 
-    .links{
-      display:grid; gap:12px; margin-top:16px;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-    .btn{
-      display:flex; align-items:center; gap:12px; padding:14px; border-radius:16px;
-      background:var(--btn); border:1px solid #ffffff1a; color:var(--text); text-decoration:none; font-weight:400; /* regular */
-      backdrop-filter:saturate(140%) blur(8px);
-      box-shadow:0 10px 26px -14px rgba(0,0,0,.45);
-      transition:transform .15s ease, background .2s ease, border-color .2s ease;
-      font-size:14px;               /* lebih kecil */
-    }
-    .btn:hover{background:var(--btn-hover); transform:translateY(-1px); border-color:#ffffff2e}
-    .btn svg{width:20px; height:20px; flex:0 0 auto; opacity:.95}
+      .wrap{
+        width:min(1080px, 96vw);
+        display:flex;
+        flex-direction:column;
+        gap:18px;
+      }
 
-    /* Tombol UNGU SOLID (pengganti gradient lama) */
-    .violet-btn{
-      display:flex; align-items:center; gap:12px; padding:14px; border-radius:16px;
-      background:linear-gradient(#0000,#0000), var(--purple); /* solid */
-      color:#fff; text-decoration:none; font-weight:400;      /* regular */
-      border:1px solid var(--purple-2);
-      box-shadow:0 12px 30px -10px rgba(109,40,217,.55);
-      transition:transform .15s ease, filter .2s ease, background .2s ease;
-      font-size:14px;               /* lebih kecil */
-    }
-    .violet-btn:hover{
-      transform:translateY(-1px);
-      filter:brightness(1.06);
-      background:linear-gradient(#0000,#0000), #6f2a8f;       /* sedikit lebih terang saat hover */
-    }
-    .violet-btn svg{ width:20px; height:20px; flex:0 0 auto;}
+      .card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border:1px solid var(--line);
+        border-radius:28px;
+        padding:28px;
+        box-shadow:var(--shadow-lg);
+        backdrop-filter: blur(8px) saturate(120%);
+      }
 
-    /* ====== KELAS PER BUTTON ====== */
-    .btn-home{}                 /* Halaman Umum */
-    .btn-pro{}                  /* Tools AI Pro (ungu solid) */
-    .btn-affiliate{}            /* Tools AI Affiliate (ungu solid) */
-    .btn-pengajar{}             /* Tools AI Pengajar (ungu solid) */
-    .btn-ultimate{}             /* Tools AI Ultimate (bisa ungu/glas) */
-    .btn-agent{}                /* Workflow AI Agent */
-    .btn-ebook{}                /* Ebook */
+      /* HEADER */
+      .hero {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:8px;
+        text-align:center;
+        padding:22px 12px;
+        border-radius:20px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+        border:1px solid rgba(255,255,255,0.03);
+      }
 
-    .login-cta{ margin-top:18px; display:flex; justify-content:center; }
-    .login-cta button{
-      appearance:none; border:none; background:var(--green); color:#06280f;
-      padding:10px 14px; border-radius:12px; cursor:pointer;
-      font-weight:500; font-size:14px; line-height:1.15;
-      box-shadow:0 8px 18px -10px rgba(34,197,94,.6);
-    }
+      .avatar{
+        width:96px; height:96px; border-radius:50%;
+        object-fit:cover; border:3px solid rgba(0,0,0,.35);
+        box-shadow: 0 0 0 6px rgba(255,255,255,.02);
+      }
+      h1{margin:0; font-size:28px; font-weight:600}
+      .subtitle{margin:0; color:var(--muted); font-size:13.5px}
 
-    .foot{margin-top:10px; text-align:center; color:#cbbcffcc; font-size:12.5px}
+      .socials{
+        display:flex; gap:14px; justify-content:center; margin-top:6px;
+      }
+      .circle{
+        width:54px; height:54px; border-radius:50%;
+        display:grid; place-items:center; text-decoration:none; color:var(--text);
+        background:var(--glass); border:1px solid var(--line);
+        transition: transform .12s ease, background .12s ease;
+      }
+      .circle:hover{ transform: translateY(-4px); background:var(--btn-hover); }
 
-    .overlay{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:20px}
-    .modal{width:min(520px, 92vw); background:rgba(31,20,56,.9); border:1px solid var(--line); border-radius:16px; padding:18px; backdrop-filter:blur(6px)}
-    .modal h3{margin:0 0 8px; font-weight:500}
-    .row{display:grid; gap:8px; margin-top:10px}
-    .row label{font-size:13px; color:var(--muted)}
-    .row input{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--bg2); color:var(--text); font-size:14px}
-    .modal .actions{display:flex; gap:10px; margin-top:14px; justify-content:flex-end}
-    .ghost{background:transparent; border:1px solid var(--line); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer}
-    .solid{background:var(--accent); border:none; color:white; padding:10px 14px; border-radius:10px; cursor:pointer}
-    .hint{margin-top:8px; color:var(--muted); font-size:13px}
+      /* LAYOUT: dua grup kotak seperti referensi */
+      .groups{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:18px;
+      }
 
-    @media (max-width: 992px){
-      h1{font-size:26px}
-      .subtitle{font-size:13px}
-      .btn, .violet-btn{padding:12px}
-      .btn svg, .violet-btn svg{width:18px; height:18px}
-      .circle{width:52px; height:52px}
-    }
-    @media (max-width: 680px){
-      .links{grid-template-columns:1fr;}
-    }
-    @media (max-width: 560px){
-      body{padding:18px}
-      .card{padding:20px; border-radius:22px}
-      .avatar{width:84px; height:84px}
-      h1{font-size:24px}
-      .subtitle{font-size:12.5px}
-      .btn, .violet-btn{padding:11px; font-size:13.5px; border-radius:14px}
-      .login-cta button{font-size:13.5px; padding:9px 12px}
-      .circle{width:46px; height:46px}
-      .foot{font-size:12px}
-    }
-  </style>
+      .group {
+        background: linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.01));
+        border-radius:20px;
+        padding:18px;
+        border:1px solid rgba(255,255,255,0.03);
+        min-height:150px;
+      }
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5W7VXFV146"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-5W7VXFV146');
-</script>
-</head>
-<body>
+      .group-title{
+        font-size:13px; color:var(--muted); margin:0 0 12px; padding-left:4px;
+      }
 
-  <main class="wrap">
-    <section class="card" aria-label="Kartu profil">
-      <img class="avatar" src="nafslogo.jpeg" alt="Foto NafsFlow" />
-      <h1>NafsFlow</h1>
-      <p class="subtitle">Nafsflow - Workflow - Cashflow</p>
+      /* Grid item di dalam group: kotak ikon 3 kolom (ubah responsif) */
+      .tiles{
+        display:grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap:12px;
+      }
 
-      <div class="socials" role="navigation" aria-label="Tautan medsos">
-        <a class="circle" href="https://wa.me/6285134882357?text=Halo%20Nafs%20Project%2C%20saya%20ingin%20info" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.1 17.6L2 22l4.5-1.2A11 11 0 1 0 20.5 3.5Zm-8.8 16.9c-1.9 0-3.6-.6-5-1.7l-.4-.3-2.6.7.7-2.5-.3-.4a8.6 8.6 0 1 1 7.6 4.2Zm4.7-6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7 7 0 0 1-2-1.2 7.5 7.5 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.3-.4.2-.4c.1-.2 0-.4 0-.5l-.9-2a.6.6 0 0 0-.6-.3h-.5c-.2 0-.5.2-.6.4s-.8.8-.8 2 .8 2.3.9 2.4c.1.2 1.7 2.7 4.1 3.7.6.3 1.1.5 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1 .1-1.2-.1-.2-.3-.3-.6-.4Z"/></svg>
-        </a>
-        <a class="circle" href="https://www.tiktok.com/@nnafssh" target="_blank" rel="noopener" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 3h2.4c.2 1.6 1.2 3 2.9 3.8a6.9 6.9 0 0 0 1.5.4v2.3c-.8 0-1.6-.2-2.3-.5a7.5 7.5 0 0 1-2.1-1.4v6.8A6 6 0 1 1 10 8.6v2.5a2.6 2.6 0 1 0 1.9 2.5V3Z"/></svg>
-        </a>
-        <a class="circle" href="https://www.youtube.com/@nnafshh" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
-        </a>
-      </div>
+      .tile {
+        display:flex; flex-direction:column; align-items:center; gap:8px;
+        background: var(--btn-color);
+        border-radius:14px; padding:10px;
+        text-decoration:none; color:var(--text);
+        border:1px solid rgba(255,255,255,0.03);
+        transition: transform .12s ease, background .12s ease;
+        min-height:78px;
+        justify-content:center;
+      }
+      .tile:hover{ transform: translateY(-6px); background: var(--btn-hover); }
 
-      <!-- MENU (urutan baru) -->
-      <div class="links" role="navigation" aria-label="Tautan utama">
+      .tile svg{ width:28px; height:28px; opacity:.98; flex-shrink:0; }
+      .tile .label{ font-size:13px; text-align:center; color:var(--text); line-height:1.1; font-weight:500; }
 
-        <!-- 1. Halaman Umum -->
-        <a href="home.html" class="btn btn-home">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 3 2 11h2v9h6v-6h4v6h6v-9h2L12 3z"/>
-          </svg>
-          Halaman Umum
-        </a>
+      /* UTAMA link grid (jika ada link yang lebih panjang) */
+      .links-wide{
+        display:grid; gap:12px; margin-top:14px;
+      }
+      .wide-btn{
+        display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px;
+        background:var(--btn-color); border:1px solid rgba(255,255,255,0.03);
+        text-decoration:none; color:var(--text);
+      }
+      .wide-btn svg{ width:20px; height:20px; opacity:.95; }
 
-        <!-- 2. Tools AI Pro -->
-        <a href="https://app.nafsflow.com" class="violet-btn btn-pro">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- crown/star -->
-            <path d="M12 4l2.2 4.5 5 .7-3.6 3.5.9 4.9L12 15.8 7.5 17.6l.9-4.9L4.8 9.2l5-.7L12 4z"/>
-          </svg>
-          Tools AI Pro
-        </a>
+      .foot{ text-align:center; color:rgba(255,255,255,0.6); font-size:12.5px; margin-top:6px }
 
-        <!-- 3. Tools AI Affiliate -->
-        <a href="affiliate.html" class="violet-btn btn-affiliate">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- users/link -->
-            <path d="M10 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm10 2h-3a4 4 0 0 0-4 4v1h2v-1a2 2 0 0 1 2-2h3a2 2 0 1 1 0 4h-2v2h2a4 4 0 1 0 0-8Zm-9 8v-1a4 4 0 0 0-4-4H4a4 4 0 0 0-4 4v1h11Z"/>
-          </svg>
-          Tools AI Affiliate
-        </a>
+      /* RESPONSIVE ADJUSTMENTS */
+      @media (max-width: 980px){
+        .tiles{ grid-template-columns: repeat(4, 1fr); }
+      }
+      @media (max-width: 780px){
+        .groups{ grid-template-columns: 1fr; }
+        .tiles{ grid-template-columns: repeat(4, 1fr); }
+      }
+      @media (max-width: 520px){
+        .tiles{ grid-template-columns: repeat(3, 1fr); gap:10px; }
+        .avatar{ width:84px; height:84px; }
+        h1{ font-size:22px; }
+      }
+      @media (max-width: 380px){
+        .tiles{ grid-template-columns: repeat(2, 1fr); }
+        .tile svg{ width:24px; height:24px; }
+      }
+    </style>
 
-        <!-- 4. Tools AI Pengajar -->
-        <a href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" class="violet-btn btn-pengajar">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- graduation cap -->
-            <path d="M12 3 2 8l10 5 8-4.1V17h2V8L12 3Zm-6 9v4.5c1.8 1.1 4 1.5 6 1.5s4.2-.4 6-1.5V12l-6 2.7L6 12z"/>
-          </svg>
-          Tools AI Pengajar
-        </a>
+    <!-- Google tag (gtag.js) - jika tidak perlu, boleh dihapus -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W7VXFV146"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-5W7VXFV146');
+    </script>
+  </head>
 
-        <!-- 5. Tools AI Ultimate (rename dari Gemini Pro 70rb) -->
-        <a href="https://wa.me/6285134882357" class="btn btn-ultimate">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- bolt -->
-            <path d="M13 2 3 14h7l-1 8 11-12h-7l0-8z"/>
-          </svg>
-          Tools AI Ultimate
-        </a>
+  <body>
+    <main class="wrap">
 
-        <!-- 6. Workflow AI Agent (rename dari AI Agent Project Free) -->
-        <a href="flowbuilder.html" class="btn btn-agent">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- robot/chip -->
-            <path d="M10 2h4v2h2a3 3 0 0 1 3 3v8a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3h2V2zm-1 7H7v3h2V9zm10 0h-2v3h2V9zM9 5h6v2H9V5z"/>
-          </svg>
-          Workflow AI Agent
-        </a>
+      <!-- Kartu Profil Utama -->
+      <section class="card hero" aria-label="Kartu profil NafsFlow">
+        <img class="avatar" src="nafslogo.jpeg" alt="Logo NafsFlow" />
+        <h1>NafsFlow</h1>
+        <p class="subtitle">Nafsflow - Workflow - Cashflow</p>
 
-        <!-- 7. Ebook -->
-        <a href="ebook/produk.html" class="btn btn-ebook">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- book -->
-            <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4zm13 16V7a1 1 0 0 0-1-1H6v14a1 1 0 0 0 1 1h10z"/>
-          </svg>
-          Buku & e-book
-        </a>
+        <nav class="socials" role="navigation" aria-label="Tautan media sosial">
+          <a class="circle" href="https://wa.me/6285134882357?text=Halo%20Nafs%20Project%2C%20saya%20ingin%20info" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 3.1 17.6L2 22l4.5-1.2A11 11 0 1 0 20.5 3.5Zm-8.8 16.9c-1.9 0-3.6-.6-5-1.7l-.4-.3-2.6.7.7-2.5-.3-.4a8.6 8.6 0 1 1 7.6 4.2Zm4.7-6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7 7 0 0 1-2-1.2 7.5 7.5 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.3-.4.2-.4c.1-.2 0-.4 0-.5l-.9-2a.6.6 0 0 0-.6-.3h-.5c-.2 0-.5.2-.6.4s-.8.8-.8 2 .8 2.3.9 2.4c.1.2 1.7 2.7 4.1 3.7.6.3 1.1.5 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1 .1-1.2-.1-.2-.3-.3-.6-.4Z"/></svg>
+          </a>
+          <a class="circle" href="https://www.tiktok.com/@nnafssh" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 3h2.4c.2 1.6 1.2 3 2.9 3.8a6.9 6.9 0 0 0 1.5.4v2.3c-.8 0-1.6-.2-2.3-.5a7.5 7.5 0 0 1-2.1-1.4v6.8A6 6 0 1 1 10 8.6v2.5a2.6 2.6 0 1 0 1.9 2.5V3Z"/></svg>
+          </a>
+          <a class="circle" href="https://www.youtube.com/@nnafshh" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
+          </a>
+        </nav>
+      </section>
 
-       <!-- 8. Biaya Jasa -->
-        <a href="produk/price.html" class="btn btn-ebook">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <!-- book -->
-            <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4zm13 16V7a1 1 0 0 0-1-1H6v14a1 1 0 0 0 1 1h10z"/>
-          </svg>
-          Biaya Layanan
-        </a>
-        
-      </div>
+      <!-- GROUPS: meniru dua kolom kotak di referensi -->
+      <section class="card" aria-label="Navigasi utama">
+        <div class="groups">
 
-      <div class="login-cta">
-        <button id="openLogin">Login Langganan</button>
-      </div>
+          <!-- kiri -->
+          <div class="group" aria-label="Grup 1">
+            <p class="group-title">Menu Utama</p>
+
+            <div class="tiles">
+              <a class="tile" href="home.html" title="Halaman Utama">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 11h2v9h6v-6h4v6h6v-9h2L12 3z"/></svg>
+                <div class="label">Halaman Utama</div>
+              </a>
+
+              <a class="tile" href="produk/price.html" title="Biaya Layanan">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1v22c6-1 6-6 6-10s0-9-6-11zM6 5v14c-6-2-6-7-6-10s0-8 6-9z"/></svg>
+                <div class="label">Biaya Layanan</div>
+              </a>
+
+              <a class="tile" href="produk.html" title="Produk & Layanan">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 7h16v2H4V7zm0 4h10v2H4v-2zm0 4h8v2H4v-2z"/></svg>
+                <div class="label">Produk & Layanan</div>
+              </a>
+
+              <a class="tile" href="ebook/produk.html" title="Buku & e-Book">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4zM17 20V7a1 1 0 0 0-1-1H6v14h11z"/></svg>
+                <div class="label">Buku & e-Book</div>
+              </a>
+
+              <a class="tile" href="flowbuilder.html" title="Workflow AI Agent">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 2h4v2h2a3 3 0 0 1 3 3v8a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3h2V2zm-1 7H7v3h2V9zm10 0h-2v3h2V9zM9 5h6v2H9V5z"/></svg>
+                <div class="label">Workflow AI Agent</div>
+              </a>
+
+              <a class="tile" href="web3/project.html" title="WEB 3 Project">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5v-3l-10 5-10-5v3z"/></svg>
+                <div class="label">WEB 3 Project</div>
+              </a>
+
+            </div>
+          </div>
+
+          <!-- kanan -->
+          <div class="group" aria-label="Grup 2">
+            <p class="group-title">Tools & Lainnya</p>
+
+            <div class="tiles">
+              <a class="tile" href="https://app.nafsflow.com" title="Tools AI Pro">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l2.2 4.5 5 .7-3.6 3.5.9 4.9L12 15.8 7.5 17.6l.9-4.9L4.8 9.2l5-.7L12 4z"/></svg>
+                <div class="label">Tools AI Pro</div>
+              </a>
+
+              <a class="tile" href="affiliate.html" title="Tools AI Affiliate">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm10 2h-3a4 4 0 0 0-4 4v1h2v-1a2 2 0 0 1 2-2h3a2 2 0 1 1 0 4h-2v2h2a4 4 0 1 0 0-8Zm-9 8v-1a4 4 0 0 0-4-4H4a4 4 0 0 0-4 4v1h11Z"/></svg>
+                <div class="label">Tools AI Affiliate</div>
+              </a>
+
+              <a class="tile" href="https://copy-of-generator-rpm-nafs-app-ai-3195732092.us-west1.run.app" title="Tools AI Pengajar">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 8l10 5 8-4.1V17h2V8L12 3Zm-6 9v4.5c1.8 1.1 4 1.5 6 1.5s4.2-.4 6-1.5V12l-6 2.7L6 12z"/></svg>
+                <div class="label">Tools AI Pengajar</div>
+              </a>
+
+              <a class="tile" href="https://wa.me/6285134882357" title="Tools AI Ultimate">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 11-12h-7l0-8z"/></svg>
+                <div class="label">Tools AI Ultimate</div>
+              </a>
+
+              <a class="tile" href="https://www.youtube.com/@nnafshh" title="Youtube Automasi">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
+                <div class="label">Youtube Automasi</div>
+              </a>
+
+              <a class="tile" href="nafsflow-premium.html" title="Nafsflow Premium">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 9 8l-7 1 5 5-1 7L12 18l7 4-1-7 5-5-7-1L12 2z"/></svg>
+                <div class="label">Nafsflow Premium</div>
+              </a>
+
+              <a class="tile" href="nafsflow-ultimate.html" title="Nafsflow Ultimate">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l3 7 7 .5-5.2 4 1.8 7L12 16 4.4 19.5 6.2 12 1 8l7-.5L12 1z"/></svg>
+                <div class="label">Nafsflow Ultimate</div>
+              </a>
+
+              <a class="tile" href="landingpage.html" title="WEB & Landing Page">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h18v4H3V3zm0 6h12v12H3V9zm14 0h4v12h-4V9z"/></svg>
+                <div class="label">WEB & Landing Page</div>
+              </a>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Optional: link lebar / tombol tambahan di bawah grup -->
+        <div class="links-wide" aria-hidden="false" style="margin-top:14px">
+          <a class="wide-btn" href="https://nafsflow.com/react/vite/" title="Kunjungi Situs">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z"/></svg>
+            Kunjungi Situs NafsFlow
+          </a>
+        </div>
+
+      </section>
 
       <p class="foot">© 2025 NafsFlow</p>
-    </section>
-  </main>
+    </main>
 
-  <!-- Modal + JS tetap -->
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-      <h3 id="mTitle">Masuk Akun Khusus</h3>
-      <div class="row">
-        <label for="mEmail">Username (Email)</label>
-        <input id="mEmail" type="email" placeholder="email@gmail.com" autocomplete="username" />
-      </div>
-      <div class="row">
-        <label for="mPass">Password</label>
-        <input id="mPass" type="password" placeholder="********" autocomplete="current-password" />
-      </div>
-      <p class="hint">Hubungi admin Nafs untuk mendapatkan akses.</p>
-      <div class="actions">
-        <button id="closeLogin" class="ghost">Batal</button>
-        <button class="solid" onclick="window.__nafsLoginSuccess()">Masuk</button>
-      </div>
-    </div>
-  </div>
+    <!-- Tidak ada modul login karena diminta dihapus -->
 
-  <script>
-    const overlay = document.getElementById('overlay');
-    document.getElementById('openLogin').onclick  = ()=>{ overlay.style.display='flex'; overlay.setAttribute('aria-hidden','false'); };
-    document.getElementById('closeLogin').onclick = ()=>{ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); };
-    overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.setAttribute('aria-hidden','true'); }});
-  </script>
+    <!-- Script kecil: aksesibilitas & fallback -->
+    <script>
+      // Tambahan: jika pengguna membuka di root, fokus ke header
+      document.querySelectorAll('.tile').forEach(t => {
+        t.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') t.click();
+        });
+      });
+    </script>
 
-  <script>
-    const params  = new URLSearchParams(location.search);
-    const backUrl = params.get('r') || 'https://nafsflow.com/react/vite/';
-    function openLoginModal() {
-      const btn = document.getElementById('openLogin');
-      if (btn) btn.click();
-      else {
-        const overlay = document.getElementById('overlay');
-        if (overlay) {
-          overlay.style.display = 'flex';
-          overlay.setAttribute('aria-hidden','false');
-        }
-      }
-    }
-    window.__nafsLoginSuccess = function () {
-      localStorage.setItem('nafs_isLoggedIn','1');
-      location.replace(backUrl);
-    };
-    window.__nafsLogout = function () {
-      localStorage.removeItem('nafs_isLoggedIn');
-      location.replace(backUrl);
-    };
-    if (params.get('login')  === '1') openLoginModal();
-    if (params.get('logout') === '1') window.__nafsLogout();
-  </script>
-
-  <script>
-  (() => {
-    if (customElements.get('nf-hero')) return;
-    class NfHero extends HTMLElement {
-      constructor(){ super(); this.attachShadow({mode:'open'}); }
-      connectedCallback(){
-        const title    = this.getAttribute('title')    || 'NafsFlow';
-        const subtitle = this.getAttribute('subtitle') || 'Solusi workflow AI untuk bisnis Anda.';
-        const ctaText  = this.getAttribute('cta-text') || 'Buka Halaman Pelanggan';
-        const ctaHref  = this.getAttribute('cta-href') || '/pelanggan/';
-        this.shadowRoot.innerHTML = `
-          <style>
-            :host{display:block;background:#17151f;color:#fff}
-            .wrap{max-width:1040px;margin:0 auto;padding:48px 16px}
-            h1{font-size:36px;line-height:1.1;margin:0 0 12px;font-weight:500}
-            p{opacity:.85;max-width:680px;margin:0 0 20px}
-            a.cta{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:12px;background:#7c5cff;color:#fff}
-            a.cta:hover{filter:brightness(1.1)}
-          </style>
-          <section class="wrap">
-            <h1>${title}</h1>
-            <p>${subtitle}</p>
-            <a class="cta" href="${ctaHref}">${ctaText}</a>
-          </section>`;
-      }
-    }
-    customElements.define('nf-hero', NfHero);
-    document.documentElement.setAttribute('data-nf','ready');
-  })();
-  </script>
-
-  <script src="web-static/js/blocks-loader.js" defer></script>
-</body>
+  </body>
 </html>
