@@ -1,7 +1,0 @@
-import NafsPremiumApp from "./NafsPremiumApp";
-
-function App() {
-  return <NafsPremiumApp />;
-}
-
-export default App;
