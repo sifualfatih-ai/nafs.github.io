@@ -18,7 +18,7 @@
         /* social size adjustable */
         --social-size: 36px;
 
-        /* typographic baseline (lebih elegan, lebih kecil) */
+        /* typographic baseline */
         --base-font: 13px;
 
         /* glow */
@@ -85,7 +85,8 @@
       html,body{height:100%}
       body{
         margin:0;
-        font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+        /* Use Segoe UI as primary font for elegant appearance */
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, -apple-system;
         font-size:var(--base-font);
         color:var(--text);
         background: linear-gradient(180deg,var(--bg) 0%, var(--bg-accent) 100%);
@@ -128,8 +129,8 @@
         text-align:center; padding:20px; border-radius:14px;
         animation: fadeInUp .7s ease both;
       }
-      .hero .headline{ font-size:17px; /* smaller, more elegant */ font-weight:700; margin:0; line-height:1.12; max-width:900px; }
-      /* removed lead paragraph styling (we removed lead text) */
+      /* hero smaller but bold */
+      .hero .headline{ font-size:15px; font-weight:700; margin:0; line-height:1.12; max-width:900px; }
 
       /* theme toggle button small top-right inside hero */
       .theme-toggle{
@@ -153,7 +154,7 @@
       h1{font-size:20px; margin:0; font-weight:600}
       .subtitle{font-size:12px; margin:0; color:var(--muted)}
 
-      /* CTA buttons - removed primary explore CTA in markup; keep style for other buttons */
+      /* CTA buttons - kept for possible other uses */
       .hero-ctas{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
       .btn {
         padding:10px 18px; border-radius:12px; font-weight:600; font-size:13px;
@@ -204,7 +205,7 @@
         display:flex; flex-direction:column; align-items:center; justify-content:center;
         gap:6px; text-decoration:none; color:var(--text);
         background:var(--btn-color); border:1px solid var(--line);
-        padding:10px; border-radius:12px; min-height:72px;
+        padding:12px; border-radius:12px; min-height:84px;
         transition: transform .12s ease, background .12s ease, box-shadow .14s ease;
         cursor:pointer;
       }
@@ -214,7 +215,10 @@
         box-shadow: 0 18px 48px var(--glow-color);
       }
       .tile svg{ width:28px; height:28px; opacity:.96; }
-      .label{ font-size:12px; text-align:center; font-weight:500; color:var(--text); line-height:1.05; }
+      .label{ font-size:12px; text-align:center; font-weight:600; color:var(--text); line-height:1.05; }
+
+      /* small subtext under tile labels */
+      .tile .sub { font-size:11px; color:var(--muted); margin-top:4px; font-weight:500; }
 
       .foot{ text-align:center; font-size:12px; color:rgba(255,255,255,0.6); margin-top:6px; }
 
@@ -257,7 +261,7 @@
         :root{ --social-size: 30px; --base-font:12.25px; }
         .tiles{ grid-template-columns: repeat(2, 1fr); gap:8px; }
         .avatar{ width:68px; height:68px; }
-        .headline{ font-size:15px; }
+        .headline{ font-size:14px; }
       }
     </style>
   </head>
@@ -272,7 +276,7 @@
         </button>
 
         <img class="avatar" src="nafslogo.jpeg" alt="Logo NafsFlow" />
-        <!-- Hero headline (font lebih kecil dan tanpa subtext) -->
+        <!-- Hero headline (font lebih kecil, bold) -->
         <h1 class="headline">Hubungkan ide, pekerjaan, bisnis dan alur keuangan anda dalam satu ekosistem digital.</h1>
 
         <nav class="socials" role="navigation" aria-label="Tautan media sosial">
@@ -339,6 +343,7 @@
               <path d="M12 2c1 0 2 .8 2 1.8V5h2a2 2 0 0 1 2 2v6a3 3 0 0 1-3 3v1a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-1a3 3 0 0 1-3-3V7a2 2 0 0 1 2-2h2V3.8C10 2.8 11 2 12 2zm-4 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
             </svg>
             <div class="label">Tools All In One</div>
+            <div class="sub">99k/bulan</div>
           </a>
 
           <!-- Tools AI Affiliate (cart icon) -->
@@ -347,6 +352,7 @@
               <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 6l.84 2h8.49c.46 0 .86.31.97.75l1.38 6.48c.12.58-.32 1.12-.92 1.12H8.53l-.31.9H19v2H8a1 1 0 0 1-.95-1.29l1.5-4.45L6.2 4H3V2h3.2c.4 0 .78.24.95.6L7.16 6z"/>
             </svg>
             <div class="label">Tools AI Affiliate</div>
+            <div class="sub">69k/bulan</div>
           </a>
 
           <!-- Tools Guru PAUD (graduation cap icon) -->
@@ -355,6 +361,7 @@
               <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3zm0 7.5L5.5 9 12 6.5 18.5 9 12 10.5zM5 13v2l7 3 7-3v-2l-7 3-7-3z"/>
             </svg>
             <div class="label">Tools Guru PAUD</div>
+            <div class="sub">29k/bulan</div>
           </a>
 
           <!-- Youtube Automasi -->
@@ -501,7 +508,6 @@
         const closeModalBtn = document.getElementById('closeModal');
         const contactOrderBtn = document.getElementById('contactOrder');
 
-        // Open modal function
         function openModal(opts = {}) {
           modalBackdrop.classList.add('show');
           modalBackdrop.setAttribute('aria-hidden','false');
@@ -513,7 +519,6 @@
           modalBackdrop.setAttribute('aria-hidden','true');
         }
 
-        // Attach click handler to elements with data-modal="pricing"
         document.querySelectorAll('[data-modal="pricing"]').forEach(el => {
           el.addEventListener('click', (e) => {
             e.preventDefault();
@@ -521,19 +526,19 @@
           });
         });
 
-        // Close handlers
         closeModalBtn && closeModalBtn.addEventListener('click', closeModal);
         modalBackdrop && modalBackdrop.addEventListener('click', (e) => {
           if(e.target === modalBackdrop) closeModal();
         });
 
-        // ESC to close
-        window.addEventListener('keydown', (e) => { if(e.key === 'Escape') {
-          closeModal();
-          closeAppsModal();
-        } });
+        // ESC to close modals
+        window.addEventListener('keydown', (e) => {
+          if(e.key === 'Escape') {
+            closeModal();
+            closeAppsModal();
+          }
+        });
 
-        // Contact / Order button: open whatsapp chat (example)
         contactOrderBtn && contactOrderBtn.addEventListener('click', () => {
           const phone = '6285134882357';
           const message = encodeURIComponent('Halo, saya ingin info paket website. Mohon bantuannya.');
@@ -547,8 +552,7 @@
 
         function openAppsModal() {
           if(!modalAppsBackdrop) return;
-          modalAppsBackdrop.style.display = ''; // ensure visible for accessibility before adding class
-          // allow next tick to animate class
+          modalAppsBackdrop.style.display = '';
           requestAnimationFrame(()=> {
             modalAppsBackdrop.classList.add('show');
             modalAppsBackdrop.setAttribute('aria-hidden','false');
@@ -559,7 +563,6 @@
           if(!modalAppsBackdrop) return;
           modalAppsBackdrop.classList.remove('show');
           modalAppsBackdrop.setAttribute('aria-hidden','true');
-          // hide after transition (not strictly necessary)
           setTimeout(()=> { if(modalAppsBackdrop && !modalAppsBackdrop.classList.contains('show')) modalAppsBackdrop.style.display = 'none'; }, 220);
         }
 
