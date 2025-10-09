@@ -20,6 +20,9 @@
 
         /* typographic baseline (lebih elegan, lebih kecil) */
         --base-font: 13px;
+
+        /* glow */
+        --glow-color: rgba(56,189,248,0.18);
       }
 
       /* Dark theme variables (default) */
@@ -45,6 +48,7 @@
           --muted: #475569;
           --btn-color: rgba(15,23,36,0.03);
           --btn-hover: rgba(15,23,36,0.06);
+          --glow-color: rgba(56,189,248,0.08);
         }
       }
 
@@ -58,6 +62,7 @@
         --muted: #475569;
         --btn-color: rgba(15,23,36,0.03);
         --btn-hover: rgba(15,23,36,0.06);
+        --glow-color: rgba(56,189,248,0.08);
       }
       html[data-theme="dark"]{
         --bg: #2a2533;
@@ -68,6 +73,7 @@
         --muted: #cfc3ff;
         --btn-color: rgba(255,255,255,0.03);
         --btn-hover: rgba(255,255,255,0.07);
+        --glow-color: rgba(56,189,248,0.18);
       }
 
       /* base reset */
@@ -105,12 +111,22 @@
         backdrop-filter: blur(6px) saturate(120%);
       }
 
+      /* Fade-in animation for nice entrance */
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       /* Header hero */
       .hero{
         position:relative;
-        display:flex; flex-direction:column; align-items:center; gap:6px;
-        text-align:center; padding:14px; border-radius:14px;
+        display:flex; flex-direction:column; align-items:center; gap:12px;
+        text-align:center; padding:20px; border-radius:14px;
+        animation: fadeInUp .7s ease both;
       }
+      .hero .headline{ font-size:20px; font-weight:700; margin:0; line-height:1.15; max-width:900px; }
+      .hero .lead{ font-size:13px; margin:0; color:var(--muted); max-width:820px; }
+
       /* theme toggle button small top-right inside hero */
       .theme-toggle{
         position:absolute; right:12px; top:12px;
@@ -118,7 +134,10 @@
         display:grid; place-items:center; text-decoration:none;
         background:var(--btn-color); border:1px solid var(--line); color:var(--text);
         cursor:pointer; outline:none; border-radius:10px;
+        transition: box-shadow .15s ease, transform .12s ease;
       }
+      .theme-toggle:hover{ box-shadow: 0 8px 28px var(--glow-color); transform: translateY(-2px); }
+
       .theme-toggle:focus{ box-shadow: 0 6px 18px rgba(0,0,0,.12); }
 
       .avatar{
@@ -126,8 +145,28 @@
         border:3px solid rgba(0,0,0,.22);
         box-shadow:0 0 0 4px rgba(255,255,255,0.02);
       }
+
       h1{font-size:20px; margin:0; font-weight:600}
       .subtitle{font-size:12px; margin:0; color:var(--muted)}
+
+      /* CTA buttons */
+      .hero-ctas{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
+      .btn {
+        padding:10px 18px; border-radius:12px; font-weight:600; font-size:13px;
+        border:1px solid transparent; text-decoration:none; display:inline-flex; gap:8px; align-items:center;
+        background: linear-gradient(90deg, rgba(56,189,248,0.14), rgba(56,189,248,0.08));
+        color:var(--text); cursor:pointer;
+        transition: box-shadow .14s ease, transform .12s ease, background .12s ease;
+      }
+      .btn:hover{
+        transform: translateY(-4px);
+        box-shadow: 0 14px 40px var(--glow-color);
+      }
+      .btn.secondary{
+        background: transparent;
+        border:1px solid rgba(255,255,255,0.06);
+      }
+      .btn.secondary:hover{ box-shadow: 0 10px 32px rgba(255,255,255,0.03); }
 
       /* socials row, icons kecil seperti diminta */
       .socials{
@@ -138,9 +177,12 @@
         border-radius:50%; display:grid; place-items:center;
         background:var(--btn-color); border:1px solid var(--line);
         color:var(--text); text-decoration:none;
-        transition: transform .12s ease, background .12s ease;
+        transition: transform .12s ease, background .12s ease, box-shadow .14s ease;
       }
-      .circle:hover{ background:var(--btn-hover); transform:translateY(-3px); }
+      .circle:hover{
+        background:var(--btn-hover); transform:translateY(-4px);
+        box-shadow: 0 10px 30px var(--glow-color);
+      }
       .circle svg{ width:calc(var(--social-size) * 0.66); height:calc(var(--social-size) * 0.66); }
 
       /* groups: separated into two cards (Menu & Tools) */
@@ -159,13 +201,39 @@
         gap:6px; text-decoration:none; color:var(--text);
         background:var(--btn-color); border:1px solid var(--line);
         padding:10px; border-radius:12px; min-height:72px;
-        transition: transform .12s ease, background .12s ease;
+        transition: transform .12s ease, background .12s ease, box-shadow .14s ease;
+        cursor:pointer;
       }
-      .tile:hover{ transform:translateY(-6px); background:var(--btn-hover); }
+      .tile:hover{
+        transform:translateY(-8px);
+        background:var(--btn-hover);
+        box-shadow: 0 18px 48px var(--glow-color);
+      }
       .tile svg{ width:28px; height:28px; opacity:.96; }
       .label{ font-size:12px; text-align:center; font-weight:500; color:var(--text); line-height:1.05; }
 
       .foot{ text-align:center; font-size:12px; color:rgba(255,255,255,0.6); margin-top:6px; }
+
+      /* modal styles */
+      .modal-backdrop{
+        position:fixed; inset:0; background:rgba(2,6,23,0.6); display:flex; align-items:center; justify-content:center;
+        z-index:9999; opacity:0; pointer-events:none; transition: opacity .18s ease;
+      }
+      .modal-backdrop.show{ opacity:1; pointer-events:auto; }
+      .modal {
+        width: min(520px, 92vw); border-radius:14px; padding:18px; background:var(--card-bg); border:1px solid var(--line);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: fadeInUp .28s ease both;
+      }
+      .modal h2{ margin:0 0 8px 0; font-size:18px; }
+      .modal p{ margin:0 0 12px 0; color:var(--muted); font-size:13px; }
+      .prices{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+      .price-row{ display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid rgba(255,255,255,0.02); }
+      .price-row .label{ font-size:14px; font-weight:600; color:var(--text); }
+      .price-row .amount{ font-size:14px; font-weight:700; color:var(--muted); }
+
+      .modal .modal-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+      .close-btn{ background:transparent; border:1px solid var(--line); padding:8px 10px; border-radius:8px; cursor:pointer; }
+      .order-btn{ background: linear-gradient(90deg, rgba(56,189,248,0.18), rgba(56,189,248,0.08)); padding:8px 12px; border-radius:8px; border:0; cursor:pointer; font-weight:700; }
 
       /* responsive */
       @media (max-width: 980px) {
@@ -174,12 +242,13 @@
       @media (max-width: 640px) {
         :root{ --social-size: 34px; }
         .tiles{ grid-template-columns: repeat(3, 1fr); gap:8px; }
+        .hero{ padding:16px; }
       }
       @media (max-width: 420px) {
         :root{ --social-size: 30px; --base-font:12.25px; }
         .tiles{ grid-template-columns: repeat(2, 1fr); gap:8px; }
         .avatar{ width:68px; height:68px; }
-        h1{ font-size:18px; }
+        .headline{ font-size:16px; }
       }
     </style>
   </head>
@@ -194,8 +263,13 @@
         </button>
 
         <img class="avatar" src="nafslogo.jpeg" alt="Logo NafsFlow" />
-        <h1>NafsFlow</h1>
-        <p class="subtitle">Nafsflow - Workflow - Cashflow</p>
+        <h1 class="headline">Hubungkan ide, pekerjaan, bisnis dan alur keuangan anda dalam satu ekosistem digital.</h1>
+        <p class="lead">Bermitra untuk. Temukan tools AI yang tepat dan otomatisasi untuk bisnis modernmu.</p>
+
+        <div class="hero-ctas" role="group" aria-label="Aksi utama">
+          <a class="btn" id="exploreBtn" href="#tools" title="Jelajahi Tools">Jelajahi Tools AI</a>
+          <button class="btn secondary" id="startPartnerBtn" title="Bermitra">Bermitra dengan NafsFlow</button>
+        </div>
 
         <nav class="socials" role="navigation" aria-label="Tautan media sosial">
           <a class="circle" href="https://wa.me/6285134882357?text=Halo%20Nafs%20Project%2C%20saya%20ingin%20info" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -241,7 +315,8 @@
             <div class="label">WEB 3 Project</div>
           </a>
 
-          <a class="tile" href="#" title="WEB & Landing Page">
+          <!-- THIS tile will open the pricing modal -->
+          <a class="tile" href="#" title="WEB & Landing Page" data-modal="pricing" data-modal-source="web-landing">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h18v4H3V3zm0 6h12v12H3V9zm14 0h4v12h-4V9z"/></svg>
             <div class="label">WEB & Landing Page</div>
           </a>
@@ -249,7 +324,7 @@
       </section>
 
       <!-- TOOLS (kartu terpisah) -->
-      <section class="card" aria-label="Tools dan Lainnya">
+      <section class="card" aria-label="Tools dan Lainnya" id="tools">
         <p class="section-title">Tools & Lainnya</p>
         <div class="tiles">
           <!-- Tools All In One (robot head icon) -->
@@ -295,6 +370,38 @@
       <p class="foot">© 2025 NafsFlow</p>
     </main>
 
+    <!-- Modal markup (hidden by default) -->
+    <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal" role="document" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+        <h2 id="modalTitle">Harga Layanan Web</h2>
+        <p id="modalDesc">Paket dasar — Harga mulai dari (estimasi). Pilih paket yang sesuai atau hubungi kami untuk kebutuhan kustom.</p>
+
+        <div class="prices" id="priceList">
+          <div class="price-row">
+            <div class="label">Blog</div>
+            <div class="amount">Rp 75.000</div>
+          </div>
+          <div class="price-row">
+            <div class="label">Landing Page</div>
+            <div class="amount">Rp 150.000</div>
+          </div>
+          <div class="price-row">
+            <div class="label">Web Statis</div>
+            <div class="amount">Rp 450.000</div>
+          </div>
+          <div class="price-row">
+            <div class="label">Web Aplikasi</div>
+            <div class="amount">Rp 1.200.000</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="close-btn" id="closeModal">Tutup</button>
+          <button class="order-btn" id="contactOrder">Hubungi / Pesan</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       (function(){
         // Theme handling: prefer saved -> html attr -> system preference
@@ -312,7 +419,6 @@
           updateIcon(name);
 
           // After theme change, scroll to top so mobile header/toggle isn't hidden by browser chrome.
-          // This addresses "tampilan di handphone terpotong bagian atas setelah di klik togle light".
           setTimeout(()=> {
             try { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
           }, 80);
@@ -357,6 +463,71 @@
 
         // Small UX: ensure top visible on first load on mobile (avoid clipped by address bar)
         setTimeout(()=>{ try { window.scrollTo(0,0); } catch(e){} }, 120);
+
+        // --- Modal logic for pricing ---
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const closeModalBtn = document.getElementById('closeModal');
+        const contactOrderBtn = document.getElementById('contactOrder');
+
+        // Open modal function
+        function openModal(opts = {}) {
+          // opts may be used later to change content dynamically
+          modalBackdrop.classList.add('show');
+          modalBackdrop.setAttribute('aria-hidden','false');
+          // focus trap start: focus close button
+          closeModalBtn.focus();
+        }
+
+        function closeModal() {
+          modalBackdrop.classList.remove('show');
+          modalBackdrop.setAttribute('aria-hidden','true');
+        }
+
+        // Attach click handler to elements with data-modal="pricing"
+        document.querySelectorAll('[data-modal="pricing"]').forEach(el => {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal({ source: el.dataset.modalSource || 'unknown' });
+          });
+        });
+
+        // Close handlers
+        closeModalBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', (e) => {
+          if(e.target === modalBackdrop) closeModal();
+        });
+
+        // ESC to close
+        window.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+
+        // Contact / Order button: open whatsapp chat (example)
+        contactOrderBtn.addEventListener('click', () => {
+          // Customize nomor & pesan sesuai kebutuhan
+          const phone = '6285134882357';
+          const message = encodeURIComponent('Halo, saya ingin info paket website. Mohon bantuannya.');
+          window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+        });
+
+        // Hero CTAs (example behaviors)
+        document.getElementById('exploreBtn').addEventListener('click', (e) => {
+          // Smooth scroll to tools
+          e.preventDefault();
+          const target = document.getElementById('tools');
+          if(target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        document.getElementById('startPartnerBtn').addEventListener('click', () => {
+          // simple action: open WA chat to start partnership
+          const phone = '6285134882357';
+          const message = encodeURIComponent('Halo NafsFlow, saya tertarik bermitra. Mohon info selanjutnya.');
+          window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+        });
+
+        // Progressive fade-in for tiles (stagger)
+        document.querySelectorAll('.card:not(.hero) .tile').forEach((tile, idx) => {
+          tile.style.animation = `fadeInUp .5s ease both`;
+          tile.style.animationDelay = `${0.08 * idx}s`;
+        });
+
       })();
     </script>
   </body>
