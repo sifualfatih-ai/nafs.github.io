@@ -275,7 +275,8 @@
             <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.8 1.42-1.42zM1 13h3v-2H1v2zm10-9h2V1h-2v3zm7.45 1.46l1.79-1.8-1.41-1.41-1.8 1.79 1.42 1.42zM17 13h3v-2h-3v2zM12 6a6 6 0 1 0 .001 12.001A6 6 0 0 0 12 6z"/></svg>
         </button>
 
-        <img class="avatar" src="nafslogo.jpeg" alt="Logo NafsFlow" />
+        <!-- updated avatar to the raw GitHub URL you provided -->
+        <img class="avatar" src="https://raw.githubusercontent.com/sifualfatih-ai/nafs.github.io/refs/heads/main/nafs%20logo.png" alt="Logo NafsFlow" />
         <!-- Hero headline (font lebih kecil, bold) -->
         <h1 class="headline">Hubungkan ide, pekerjaan, bisnis dan alur keuangan anda dalam satu ekosistem digital.</h1>
 
@@ -333,13 +334,15 @@
             <div class="sub">Free - Input API Key Sendiri</div>
           </a>
 
-          <!-- Movie Builder Pro (replaces Tools AI Affiliate) -->
+          <!-- Movie Builder Pro (clapperboard icon now) -->
           <a class="tile" href="#" title="Movie Builder Pro">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 6l.84 2h8.49c.46 0 .86.31.97.75l1.38 6.48c.12.58-.32 1.12-.92 1.12H8.53l-.31.9H19v2H8a1 1 0 0 1-.95-1.29l1.5-4.45L6.2 4H3V2h3.2c.4 0 .78.24.95.6L7.16 6z"/>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+              <!-- clapperboard / film clap -->
+              <path d="M2 7.5V20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7.5H2zM22 6h-6.2l1.2-2H20a1 1 0 0 1 1 1v1zM7.5 3L6 6h5l1-3H7.5z" />
+              <path d="M4 9h16v9H4V9z" opacity="0.98"/>
             </svg>
             <div class="label">Movie Builder Pro</div>
-            <div class="sub">Masih dalamTahap Pengembangan</div>
+            <div class="sub">Masih dalam Tahap Pengembangan</div>
           </a>
 
           <!-- Tools Guru PAUD (graduation cap icon) -->
@@ -559,8 +562,7 @@
           setTimeout(()=> { if(modalAppsBackdrop && !modalAppsBackdrop.classList.contains('show')) modalAppsBackdrop.style.display = 'none'; }, 220);
         }
 
-        // Note: Produk & Layanan now links to external page (lynk.id) and no longer triggers apps modal.
-        // However if you still want to keep the apps modal trigger on another tile, you can add data-modal="apps" to any tile.
+        // Note: Produk & Layanan links open new tab; apps modal kept but not auto-triggered by that tile.
 
         closeAppsBtn && closeAppsBtn.addEventListener('click', closeAppsModal);
         modalAppsBackdrop && modalAppsBackdrop.addEventListener('click', (e) => {
