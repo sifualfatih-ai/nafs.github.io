@@ -127,7 +127,11 @@
       .circle:hover{ transform:translateY(-4px); box-shadow: 0 10px 30px var(--glow-color); }
       .circle svg{ width:calc(var(--social-size) * 0.66); height:calc(var(--social-size) * 0.66); }
 
-      /* whatsapp special CTA - centered and emphasized */
+      /* TikTok icon as image */
+      .circle.tiktok{ background:transparent; border:none; padding:4px; }
+      .circle.tiktok img{ width:22px; height:22px; display:block; }
+
+      /* whatsapp special CTA - centered, emphasized + pulse animation */
       .circle.whatsapp{
         width:48px; height:48px;
         background:var(--whatsapp-cta-bg);
@@ -135,9 +139,17 @@
         box-shadow: 0 10px 36px rgba(37,211,102,0.18);
         transform: translateY(0);
         display:grid; place-items:center;
+        /* pulse animation */
+        animation: pulse 2.6s infinite ease-out;
       }
       .circle.whatsapp svg{ width:20px; height:20px; color:#fff; }
-      .circle.whatsapp:focus, .circle.whatsapp:hover{ box-shadow: 0 16px 48px rgba(37,211,102,0.22); transform: translateY(-4px); }
+      .circle.whatsapp:focus, .circle.whatsapp:hover{ box-shadow: 0 16px 48px rgba(37,211,102,0.22); transform: translateY(-4px); animation: none; }
+
+      @keyframes pulse {
+        0% { box-shadow: 0 6px 18px rgba(37,211,102,0.18), 0 0 0 0 rgba(37,211,102,0.12); transform: translateY(0) scale(1); }
+        40% { box-shadow: 0 12px 34px rgba(37,211,102,0.18), 0 0 0 10px rgba(37,211,102,0.06); transform: translateY(-2px) scale(1.02); }
+        100% { box-shadow: 0 6px 18px rgba(37,211,102,0.12), 0 0 0 0 rgba(37,211,102,0); transform: translateY(0) scale(1); }
+      }
 
       .section-title{ font-size:12px; color:var(--muted); margin:0 0 8px 6px; }
       .tiles{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
@@ -205,16 +217,13 @@
 
         <!-- socials: TikTok - WhatsApp(center CTA) - YouTube -->
         <nav class="socials" role="navigation" aria-label="Tautan media sosial">
-          <!-- TikTok (familiar icon) -->
-          <a class="circle" href="https://www.tiktok.com/@nnafssh" target="_blank" rel="noopener" aria-label="TikTok">
-            <!-- TikTok glyph (stylized) -->
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="20" height="20">
-              <path d="M9.08 3v10.09A4.91 4.91 0 0 0 12 18.99a4.9 4.9 0 0 0 4.9-4.9V9.5h2.2V7.2h-2.2V3h-2.2v6.3c-.6-.2-1.2-.3-1.8-.3-1.9 0-3.6 1-4.6 2.6V3H9.08z"/>
-            </svg>
+          <!-- TikTok (image icon as provided) -->
+          <a class="circle tiktok" href="https://www.tiktok.com/@nnafssh" target="_blank" rel="noopener" aria-label="TikTok">
+            <img src="https://raw.githubusercontent.com/sifualfatih-ai/nafs.github.io/refs/heads/main/tiktok-icon.png" alt="TikTok">
           </a>
 
           <!-- WhatsApp centered CTA -->
-          <a class="circle whatsapp" href="https://wa.me/6285134882357?text=Halo%20Nafs%20Project%2C%20saya%20ingin%20info" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <a class="circle whatsapp" id="whatsappCTA" href="https://wa.me/6285134882357?text=Halo%20Nafs%20Project%2C%20saya%20ingin%20info" target="_blank" rel="noopener" aria-label="WhatsApp">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 3.1 17.6L2 22l4.5-1.2A11 11 0 1 0 20.5 3.5Zm-8.8 16.9c-1.9 0-3.6-.6-5-1.7l-.4-.3-2.6.7.7-2.5-.3-.4a8.6 8.6 0 1 1 7.6 4.2Zm4.7-6c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.9 1.1-.3.2-.6.1a7 7 0 0 1-2-1.2 7.5 7.5 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.3-.4.2-.4c.1-.2 0-.4 0-.5l-.9-2a.6.6 0 0 0-.6-.3h-.5c-.2 0-.5.2-.6.4s-.8.8-.8 2 .8 2.3.9 2.4c.1.2 1.7 2.7 4.1 3.7.6.3 1.1.5 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.2.2-.6.2-1 .1-1.2-.1-.2-.3-.3-.6-.4Z"/></svg>
           </a>
 
@@ -299,7 +308,7 @@
 
           <div class="testi-grid">
             <article class="testi" aria-label="Testimoni 1">
-              <img class="photo" src="https://via.placeholder.com/160?text=Bu+Siti" alt="Foto Bu Siti"/>
+              <img class="photo" src="https://raw.githubusercontent.com/sifualfatih-ai/nafs.github.io/refs/heads/main/testimoni2.png" alt="Foto Bu Siti"/>
               <div class="content">
                 <p class="quote">"Saya sangat terbantu dengan adanya generator RPM untuk guru, ini sangat memudahkan pekerja pembuatan rencana pembelajaran dan laporannya, dari segi waktu sangat efisien."</p>
                 <div class="who">- Bu Siti, Pengajar Kober Kinanti -</div>
@@ -307,7 +316,7 @@
             </article>
 
             <article class="testi" aria-label="Testimoni 2">
-              <img class="photo" src="https://via.placeholder.com/160?text=Pak+Arif" alt="Foto Pak Arif"/>
+              <img class="photo" src="https://raw.githubusercontent.com/sifualfatih-ai/nafs.github.io/refs/heads/main/testimoni1.png" alt="Foto Pak Arif"/>
               <div class="content">
                 <p class="quote">"Template dan automasi yang disediakan membantu kami meluncurkan kampanye pemasaran dalam hitungan jam, bukan hari. Sangat recommended!"</p>
                 <div class="who">- Pak Arif, Pelaku UMKM -</div>
@@ -315,7 +324,7 @@
             </article>
 
             <article class="testi" aria-label="Testimoni 3">
-              <img class="photo" src="https://via.placeholder.com/160?text=Ibu+Maya" alt="Foto Ibu Maya"/>
+              <img class="photo" src="https://raw.githubusercontent.com/sifualfatih-ai/nafs.github.io/refs/heads/main/testimoni2.png" alt="Foto Ibu Maya"/>
               <div class="content">
                 <p class="quote">"Layanan pembuatan landing page dan video promosi AI mereka membuat produk baru kami cepat dikenal. Support-nya ramah dan cepat."</p>
                 <div class="who">- Anonim, Java Bandung Studio -</div>
@@ -451,6 +460,15 @@
           const message = encodeURIComponent('Halo, saya ingin info Aplikasi Pro (Capcut/Canva/ChatGPT/Gemini). Mohon bantuannya.');
           window.open(`https://wa.me/${phone}?text=${message}`, '_blank', 'noopener');
         });
+
+        // stop pulse on user interaction (optional)
+        const whatsappEl = document.getElementById('whatsappCTA');
+        if (whatsappEl) {
+          whatsappEl.addEventListener('mouseover', () => { whatsappEl.style.animation = 'none'; });
+          whatsappEl.addEventListener('focus', () => { whatsappEl.style.animation = 'none'; });
+          whatsappEl.addEventListener('mouseout', () => { whatsappEl.style.animation = ''; });
+          whatsappEl.addEventListener('blur', () => { whatsappEl.style.animation = ''; });
+        }
 
         // stagger tile animation
         document.querySelectorAll('.card:not(.hero) .tile').forEach((tile, idx) => {
