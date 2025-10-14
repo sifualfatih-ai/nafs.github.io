@@ -85,7 +85,6 @@
       html,body{height:100%}
       body{
         margin:0;
-        /* Use Segoe UI as primary font for elegant appearance */
         font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, -apple-system;
         font-size:var(--base-font);
         color:var(--text);
@@ -129,10 +128,8 @@
         text-align:center; padding:20px; border-radius:14px;
         animation: fadeInUp .7s ease both;
       }
-      /* hero smaller but bold */
       .hero .headline{ font-size:15px; font-weight:700; margin:0; line-height:1.12; max-width:900px; }
 
-      /* theme toggle button small top-right inside hero */
       .theme-toggle{
         position:absolute; right:12px; top:12px;
         width:34px; height:34px; border-radius:10px;
@@ -142,7 +139,6 @@
         transition: box-shadow .15s ease, transform .12s ease;
       }
       .theme-toggle:hover{ box-shadow: 0 8px 28px var(--glow-color); transform: translateY(-2px); }
-
       .theme-toggle:focus{ box-shadow: 0 6px 18px rgba(0,0,0,.12); }
 
       .avatar{
@@ -154,7 +150,6 @@
       h1{font-size:20px; margin:0; font-weight:600}
       .subtitle{font-size:12px; margin:0; color:var(--muted)}
 
-      /* CTA buttons - kept for possible other uses */
       .hero-ctas{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
       .btn {
         padding:10px 18px; border-radius:12px; font-weight:600; font-size:13px;
@@ -163,20 +158,11 @@
         color:var(--text); cursor:pointer;
         transition: box-shadow .14s ease, transform .12s ease, background .12s ease;
       }
-      .btn:hover{
-        transform: translateY(-4px);
-        box-shadow: 0 14px 40px var(--glow-color);
-      }
-      .btn.secondary{
-        background: transparent;
-        border:1px solid rgba(255,255,255,0.06);
-      }
+      .btn:hover{ transform: translateY(-4px); box-shadow: 0 14px 40px var(--glow-color); }
+      .btn.secondary{ background: transparent; border:1px solid rgba(255,255,255,0.06); }
       .btn.secondary:hover{ box-shadow: 0 10px 32px rgba(255,255,255,0.03); }
 
-      /* socials row, icons kecil seperti diminta */
-      .socials{
-        display:flex; gap:10px; justify-content:center; margin-top:6px;
-      }
+      .socials{ display:flex; gap:10px; justify-content:center; margin-top:6px; }
       .circle{
         width:var(--social-size); height:var(--social-size);
         border-radius:50%; display:grid; place-items:center;
@@ -184,16 +170,10 @@
         color:var(--text); text-decoration:none;
         transition: transform .12s ease, background .12s ease, box-shadow .14s ease;
       }
-      .circle:hover{
-        background:var(--btn-hover); transform:translateY(-4px);
-        box-shadow: 0 10px 30px var(--glow-color);
-      }
+      .circle:hover{ background:var(--btn-hover); transform:translateY(-4px); box-shadow: 0 10px 30px var(--glow-color); }
       .circle svg{ width:calc(var(--social-size) * 0.66); height:calc(var(--social-size) * 0.66); }
 
-      /* groups: separated into two cards (Menu & Tools) */
-      .section-title{
-        font-size:12px; color:var(--muted); margin:0 0 8px 6px;
-      }
+      .section-title{ font-size:12px; color:var(--muted); margin:0 0 8px 6px; }
 
       .tiles{
         display:grid;
@@ -217,12 +197,21 @@
       .tile svg{ width:28px; height:28px; opacity:.96; }
       .label{ font-size:12px; text-align:center; font-weight:600; color:var(--text); line-height:1.05; }
 
-      /* small subtext under tile labels */
-      .tile .sub { font-size:11px; color:var(--muted); margin-top:4px; font-weight:500; }
+      /* CENTER subtext for all devices (ensures mobile/tablet & desktop centered) */
+      .tile .sub {
+        font-size:11px;
+        color:var(--muted);
+        margin-top:6px;
+        font-weight:500;
+        text-align:center;        /* <-- centered */
+        line-height:1.25;
+        max-width: 100%;
+        display: block;
+        word-break: break-word;
+      }
 
       .foot{ text-align:center; font-size:12px; color:rgba(255,255,255,0.6); margin-top:6px; }
 
-      /* modal styles (backdrop made slightly darker for readability) */
       .modal-backdrop{
         position:fixed; inset:0; background:rgba(2,6,23,0.78); display:flex; align-items:center; justify-content:center;
         z-index:9999; opacity:0; pointer-events:none; transition: opacity .18s ease;
@@ -234,12 +223,12 @@
       }
       .modal h2{ margin:0 0 8px 0; font-size:18px; }
       .modal p{ margin:0 0 12px 0; color:var(--muted); font-size:13px; }
+
       .prices{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
       .price-row{ display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid rgba(255,255,255,0.02); }
       .price-row .label{ font-size:14px; font-weight:600; color:var(--text); }
       .price-row .amount{ font-size:14px; font-weight:700; color:var(--muted); }
 
-      /* apps modal table */
       .apps-table{ width:100%; border-collapse:collapse; margin-top:8px; }
       .apps-table th, .apps-table td{ padding:10px 8px; text-align:left; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.03); }
       .apps-note{ font-size:12px; color:var(--muted); margin-top:10px; }
@@ -248,7 +237,7 @@
       .close-btn{ background:transparent; border:1px solid var(--line); padding:8px 10px; border-radius:8px; cursor:pointer; color:var(--text); }
       .order-btn{ background: linear-gradient(90deg, rgba(56,189,248,0.18), rgba(56,189,248,0.08)); padding:8px 12px; border-radius:8px; border:0; cursor:pointer; font-weight:700; color:var(--text); }
 
-      /* responsive */
+      /* responsive adjustments */
       @media (max-width: 980px) {
         .tiles{ grid-template-columns: repeat(4, 1fr); }
       }
@@ -256,12 +245,15 @@
         :root{ --social-size: 34px; }
         .tiles{ grid-template-columns: repeat(3, 1fr); gap:8px; }
         .hero{ padding:16px; }
+        /* ensure tile content remains centered on phones */
+        .tile { padding:14px; min-height:88px; }
       }
       @media (max-width: 420px) {
         :root{ --social-size: 30px; --base-font:12.25px; }
         .tiles{ grid-template-columns: repeat(2, 1fr); gap:8px; }
         .avatar{ width:68px; height:68px; }
         .headline{ font-size:14px; }
+        .tile .sub { margin-top:6px; font-size:11px; }
       }
     </style>
   </head>
@@ -277,7 +269,6 @@
 
         <!-- updated avatar to the raw GitHub URL you provided -->
         <img class="avatar" src="https://raw.githubusercontent.com/sifualfatih-ai/nafs.github.io/refs/heads/main/nafs%20logo.png" alt="Logo NafsFlow" />
-        <!-- Hero headline (font lebih kecil, bold) -->
         <h1 class="headline">Hubungkan ide, pekerjaan, bisnis dan alur keuangan anda dalam satu ekosistem digital.</h1>
 
         <nav class="socials" role="navigation" aria-label="Tautan media sosial">
@@ -304,19 +295,15 @@
             <div class="label">Home</div>
           </a>
 
-          <!-- Produk & Layanan -> previously Aplikasi Pro -->
           <a class="tile" href="https://lynk.id/nnafssh" title="Produk & Layanan" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 7h16v2H4V7zm0 4h10v2H4v-2zm0 4h8v2H4v-2z"/></svg>
             <div class="label">Produk &amp; Layanan</div>
           </a>
 
-          <!-- Nafsflow Premium moved to Menu (keputusan: kept href '#' as not a real page) -->
           <a class="tile" href="#" title="Nafsflow Premium">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 9 8l-7 1 5 5-1 7L12 18l7 4-1-7 5-5-7-1L12 2z"/></svg>
             <div class="label">Nafsflow Premium</div>
           </a>
-
-          <!-- removed Buku & e-Book and WEB & Landing Page as requested -->
         </div>
       </section>
 
@@ -324,20 +311,16 @@
       <section class="card" aria-label="Tools dan Lainnya" id="tools">
         <p class="section-title">Tools & Lainnya</p>
         <div class="tiles">
-          <!-- Tools All In One (robot head icon) -->
           <a class="tile" href="https://app-ai-all-in-one-3195732092.us-west1.run.app" title="Tools All In One" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <!-- robot head simple -->
               <path d="M12 2c1 0 2 .8 2 1.8V5h2a2 2 0 0 1 2 2v6a3 3 0 0 1-3 3v1a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-1a3 3 0 0 1-3-3V7a2 2 0 0 1 2-2h2V3.8C10 2.8 11 2 12 2zm-4 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
             </svg>
             <div class="label">Tools All In One</div>
             <div class="sub">Free - Input API Key Sendiri</div>
           </a>
 
-          <!-- Movie Builder Pro (clapperboard icon now) -->
           <a class="tile" href="#" title="Movie Builder Pro">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-              <!-- clapperboard / film clap -->
               <path d="M2 7.5V20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7.5H2zM22 6h-6.2l1.2-2H20a1 1 0 0 1 1 1v1zM7.5 3L6 6h5l1-3H7.5z" />
               <path d="M4 9h16v9H4V9z" opacity="0.98"/>
             </svg>
@@ -345,8 +328,7 @@
             <div class="sub">Masih dalam Tahap Pengembangan</div>
           </a>
 
-          <!-- Tools Guru PAUD (graduation cap icon) -->
-          <a class="tile" href="https://aistudio.google.com/apps/drive/13bC7eCGILcw27FwuQvHJDCY-LmWRhTcF?showPreview=true&showAssistant=true" title="Tools Guru PAUD" target="_blank" rel="noopener">
+          <a class="tile" href="https://generator-guru-paud-193227954559.us-west1.run.app" title="Tools Guru PAUD" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 3l9 4.5-9 4.5L3 7.5 12 3zm0 7.5L5.5 9 12 6.5 18.5 9 12 10.5zM5 13v2l7 3 7-3v-2l-7 3-7-3z"/>
             </svg>
@@ -354,19 +336,16 @@
             <div class="sub">Free Guru - Hubungi Admin</div>
           </a>
 
-          <!-- Youtube Automasi -->
           <a class="tile" href="#" title="Youtube Automasi">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3-.4-4.4a3.1 3.1 0 0 0-2.1-2.1C18.9 5 12 5 12 5s-6.9 0-8.5.5A3.1 3.1 0 0 0 1.4 7.6C1 9 .9 12 .9 12s0 3 .5 4.4c.3 1 1.1 1.8 2.1 2.1C5.1 19 12 19 12 19s6.9 0 8.5-.5c1-.3 1.8-1.1 2.1-2.1.4-1.4.4-4.4.4-4.4ZM9.8 15.5v-7l6 3.5-6 3.5Z"/></svg>
             <div class="label">Youtube Automasi</div>
           </a>
 
-          <!-- Workflow AI Agent moved to Tools (now opens new tab) -->
           <a class="tile" href="flowbuilder.html" title="Workflow AI Agent" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm8 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm-4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
             <div class="label">Workflow AI Agent</div>
           </a>
 
-          <!-- WEB 3 Project moved to Tools (now opens new tab) -->
           <a class="tile" href="web3simulator.html" title="WEB 3 Project" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5v-3l-10 5-10-5v3z"/></svg>
             <div class="label">WEB 3 Project</div>
@@ -378,7 +357,7 @@
       <p class="foot">© 2025 NafsFlow</p>
     </main>
 
-    <!-- Modal markup (pricing for web) - kept in case you still need the web pricing dialog -->
+    <!-- Modal markup (pricing for web) kept -->
     <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="modal" role="document" aria-labelledby="modalTitle" aria-describedby="modalDesc">
         <h2 id="modalTitle">Harga Layanan Web</h2>
@@ -410,7 +389,7 @@
       </div>
     </div>
 
-    <!-- Modal markup (apps) - kept but will not be triggered by Produk & Layanan anymore -->
+    <!-- Apps modal kept -->
     <div id="modalAppsBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
       <div class="modal" role="document" aria-labelledby="appsTitle" aria-describedby="appsDesc">
         <h2 id="appsTitle">Aplikasi Pro — Paket Bulanan</h2>
@@ -439,24 +418,17 @@
 
     <script>
       (function(){
-        // Theme handling: prefer saved -> html attr -> system preference
         const root = document.documentElement;
         const toggle = document.getElementById('themeToggle');
         const icon = document.getElementById('themeIcon');
 
-        function getSavedTheme(){
-          try { return localStorage.getItem('nafs_theme'); } catch(e){ return null; }
-        }
+        function getSavedTheme(){ try { return localStorage.getItem('nafs_theme'); } catch(e){ return null; } }
         function saveTheme(t){ try { localStorage.setItem('nafs_theme', t); } catch(e){} }
         function applyTheme(name){
           if(name === 'light'){ root.setAttribute('data-theme','light'); toggle.setAttribute('aria-pressed','true'); }
           else { root.setAttribute('data-theme','dark'); toggle.setAttribute('aria-pressed','false'); }
           updateIcon(name);
-
-          // After theme change, scroll to top so mobile header/toggle isn't hidden by browser chrome.
-          setTimeout(()=> {
-            try { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
-          }, 80);
+          setTimeout(()=> { try { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); } }, 80);
         }
         function updateIcon(name){
           if(!icon) return;
@@ -467,118 +439,70 @@
           }
         }
 
-        // initial theme
         const saved = getSavedTheme();
-        if(saved){
-          applyTheme(saved);
-        } else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
-          applyTheme('light');
-        } else {
-          applyTheme('dark');
-        }
+        if(saved){ applyTheme(saved); }
+        else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){ applyTheme('light'); }
+        else { applyTheme('dark'); }
 
-        // toggle handler
         toggle.addEventListener('click', function(){
           const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
           const next = current === 'light' ? 'dark' : 'light';
-          applyTheme(next);
-          saveTheme(next);
+          applyTheme(next); saveTheme(next);
         });
+        toggle.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); } });
 
-        // keyboard accessibility: Enter/Space toggles
-        toggle.addEventListener('keydown', (e)=>{
-          if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
-        });
-
-        // Accessibility: tiles keyboard activation
+        // keyboard activation for tiles
         document.querySelectorAll('.tile').forEach(t => {
           t.setAttribute('tabindex','0');
           t.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') t.click(); });
         });
 
-        // Small UX: ensure top visible on first load on mobile (avoid clipped by address bar)
         setTimeout(()=>{ try { window.scrollTo(0,0); } catch(e){} }, 120);
 
-        // --- Modal logic for pricing (web) ---
+        // pricing modal
         const modalBackdrop = document.getElementById('modalBackdrop');
         const closeModalBtn = document.getElementById('closeModal');
         const contactOrderBtn = document.getElementById('contactOrder');
-
-        function openModal(opts = {}) {
-          modalBackdrop.classList.add('show');
-          modalBackdrop.setAttribute('aria-hidden','false');
-          closeModalBtn && closeModalBtn.focus();
-        }
-
-        function closeModal() {
-          modalBackdrop.classList.remove('show');
-          modalBackdrop.setAttribute('aria-hidden','true');
-        }
-
-        document.querySelectorAll('[data-modal="pricing"]').forEach(el => {
-          el.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal({ source: el.dataset.modalSource || 'unknown' });
-          });
-        });
-
+        function openModal(){ if(!modalBackdrop) return; modalBackdrop.classList.add('show'); modalBackdrop.setAttribute('aria-hidden','false'); closeModalBtn && closeModalBtn.focus(); }
+        function closeModal(){ if(!modalBackdrop) return; modalBackdrop.classList.remove('show'); modalBackdrop.setAttribute('aria-hidden','true'); }
+        document.querySelectorAll('[data-modal="pricing"]').forEach(el => { el.addEventListener('click', (e) => { e.preventDefault(); openModal(); });});
         closeModalBtn && closeModalBtn.addEventListener('click', closeModal);
-        modalBackdrop && modalBackdrop.addEventListener('click', (e) => {
-          if(e.target === modalBackdrop) closeModal();
-        });
+        modalBackdrop && modalBackdrop.addEventListener('click', (e) => { if(e.target === modalBackdrop) closeModal(); });
 
-        // ESC to close modals
-        window.addEventListener('keydown', (e) => {
-          if(e.key === 'Escape') {
-            closeModal();
-            closeAppsModal();
-          }
-        });
-
+        // contact/order action
         contactOrderBtn && contactOrderBtn.addEventListener('click', () => {
           const phone = '6285134882357';
           const message = encodeURIComponent('Halo, saya ingin info paket website. Mohon bantuannya.');
           window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
         });
 
-        // --- Modal logic for apps ---
+        // apps modal
         const modalAppsBackdrop = document.getElementById('modalAppsBackdrop');
         const closeAppsBtn = document.getElementById('closeAppsModal');
         const contactAppsBtn = document.getElementById('contactApps');
-
-        function openAppsModal() {
-          if(!modalAppsBackdrop) return;
-          modalAppsBackdrop.style.display = '';
-          requestAnimationFrame(()=> {
-            modalAppsBackdrop.classList.add('show');
-            modalAppsBackdrop.setAttribute('aria-hidden','false');
-            closeAppsBtn && closeAppsBtn.focus();
-          });
-        }
-        function closeAppsModal() {
-          if(!modalAppsBackdrop) return;
-          modalAppsBackdrop.classList.remove('show');
-          modalAppsBackdrop.setAttribute('aria-hidden','true');
-          setTimeout(()=> { if(modalAppsBackdrop && !modalAppsBackdrop.classList.contains('show')) modalAppsBackdrop.style.display = 'none'; }, 220);
-        }
-
-        // Note: Produk & Layanan links open new tab; apps modal kept but not auto-triggered by that tile.
+        function openAppsModal() { if(!modalAppsBackdrop) return; modalAppsBackdrop.style.display = ''; requestAnimationFrame(()=> { modalAppsBackdrop.classList.add('show'); modalAppsBackdrop.setAttribute('aria-hidden','false'); closeAppsBtn && closeAppsBtn.focus(); }); }
+        function closeAppsModal() { if(!modalAppsBackdrop) return; modalAppsBackdrop.classList.remove('show'); modalAppsBackdrop.setAttribute('aria-hidden','true'); setTimeout(()=> { if(modalAppsBackdrop && !modalAppsBackdrop.classList.contains('show')) modalAppsBackdrop.style.display = 'none'; }, 220); }
 
         closeAppsBtn && closeAppsBtn.addEventListener('click', closeAppsModal);
-        modalAppsBackdrop && modalAppsBackdrop.addEventListener('click', (e) => {
-          if(e.target === modalAppsBackdrop) closeAppsModal();
-        });
-
+        modalAppsBackdrop && modalAppsBackdrop.addEventListener('click', (e) => { if(e.target === modalAppsBackdrop) closeAppsModal(); });
         contactAppsBtn && contactAppsBtn.addEventListener('click', () => {
           const phone = '6285134882357';
           const message = encodeURIComponent('Halo, saya ingin info Aplikasi Pro (Capcut/Canva/ChatGPT/Gemini). Mohon bantuannya.');
           window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
         });
 
-        // Progressive fade-in for tiles (stagger)
+        // stagger animation
         document.querySelectorAll('.card:not(.hero) .tile').forEach((tile, idx) => {
           tile.style.animation = `fadeInUp .5s ease both`;
           tile.style.animationDelay = `${0.08 * idx}s`;
+        });
+
+        // ESC close
+        window.addEventListener('keydown', (e) => {
+          if(e.key === 'Escape') {
+            closeModal();
+            closeAppsModal();
+          }
         });
 
       })();
